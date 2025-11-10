@@ -73,16 +73,23 @@ export default function DiscoverPage() {
   const fetchProfiles = async () => {
     try {
       setIsLoading(true)
+      console.log('Fetching profiles with offset:', offset)
       const response = await fetch(`/api/discover?limit=20&offset=${offset}`)
 
+      console.log('Discover API response status:', response.status)
+
       if (!response.ok) {
-        throw new Error('Failed to fetch profiles')
+        const errorData = await response.json().catch(() => ({}))
+        console.error('Discover API error:', errorData)
+        throw new Error(errorData.error || 'Failed to fetch profiles')
       }
 
       const data = await response.json()
+      console.log('Discover API data:', data)
 
       // Check if onboarding is needed
       if (data.needsOnboarding) {
+        console.log('User needs onboarding, redirecting...')
         toast({
           title: 'Complete Your Profile',
           description: 'Please complete your profile to start discovering matches.',
@@ -92,6 +99,7 @@ export default function DiscoverPage() {
         return
       }
 
+      console.log('Loaded profiles:', data.matches?.length || 0)
       setProfiles((prev) => [...prev, ...data.matches])
       setHasMore(data.hasMore)
       setOffset(data.offset)
@@ -99,7 +107,7 @@ export default function DiscoverPage() {
       console.error('Error fetching profiles:', error)
       toast({
         title: 'Error',
-        description: 'Failed to load profiles. Please try again.',
+        description: error instanceof Error ? error.message : 'Failed to load profiles. Please try again.',
         variant: 'destructive',
       })
     } finally {

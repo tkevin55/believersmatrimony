@@ -497,13 +497,18 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
         throw new Error(errorMessage + errorHint)
       }
 
+      console.log('Onboarding completed successfully, redirecting...')
+
       toast({
         title: 'Success!',
-        description: 'Your profile has been completed successfully',
+        description: 'Your profile has been completed successfully. Redirecting...',
       })
 
-      router.push('/discover')
-      router.refresh()
+      // Wait a moment to ensure the toast is visible
+      await new Promise(resolve => setTimeout(resolve, 1000))
+
+      // Force a full page reload to ensure session is refreshed
+      window.location.href = '/discover'
     } catch (error) {
       console.error('Submit error:', error)
       toast({
