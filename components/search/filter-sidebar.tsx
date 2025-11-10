@@ -41,16 +41,23 @@ interface FilterSidebarProps {
 }
 
 const DENOMINATIONS = [
+  { value: 'CSI', label: 'CSI (Church of South India)' },
+  { value: 'CNI', label: 'CNI (Church of North India)' },
   { value: 'BAPTIST', label: 'Baptist' },
   { value: 'METHODIST', label: 'Methodist' },
   { value: 'PRESBYTERIAN', label: 'Presbyterian' },
   { value: 'PENTECOSTAL', label: 'Pentecostal' },
+  { value: 'AG', label: 'AG (Assemblies of God)' },
+  { value: 'IPC', label: 'IPC (Indian Pentecostal Church)' },
   { value: 'NON_DENOMINATIONAL', label: 'Non-Denominational' },
   { value: 'LUTHERAN', label: 'Lutheran' },
   { value: 'ANGLICAN', label: 'Anglican' },
   { value: 'EPISCOPAL', label: 'Episcopal' },
   { value: 'REFORMED', label: 'Reformed' },
   { value: 'EVANGELICAL', label: 'Evangelical' },
+  { value: 'MAR_THOMA', label: 'Mar Thoma' },
+  { value: 'SEVENTH_DAY_ADVENTIST', label: 'SDA (Seventh-day Adventist)' },
+  { value: 'BRETHREN', label: 'Brethren' },
   { value: 'OTHER', label: 'Other' },
 ]
 

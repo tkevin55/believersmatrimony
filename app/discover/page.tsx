@@ -70,6 +70,31 @@ export default function DiscoverPage() {
     }
   }, [status])
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      // Only handle keyboard shortcuts when not typing in an input
+      if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
+        return
+      }
+
+      if (!currentProfile || isActionLoading) {
+        return
+      }
+
+      if (event.key === 'ArrowLeft') {
+        // Pass
+        handlePass(currentProfile.id)
+      } else if (event.key === 'ArrowRight') {
+        // Like
+        handleLike(currentProfile.id)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyPress)
+    return () => window.removeEventListener('keydown', handleKeyPress)
+  }, [currentProfile, isActionLoading])
+
   const fetchProfiles = async () => {
     try {
       setIsLoading(true)
