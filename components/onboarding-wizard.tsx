@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -154,6 +155,7 @@ interface PhotoFile {
 
 export default function OnboardingWizard({ userId, initialName }: OnboardingWizardProps) {
   const router = useRouter()
+  const { data: session, update: updateSession } = useSession()
   const [currentStep, setCurrentStep] = useState(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSavingProgress, setIsSavingProgress] = useState(false)
@@ -497,18 +499,24 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
         throw new Error(errorMessage + errorHint)
       }
 
-      console.log('Onboarding completed successfully, redirecting...')
+      console.log('Onboarding completed successfully, updating session...')
 
       toast({
         title: 'Success!',
         description: 'Your profile has been completed successfully. Redirecting...',
       })
 
-      // Wait a moment to ensure the toast is visible
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      // Update the session to reflect onboarding completion
+      console.log('Updating session with new onboarding status...')
+      await updateSession({ onboardingCompleted: true })
 
-      // Force a full page reload to ensure session is refreshed
-      window.location.href = '/discover'
+      // Wait a moment to ensure session is updated
+      await new Promise(resolve => setTimeout(resolve, 500))
+
+      console.log('Redirecting to discover page...')
+      // Use router push instead of window.location
+      router.push('/discover')
+      router.refresh()
     } catch (error) {
       console.error('Submit error:', error)
       toast({
