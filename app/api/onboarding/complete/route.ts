@@ -107,7 +107,10 @@ export async function POST(request: Request) {
     }
 
     // Perform the complete onboarding in a transaction
+    // Increased timeout to 30 seconds to handle large photo uploads
     const result = await prisma.$transaction(async (tx) => {
+      console.log('🔄 Transaction started')
+
       // Combine country code with phone number
       const fullPhoneNumber = formData.countryCode && formData.phoneNumber
         ? `${formData.countryCode}${formData.phoneNumber}`
@@ -198,6 +201,7 @@ export async function POST(request: Request) {
 
       // Save photos if provided
       if (formData.photos && formData.photos.length >= 3) {
+        const photoStartTime = Date.now()
         console.log(`💾 Saving ${formData.photos.length} photos...`)
 
         // Delete existing photos
@@ -205,21 +209,23 @@ export async function POST(request: Request) {
           where: { userId }
         })
 
-        // Create new photos
-        const photoPromises = formData.photos.map((photo: any, index: number) => {
-          console.log(`  📸 Photo ${index + 1}: isPrimary=${photo.isPrimary}, order=${photo.order}, dataLength=${photo.data?.length || 0}`)
-          return tx.photo.create({
+        // Create new photos - use sequential processing to avoid overwhelming the transaction
+        for (let i = 0; i < formData.photos.length; i++) {
+          const photo = formData.photos[i]
+          console.log(`  📸 Photo ${i + 1}/${formData.photos.length}: isPrimary=${photo.isPrimary}, order=${photo.order}, dataLength=${photo.data?.length || 0}`)
+
+          await tx.photo.create({
             data: {
               userId,
               url: photo.data, // Base64 data for now
-              order: photo.order || index,
+              order: photo.order || i,
               isPrimary: photo.isPrimary || false,
             }
           })
-        })
+        }
 
-        await Promise.all(photoPromises)
-        console.log('✅ Photos saved successfully')
+        const photoEndTime = Date.now()
+        console.log(`✅ Photos saved successfully in ${photoEndTime - photoStartTime}ms`)
       }
 
       // Parse partner preferences
@@ -267,6 +273,9 @@ export async function POST(request: Request) {
       console.log('✅ Onboarding completed successfully for user:', userId)
 
       return { profile }
+    }, {
+      maxWait: 30000, // 30 seconds
+      timeout: 30000, // 30 seconds
     })
 
     console.log('🎉 Transaction completed! User is fully onboarded.')
