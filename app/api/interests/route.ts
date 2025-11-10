@@ -168,37 +168,56 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Create the interest
-    const interest = await prisma.interest.create({
-      data: {
-        senderId: session.user.id,
-        receiverId: receiverId,
-        message: message || null,
-        status: 'PENDING'
-      },
-      include: {
-        receiver: {
-          include: {
-            profile: true,
-            photos: {
-              where: { isPrimary: true },
-              take: 1
+    // Create the interest and log activities
+    const [interest] = await prisma.$transaction([
+      prisma.interest.create({
+        data: {
+          senderId: session.user.id,
+          receiverId: receiverId,
+          message: message || null,
+          status: 'PENDING'
+        },
+        include: {
+          receiver: {
+            include: {
+              profile: true,
+              photos: {
+                where: { isPrimary: true },
+                take: 1
+              }
             }
           }
         }
-      }
-    })
-
-    // Create a notification for the receiver
-    await prisma.notification.create({
-      data: {
-        userId: receiverId,
-        type: 'INTEREST_RECEIVED',
-        title: 'New Interest Received',
-        content: `${session.user.name || 'Someone'} has sent you an interest!`,
-        link: `/dashboard?tab=interests`
-      }
-    })
+      }),
+      // Log activity for sender
+      prisma.activity.create({
+        data: {
+          userId: session.user.id,
+          type: 'INTEREST_SENT',
+          targetUserId: receiverId,
+          metadata: { message: message || null }
+        }
+      }),
+      // Log activity for receiver
+      prisma.activity.create({
+        data: {
+          userId: receiverId,
+          type: 'INTEREST_RECEIVED',
+          targetUserId: session.user.id,
+          metadata: { message: message || null }
+        }
+      }),
+      // Create a notification for the receiver
+      prisma.notification.create({
+        data: {
+          userId: receiverId,
+          type: 'INTEREST_RECEIVED',
+          title: 'New Interest Received',
+          content: `${session.user.name || 'Someone'} has sent you an interest!`,
+          link: `/dashboard?tab=interests`
+        }
+      })
+    ])
 
     return NextResponse.json(interest, { status: 201 })
   } catch (error) {

@@ -4,6 +4,61 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { checkMutualInterest, checkExistingMatch } from '@/lib/matching'
 
+// GET - Fetch likes (sent or received)
+export async function GET(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions)
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const searchParams = request.nextUrl.searchParams
+    const filter = searchParams.get('filter') || 'sent' // 'sent' or 'received'
+    const limit = parseInt(searchParams.get('limit') || '50')
+    const offset = parseInt(searchParams.get('offset') || '0')
+
+    const likes = await prisma.like.findMany({
+      where: filter === 'received'
+        ? { likedId: session.user.id }
+        : { likerId: session.user.id },
+      include: {
+        liker: {
+          include: {
+            profile: true,
+            photos: {
+              orderBy: [{ isPrimary: 'desc' }, { order: 'asc' }],
+            },
+          },
+        },
+        liked: {
+          include: {
+            profile: true,
+            photos: {
+              orderBy: [{ isPrimary: 'desc' }, { order: 'asc' }],
+            },
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+      skip: offset,
+    })
+
+    return NextResponse.json({
+      likes,
+      hasMore: likes.length === limit,
+      offset: offset + likes.length,
+    })
+  } catch (error) {
+    console.error('Error fetching likes:', error)
+    return NextResponse.json(
+      { error: 'Failed to fetch likes' },
+      { status: 500 }
+    )
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     // Check authentication
@@ -98,14 +153,32 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Create the like
-    await prisma.like.create({
-      data: {
-        likerId: session.user.id,
-        likedId: likedUserId,
-        isSuperLike: isSuperLike,
-      },
-    })
+    // Create the like and log activity in a transaction
+    await prisma.$transaction([
+      prisma.like.create({
+        data: {
+          likerId: session.user.id,
+          likedId: likedUserId,
+          isSuperLike: isSuperLike,
+        },
+      }),
+      // Log activity for sender
+      prisma.activity.create({
+        data: {
+          userId: session.user.id,
+          type: isSuperLike ? 'SUPERLIKE_SENT' : 'LIKE_SENT',
+          targetUserId: likedUserId,
+        },
+      }),
+      // Log activity for receiver
+      prisma.activity.create({
+        data: {
+          userId: likedUserId,
+          type: isSuperLike ? 'SUPERLIKE_RECEIVED' : 'LIKE_RECEIVED',
+          targetUserId: session.user.id,
+        },
+      }),
+    ])
 
     // Check if mutual like exists
     const isMutualLike = await checkMutualInterest(session.user.id, likedUserId)
@@ -118,13 +191,33 @@ export async function POST(request: NextRequest) {
       const existingMatch = await checkExistingMatch(session.user.id, likedUserId)
 
       if (!existingMatch) {
-        // Create match
+        // Create match and log activity
         match = await prisma.match.create({
           data: {
             user1Id: session.user.id,
             user2Id: likedUserId,
           },
         })
+
+        // Log match activity for both users
+        await Promise.all([
+          prisma.activity.create({
+            data: {
+              userId: session.user.id,
+              type: 'MATCH_CREATED',
+              targetUserId: likedUserId,
+              metadata: { matchId: match.id },
+            },
+          }),
+          prisma.activity.create({
+            data: {
+              userId: likedUserId,
+              type: 'MATCH_CREATED',
+              targetUserId: session.user.id,
+              metadata: { matchId: match.id },
+            },
+          }),
+        ])
 
         // Create interest records for both users
         const [interest1, interest2] = await Promise.all([

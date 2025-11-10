@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import OverviewTab from '@/components/dashboard/overview-tab'
+import ActivityTab from '@/components/dashboard/activity-tab'
 import MatchesTab from '@/components/dashboard/matches-tab'
 import InterestsTab from '@/components/dashboard/interests-tab'
 import SettingsTab from '@/components/dashboard/settings-tab'
@@ -80,20 +81,7 @@ export default function DashboardPage() {
         </TabsContent>
 
         <TabsContent value="activity" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Activity</CardTitle>
-              <CardDescription>
-                Track your recent profile views and interactions
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-12 text-muted-foreground">
-                <Activity className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Activity tracking coming soon!</p>
-              </div>
-            </CardContent>
-          </Card>
+          <ActivityTab />
         </TabsContent>
 
         <TabsContent value="matches" className="space-y-6">

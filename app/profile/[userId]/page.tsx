@@ -78,6 +78,18 @@ export default function ProfileViewPage({ params }: ProfileViewProps) {
       setInterestStatus(data.interestStatus)
       setIsMatched(data.isMatched)
       setVerifications(data.verifications || [])
+
+      // Log profile view activity (only if viewing someone else's profile)
+      if (session?.user?.id && session.user.id !== params.userId) {
+        fetch('/api/activity', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'PROFILE_VIEW',
+            targetUserId: params.userId,
+          }),
+        }).catch((error) => console.error('Failed to log activity:', error))
+      }
     } catch (error: any) {
       console.error('Error fetching profile:', error)
       toast({

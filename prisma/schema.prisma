@@ -140,6 +140,21 @@ enum ChurchInvolvement {
   OCCASIONAL_ATTENDER
 }
 
+enum ActivityType {
+  PROFILE_VIEW
+  LIKE_SENT
+  LIKE_RECEIVED
+  SUPERLIKE_SENT
+  SUPERLIKE_RECEIVED
+  INTEREST_SENT
+  INTEREST_RECEIVED
+  INTEREST_ACCEPTED
+  INTEREST_DECLINED
+  MATCH_CREATED
+  MESSAGE_SENT
+  MESSAGE_RECEIVED
+}
+
 model User {
   id            String     @id @default(cuid())
   email         String     @unique
@@ -178,6 +193,8 @@ model User {
   reportsReceived    Report[]            @relation("ReportsReceived")
   notifications      Notification[]
   verifications      Verification[]
+  activities         Activity[]          @relation("UserActivities")
+  activityTargets    Activity[]          @relation("ActivityTargets")
 
   @@index([email])
   @@index([status])
@@ -455,4 +472,19 @@ model SuperLikeQuota {
   updatedAt       DateTime @updatedAt
 
   @@index([userId])
+}
+
+model Activity {
+  id           String       @id @default(cuid())
+  userId       String
+  user         User         @relation("UserActivities", fields: [userId], references: [id], onDelete: Cascade)
+  type         ActivityType
+  targetUserId String?
+  targetUser   User?        @relation("ActivityTargets", fields: [targetUserId], references: [id], onDelete: Cascade)
+  metadata     Json?
+  createdAt    DateTime     @default(now())
+
+  @@index([userId, createdAt])
+  @@index([targetUserId])
+  @@index([type])
 }
