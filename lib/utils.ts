@@ -19,9 +19,21 @@ export function calculateAge(dateOfBirth: Date): number {
 }
 
 export function formatHeight(heightInCm: number): string {
-  const feet = Math.floor(heightInCm / 30.48)
-  const inches = Math.round((heightInCm % 30.48) / 2.54)
+  const totalInches = heightInCm / 2.54
+  const feet = Math.floor(totalInches / 12)
+  const inches = Math.round(totalInches % 12)
   return `${feet}'${inches}"`
+}
+
+export function cmToFeetInches(cm: number): string {
+  const totalInches = cm / 2.54
+  const feet = Math.floor(totalInches / 12)
+  const inches = Math.round(totalInches % 12)
+  return `${feet}'${inches}"`
+}
+
+export function formatHeightWithCm(cm: number): string {
+  return `${cmToFeetInches(cm)} (${cm} cm)`
 }
 
 export function calculateProfileCompletion(profile: any): number {
