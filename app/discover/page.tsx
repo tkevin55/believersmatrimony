@@ -80,6 +80,18 @@ export default function DiscoverPage() {
       }
 
       const data = await response.json()
+
+      // Check if onboarding is needed
+      if (data.needsOnboarding) {
+        toast({
+          title: 'Complete Your Profile',
+          description: 'Please complete your profile to start discovering matches.',
+          variant: 'destructive',
+        })
+        router.push('/onboarding')
+        return
+      }
+
       setProfiles((prev) => [...prev, ...data.matches])
       setHasMore(data.hasMore)
       setOffset(data.offset)
@@ -95,20 +107,22 @@ export default function DiscoverPage() {
     }
   }
 
-  const handleLike = async (userId: string) => {
+  const handleLike = async (userId: string, isSuperLike: boolean = false) => {
     try {
       setIsActionLoading(true)
 
-      const response = await fetch('/api/likes', {
+      const endpoint = isSuperLike ? '/api/super-likes' : '/api/likes'
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ likedUserId: userId }),
+        body: JSON.stringify({ likedUserId: userId, isSuperLike }),
       })
 
       if (!response.ok) {
-        throw new Error('Failed to like profile')
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to like profile')
       }
 
       const data = await response.json()
@@ -119,8 +133,10 @@ export default function DiscoverPage() {
         setMatchModalOpen(true)
       } else {
         toast({
-          title: 'Profile Liked!',
-          description: 'We\'ll let you know if they like you back.',
+          title: isSuperLike ? 'Super Like Sent!' : 'Profile Liked!',
+          description: isSuperLike
+            ? `${profiles[currentIndex]?.name} will know you really liked them!`
+            : 'We\'ll let you know if they like you back.',
         })
       }
 
@@ -130,7 +146,7 @@ export default function DiscoverPage() {
       console.error('Error liking profile:', error)
       toast({
         title: 'Error',
-        description: 'Failed to like profile. Please try again.',
+        description: error instanceof Error ? error.message : 'Failed to like profile. Please try again.',
         variant: 'destructive',
       })
     } finally {
@@ -256,19 +272,33 @@ export default function DiscoverPage() {
                   <div className="mb-4">
                     <Users className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
                     <h2 className="text-2xl font-bold mb-2">
-                      No More Profiles
+                      {profiles.length === 0 && currentIndex === 0
+                        ? 'No Profiles Available'
+                        : 'No More Profiles'}
                     </h2>
                     <p className="text-muted-foreground">
-                      You've seen all available matches for now. Check back later for new profiles!
+                      {profiles.length === 0 && currentIndex === 0
+                        ? 'There are no matching profiles available right now. Try adjusting your preferences or check back later!'
+                        : 'You\'ve seen all available matches for now. Check back later for new profiles!'}
                     </p>
                   </div>
                   <div className="space-y-3">
+                    {profiles.length > 0 && (
+                      <Button
+                        size="lg"
+                        className="w-full"
+                        onClick={() => router.push('/matches')}
+                      >
+                        View Your Matches
+                      </Button>
+                    )}
                     <Button
                       size="lg"
+                      variant="outline"
                       className="w-full"
-                      onClick={() => router.push('/matches')}
+                      onClick={() => router.push('/settings/preferences')}
                     >
-                      View Your Matches
+                      Update Preferences
                     </Button>
                     <Button
                       size="lg"

@@ -2,11 +2,13 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { checkMutualInterest, checkExistingMatch } from '@/lib/matching'
 
-export async function POST(request: NextRequest) {
+/**
+ * GET /api/super-likes
+ * Get remaining super likes count for the current user
+ */
+export async function GET(request: NextRequest) {
   try {
-    // Check authentication
     const session = await getServerSession(authOptions)
 
     if (!session?.user?.id) {
@@ -16,9 +18,67 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Parse request body
+    // Get or create super like quota
+    let quota = await prisma.superLikeQuota.findUnique({
+      where: { userId: session.user.id },
+    })
+
+    if (!quota) {
+      // Create initial quota
+      quota = await prisma.superLikeQuota.create({
+        data: {
+          userId: session.user.id,
+          remainingLikes: 3,
+          weekStartDate: new Date(),
+        },
+      })
+    } else {
+      // Check if week has passed and reset if needed
+      const weekInMs = 7 * 24 * 60 * 60 * 1000
+      const timeSinceReset = Date.now() - quota.weekStartDate.getTime()
+
+      if (timeSinceReset >= weekInMs) {
+        quota = await prisma.superLikeQuota.update({
+          where: { userId: session.user.id },
+          data: {
+            remainingLikes: 3,
+            weekStartDate: new Date(),
+          },
+        })
+      }
+    }
+
+    return NextResponse.json({
+      remainingLikes: quota.remainingLikes,
+      weekStartDate: quota.weekStartDate,
+      nextResetDate: new Date(quota.weekStartDate.getTime() + 7 * 24 * 60 * 60 * 1000),
+    })
+  } catch (error) {
+    console.error('Error fetching super like quota:', error)
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
+  }
+}
+
+/**
+ * POST /api/super-likes
+ * Create a super like
+ */
+export async function POST(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions)
+
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
+
     const body = await request.json()
-    const { likedUserId, message, isSuperLike = false } = body
+    const { likedUserId, message } = body
 
     if (!likedUserId) {
       return NextResponse.json(
@@ -27,11 +87,52 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check if user is trying to like themselves
+    // Check if user is trying to super like themselves
     if (likedUserId === session.user.id) {
       return NextResponse.json(
-        { error: 'Cannot like yourself' },
+        { error: 'Cannot super like yourself' },
         { status: 400 }
+      )
+    }
+
+    // Get or create super like quota
+    let quota = await prisma.superLikeQuota.findUnique({
+      where: { userId: session.user.id },
+    })
+
+    if (!quota) {
+      quota = await prisma.superLikeQuota.create({
+        data: {
+          userId: session.user.id,
+          remainingLikes: 3,
+          weekStartDate: new Date(),
+        },
+      })
+    } else {
+      // Check if week has passed and reset if needed
+      const weekInMs = 7 * 24 * 60 * 60 * 1000
+      const timeSinceReset = Date.now() - quota.weekStartDate.getTime()
+
+      if (timeSinceReset >= weekInMs) {
+        quota = await prisma.superLikeQuota.update({
+          where: { userId: session.user.id },
+          data: {
+            remainingLikes: 3,
+            weekStartDate: new Date(),
+          },
+        })
+      }
+    }
+
+    // Check if user has remaining super likes
+    if (quota.remainingLikes <= 0) {
+      return NextResponse.json(
+        {
+          error: 'No super likes remaining',
+          remainingLikes: 0,
+          nextResetDate: new Date(quota.weekStartDate.getTime() + 7 * 24 * 60 * 60 * 1000),
+        },
+        { status: 429 }
       )
     }
 
@@ -54,7 +155,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check if already liked
+    // Check if already liked (regular or super)
     const existingLike = await prisma.like.findUnique({
       where: {
         likerId_likedId: {
@@ -93,28 +194,37 @@ export async function POST(request: NextRequest) {
 
     if (blockedByUser || blockedUser) {
       return NextResponse.json(
-        { error: 'Cannot like this user' },
+        { error: 'Cannot super like this user' },
         { status: 400 }
       )
     }
 
-    // Create the like
-    await prisma.like.create({
-      data: {
-        likerId: session.user.id,
-        likedId: likedUserId,
-        isSuperLike: isSuperLike,
-      },
-    })
+    // Create the super like and decrement quota in a transaction
+    const [like, updatedQuota] = await prisma.$transaction([
+      prisma.like.create({
+        data: {
+          likerId: session.user.id,
+          likedId: likedUserId,
+          isSuperLike: true,
+        },
+      }),
+      prisma.superLikeQuota.update({
+        where: { userId: session.user.id },
+        data: {
+          remainingLikes: quota.remainingLikes - 1,
+        },
+      }),
+    ])
 
     // Check if mutual like exists
+    const { checkMutualInterest } = await import('@/lib/matching')
     const isMutualLike = await checkMutualInterest(session.user.id, likedUserId)
 
     let match = null
-    let interest = null
 
     if (isMutualLike) {
       // Check if match already exists
+      const { checkExistingMatch } = await import('@/lib/matching')
       const existingMatch = await checkExistingMatch(session.user.id, likedUserId)
 
       if (!existingMatch) {
@@ -127,7 +237,7 @@ export async function POST(request: NextRequest) {
         })
 
         // Create interest records for both users
-        const [interest1, interest2] = await Promise.all([
+        await Promise.all([
           prisma.interest.upsert({
             where: {
               senderId_receiverId: {
@@ -164,8 +274,6 @@ export async function POST(request: NextRequest) {
           }),
         ])
 
-        interest = interest1
-
         // Create notifications for both users
         await Promise.all([
           prisma.notification.create({
@@ -189,15 +297,13 @@ export async function POST(request: NextRequest) {
         ])
       }
     } else {
-      // No mutual like yet, send a notification to the liked user
+      // Send special super like notification
       await prisma.notification.create({
         data: {
           userId: likedUserId,
-          type: isSuperLike ? 'SUPER_LIKE' : 'PROFILE_LIKE',
-          title: isSuperLike ? 'You got a Super Like!' : 'Someone liked your profile!',
-          content: isSuperLike
-            ? `${session.user.name} super liked your profile!`
-            : `${session.user.name} liked your profile`,
+          type: 'SUPER_LIKE',
+          title: 'You got a Super Like!',
+          content: `${session.user.name} super liked your profile!`,
           link: `/profile/${session.user.id}`,
         },
       })
@@ -207,7 +313,6 @@ export async function POST(request: NextRequest) {
     const currentUser = await prisma.user.findUnique({
       where: { id: session.user.id },
       include: {
-        profile: true,
         photos: {
           where: { isPrimary: true },
           take: 1,
@@ -217,8 +322,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
+      isSuperLike: true,
       isMatch: isMutualLike,
-      isSuperLike: isSuperLike,
+      remainingLikes: updatedQuota.remainingLikes,
       match: match ? {
         id: match.id,
         matchedAt: match.matchedAt,
@@ -235,7 +341,7 @@ export async function POST(request: NextRequest) {
       } : null,
     })
   } catch (error) {
-    console.error('Error creating like:', error)
+    console.error('Error creating super like:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

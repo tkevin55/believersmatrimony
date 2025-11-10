@@ -100,15 +100,46 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Check if receiver exists
+    // Check if receiver exists and has profile
     const receiver = await prisma.user.findUnique({
-      where: { id: receiverId }
+      where: { id: receiverId },
+      include: { profile: true }
     })
 
-    if (!receiver) {
+    if (!receiver || !receiver.profile) {
       return NextResponse.json(
-        { error: 'User not found' },
+        { error: 'User not found or profile not complete' },
         { status: 404 }
+      )
+    }
+
+    // Check if sender has profile
+    const sender = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      include: { profile: true }
+    })
+
+    if (!sender || !sender.profile) {
+      return NextResponse.json(
+        { error: 'Please complete your profile before sending interests' },
+        { status: 400 }
+      )
+    }
+
+    // Check if blocked
+    const isBlocked = await prisma.block.findFirst({
+      where: {
+        OR: [
+          { blockerId: session.user.id, blockedId: receiverId },
+          { blockerId: receiverId, blockedId: session.user.id }
+        ]
+      }
+    })
+
+    if (isBlocked) {
+      return NextResponse.json(
+        { error: 'Cannot send interest to this user' },
+        { status: 403 }
       )
     }
 

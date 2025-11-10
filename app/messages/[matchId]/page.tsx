@@ -5,27 +5,11 @@ import { useRouter, useParams } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
 import { MessageBubble } from '@/components/message-bubble'
 import { MessageInput } from '@/components/message-input'
 import { TypingIndicator } from '@/components/typing-indicator'
-import { ArrowLeft, MoreVertical, Phone, Video } from 'lucide-react'
-import {
-  connectSocket,
-  disconnectSocket,
-  joinConversation,
-  leaveConversation,
-  sendMessage as sendSocketMessage,
-  emitTypingStart,
-  emitTypingStop,
-  onNewMessage,
-  onTyping,
-  onMessagesRead,
-  offNewMessage,
-  offTyping,
-  offMessagesRead,
-  SocketMessage,
-} from '@/lib/socket'
+import { ArrowLeft, MoreVertical, Phone, Video, Loader2 } from 'lucide-react'
+import { useToast } from '@/hooks/use-toast'
 
 interface Message {
   id: string
@@ -53,130 +37,104 @@ export default function ChatPage() {
   const router = useRouter()
   const params = useParams()
   const { data: session } = useSession()
+  const { toast } = useToast()
   const matchId = params?.matchId as string
 
   const [messages, setMessages] = useState<Message[]>([])
   const [otherUser, setOtherUser] = useState<MatchUser | null>(null)
-  const [isTyping, setIsTyping] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [isSending, setIsSending] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const lastMessageCountRef = useRef(0)
 
   // Scroll to bottom
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  const scrollToBottom = (smooth = true) => {
+    messagesEndRef.current?.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto' })
   }
 
   // Fetch messages
-  useEffect(() => {
-    if (!matchId || !session?.user?.id) return
+  const fetchMessages = async (isInitial = false) => {
+    try {
+      const response = await fetch(`/api/messages/${matchId}`)
+      if (!response.ok) {
+        throw new Error('Failed to fetch messages')
+      }
+      const data = await response.json()
 
-    const fetchMessages = async () => {
-      try {
-        const response = await fetch(`/api/messages/${matchId}`)
-        if (!response.ok) {
-          throw new Error('Failed to fetch messages')
-        }
-        const data = await response.json()
-        setMessages(data.messages)
-        setOtherUser(data.match.user)
+      setMessages(data.messages)
+      setOtherUser(data.match.user)
+
+      // Auto-scroll only if new messages arrived or initial load
+      if (isInitial || data.messages.length > lastMessageCountRef.current) {
+        setTimeout(() => scrollToBottom(isInitial ? false : true), 100)
+      }
+
+      lastMessageCountRef.current = data.messages.length
+
+      if (isInitial) {
         setIsLoading(false)
-      } catch (err) {
-        console.error('Error fetching messages:', err)
+      }
+    } catch (err) {
+      console.error('Error fetching messages:', err)
+      if (isInitial) {
         setError('Failed to load messages')
         setIsLoading(false)
       }
     }
+  }
 
-    fetchMessages()
+  // Initial fetch
+  useEffect(() => {
+    if (!matchId || !session?.user?.id) return
+
+    fetchMessages(true)
   }, [matchId, session])
 
-  // Socket.io setup
+  // Set up polling for new messages (every 3 seconds)
   useEffect(() => {
-    if (!session?.user?.id || !matchId) return
+    if (!matchId || !session?.user?.id || isLoading) return
 
-    const socket = connectSocket(session.user.id)
+    pollingIntervalRef.current = setInterval(() => {
+      fetchMessages(false)
+    }, 3000)
 
-    // Join conversation room
-    joinConversation(matchId)
-
-    // Listen for new messages
-    onNewMessage((message: SocketMessage) => {
-      if (message.matchId === matchId) {
-        setMessages((prev) => [...prev, message as any])
-        scrollToBottom()
-      }
-    })
-
-    // Listen for typing events
-    onTyping((data) => {
-      if (data.matchId === matchId && data.userId !== session.user.id) {
-        setIsTyping(true)
-
-        // Clear existing timeout
-        if (typingTimeoutRef.current) {
-          clearTimeout(typingTimeoutRef.current)
-        }
-
-        // Stop typing indicator after 3 seconds
-        typingTimeoutRef.current = setTimeout(() => {
-          setIsTyping(false)
-        }, 3000)
-      }
-    })
-
-    // Listen for messages read
-    onMessagesRead((data) => {
-      if (data.matchId === matchId) {
-        setMessages((prev) =>
-          prev.map((msg) =>
-            data.messageIds.includes(msg.id) ? { ...msg, isRead: true } : msg
-          )
-        )
-      }
-    })
-
-    // Cleanup
     return () => {
-      leaveConversation(matchId)
-      offNewMessage()
-      offTyping()
-      offMessagesRead()
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current)
+      }
     }
-  }, [session, matchId])
+  }, [matchId, session, isLoading])
 
-  // Scroll to bottom when messages change
-  useEffect(() => {
-    scrollToBottom()
-  }, [messages])
-
-  // Cleanup socket on unmount
-  useEffect(() => {
-    return () => {
-      disconnectSocket()
-    }
-  }, [])
-
+  // Handle sending message
   const handleSendMessage = async (content: string) => {
-    if (!session?.user?.id || !otherUser) return
+    if (!session?.user?.id || !otherUser || isSending) return
+
+    setIsSending(true)
+
+    // Optimistic update - add message immediately
+    const optimisticMessage: Message = {
+      id: 'temp-' + Date.now(),
+      content,
+      type: 'TEXT',
+      senderId: session.user.id,
+      receiverId: otherUser.id,
+      createdAt: new Date(),
+      isRead: false,
+      sender: {
+        id: session.user.id,
+        name: session.user.name || null,
+        image: session.user.image || null,
+      },
+    }
+
+    setMessages(prev => [...prev, optimisticMessage])
+    setTimeout(() => scrollToBottom(), 50)
 
     try {
-      // Send via Socket.io
-      sendSocketMessage({
-        matchId,
-        receiverId: otherUser.id,
-        content,
-        type: 'TEXT',
-      })
-
-      // Fallback to REST API if socket not connected
-      // The message will be added via socket event listener
-    } catch (error) {
-      console.error('Error sending message:', error)
-      // Fallback to REST API
-      await fetch('/api/messages', {
+      const response = await fetch('/api/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -188,22 +146,35 @@ export default function ChatPage() {
           type: 'TEXT',
         }),
       })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to send message')
+      }
+
+      // Fetch fresh messages to replace optimistic update
+      await fetchMessages(false)
+    } catch (error: any) {
+      console.error('Error sending message:', error)
+
+      // Remove optimistic message on error
+      setMessages(prev => prev.filter(msg => msg.id !== optimisticMessage.id))
+
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to send message. Please try again.',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsSending(false)
     }
-  }
-
-  const handleTypingStart = () => {
-    emitTypingStart(matchId)
-  }
-
-  const handleTypingStop = () => {
-    emitTypingStop(matchId)
   }
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4" />
+          <Loader2 className="h-12 w-12 animate-spin text-blue-600 mx-auto mb-4" />
           <p className="text-gray-600">Loading messages...</p>
         </div>
       </div>
@@ -237,7 +208,7 @@ export default function ChatPage() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 cursor-pointer" onClick={() => router.push(`/profile/${otherUser.id}`)}>
             <div className="relative">
               <Avatar className="h-10 w-10">
                 <AvatarImage
@@ -301,7 +272,6 @@ export default function ChatPage() {
                 isRead={message.isRead}
               />
             ))}
-            {isTyping && <TypingIndicator userName={otherUser.name} />}
             <div ref={messagesEndRef} />
           </>
         )}
@@ -310,8 +280,7 @@ export default function ChatPage() {
       {/* Message Input */}
       <MessageInput
         onSendMessage={handleSendMessage}
-        onTypingStart={handleTypingStart}
-        onTypingStop={handleTypingStop}
+        disabled={isSending}
       />
     </div>
   )

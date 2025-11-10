@@ -87,6 +87,13 @@ enum Denomination {
   EPISCOPAL
   REFORMED
   EVANGELICAL
+  CSI
+  CNI
+  AG
+  IPC
+  MAR_THOMA
+  SEVENTH_DAY_ADVENTIST
+  BRETHREN
   OTHER
 }
 
@@ -113,15 +120,38 @@ enum FamilyType {
   SINGLE_PARENT
 }
 
+enum IncomeRange {
+  BELOW_3_LAKHS
+  THREE_TO_FIVE_LAKHS
+  FIVE_TO_SEVEN_LAKHS
+  SEVEN_TO_TEN_LAKHS
+  TEN_TO_FIFTEEN_LAKHS
+  FIFTEEN_TO_TWENTY_LAKHS
+  TWENTY_TO_THIRTY_LAKHS
+  ABOVE_THIRTY_LAKHS
+  PREFER_NOT_TO_SAY
+}
+
+enum ChurchInvolvement {
+  REGULAR_ATTENDER
+  VOLUNTEER
+  MINISTRY_LEADER
+  ELDER_DEACON
+  OCCASIONAL_ATTENDER
+}
+
 model User {
   id            String     @id @default(cuid())
   email         String     @unique
   emailVerified DateTime?
+  emailVerificationToken String? @unique
+  emailVerifiedAt DateTime?
   password      String?
   name          String?
   image         String?
   phoneNumber   String?    @unique
   phoneVerified Boolean    @default(false)
+  onboardingCompleted Boolean @default(false)
   status        UserStatus @default(ACTIVE)
   role          UserRole   @default(USER)
   createdAt     DateTime   @default(now())
@@ -204,17 +234,20 @@ model Profile {
   churchName            String?
   yearsAsBeliever       Int?
   isBaptized            Boolean      @default(false)
-  churchInvolvementLevel String?
+  churchInvolvementLevel ChurchInvolvement?
+  faithTestimony        String?      @db.Text
 
   // Physical Attributes
   height          Int? // in cm
   bodyType        BodyType?
+  complexion      String?
+  languages       String[]
 
   // Education & Career
   educationLevel  EducationLevel?
   fieldOfStudy    String?
   occupation      String?
-  incomeRange     String?
+  incomeRange     IncomeRange?
 
   // Family Background
   parentsOccupation String?
@@ -337,15 +370,17 @@ model Message {
 }
 
 model Like {
-  id        String   @id @default(cuid())
-  likerId   String
-  likedId   String
-  liker     User     @relation("LikesGiven", fields: [likerId], references: [id], onDelete: Cascade)
-  liked     User     @relation("LikesReceived", fields: [likedId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
+  id          String   @id @default(cuid())
+  likerId     String
+  likedId     String
+  isSuperLike Boolean  @default(false)
+  liker       User     @relation("LikesGiven", fields: [likerId], references: [id], onDelete: Cascade)
+  liked       User     @relation("LikesReceived", fields: [likedId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
 
   @@unique([likerId, likedId])
   @@index([likedId])
+  @@index([isSuperLike])
 }
 
 model Block {
@@ -409,4 +444,15 @@ model Verification {
 
   @@index([userId, type])
   @@index([status])
+}
+
+model SuperLikeQuota {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  remainingLikes  Int      @default(3)
+  weekStartDate   DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId])
 }

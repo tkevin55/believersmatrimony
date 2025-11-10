@@ -309,6 +309,7 @@ export async function calculateMatchPercentage(
 
 /**
  * Get curated matches for a user (10-20 profiles)
+ * Now with LESS strict filtering - prioritizes showing profiles over perfect matches
  */
 export async function getCuratedMatches(
   userId: string,
@@ -317,16 +318,24 @@ export async function getCuratedMatches(
 ): Promise<(ProfileWithUser & { matchScore: number })[]> {
   try {
     // Get user's profile and preferences
-    const [userProfile, userPreferences] = await Promise.all([
+    const [userProfile, userPreferences, user] = await Promise.all([
       prisma.profile.findUnique({
         where: { userId },
       }),
       prisma.partnerPreferences.findUnique({
         where: { userId },
       }),
+      prisma.user.findUnique({
+        where: { id: userId },
+      }),
     ])
 
     if (!userProfile) {
+      return []
+    }
+
+    // Check if user has completed onboarding
+    if (!user?.onboardingCompleted) {
       return []
     }
 
@@ -357,7 +366,8 @@ export async function getCuratedMatches(
     const userAge = calculateAge(userProfile.dateOfBirth)
     const oppositeGender = userProfile.gender === 'MALE' ? 'FEMALE' : 'MALE'
 
-    const whereClause: any = {
+    // BASIC filters (always apply)
+    const baseWhereClause: any = {
       userId: {
         notIn: excludedUserIds,
       },
@@ -365,78 +375,75 @@ export async function getCuratedMatches(
       isVisible: true,
       user: {
         status: 'ACTIVE',
+        onboardingCompleted: true,
       },
     }
 
-    // Apply preferences if they exist
+    // Try with PREFERRED filters first
+    let whereClause: any = { ...baseWhereClause }
+    let potentialMatches: any[] = []
+
+    // Apply preferences if they exist (but not as hard requirements)
     if (userPreferences) {
-      // Age filter
+      const preferredFilters: any = {}
+
+      // Age filter (with some flexibility - add 5 years buffer)
       if (userPreferences.ageMin || userPreferences.ageMax) {
         const today = new Date()
         if (userPreferences.ageMax) {
           const minBirthDate = new Date(
-            today.getFullYear() - userPreferences.ageMax - 1,
+            today.getFullYear() - (userPreferences.ageMax + 5) - 1,
             today.getMonth(),
             today.getDate()
           )
-          whereClause.dateOfBirth = { ...whereClause.dateOfBirth, gte: minBirthDate }
+          preferredFilters.dateOfBirth = { ...preferredFilters.dateOfBirth, gte: minBirthDate }
         }
         if (userPreferences.ageMin) {
           const maxBirthDate = new Date(
-            today.getFullYear() - userPreferences.ageMin,
+            today.getFullYear() - Math.max(userPreferences.ageMin - 5, 18),
             today.getMonth(),
             today.getDate()
           )
-          whereClause.dateOfBirth = { ...whereClause.dateOfBirth, lte: maxBirthDate }
+          preferredFilters.dateOfBirth = { ...preferredFilters.dateOfBirth, lte: maxBirthDate }
         }
       }
 
-      // Denomination filter
-      if (userPreferences.denominations && userPreferences.denominations.length > 0) {
-        whereClause.denomination = {
-          in: userPreferences.denominations,
-        }
-      }
+      // Try with preferred filters first
+      whereClause = { ...baseWhereClause, ...preferredFilters }
 
-      // Location filter
-      if (userPreferences.locations && userPreferences.locations.length > 0) {
-        whereClause.OR = [
-          { city: { in: userPreferences.locations } },
-          { state: { in: userPreferences.locations } },
-        ]
-      }
-
-      // Education filter
-      if (userPreferences.educationLevels && userPreferences.educationLevels.length > 0) {
-        whereClause.educationLevel = {
-          in: userPreferences.educationLevels,
-        }
-      }
-
-      // Height filter
-      if (userPreferences.heightMin) {
-        whereClause.height = { ...whereClause.height, gte: userPreferences.heightMin }
-      }
-      if (userPreferences.heightMax) {
-        whereClause.height = { ...whereClause.height, lte: userPreferences.heightMax }
-      }
-    }
-
-    // Fetch potential matches
-    const potentialMatches = await prisma.profile.findMany({
-      where: whereClause,
-      include: {
-        user: {
-          include: {
-            photos: {
-              where: { isPrimary: true },
-              take: 1,
+      potentialMatches = await prisma.profile.findMany({
+        where: whereClause,
+        include: {
+          user: {
+            include: {
+              photos: true,
             },
           },
         },
-      },
-      take: limit * 3, // Fetch more to allow for scoring
-    })
+        take: limit * 3,
+      })
+    }
+
+    // If no matches with preferences, try with ONLY basic filters (opposite gender, active, completed onboarding)
+    if (potentialMatches.length === 0) {
+      console.log('No matches with preferences, trying with basic filters only')
+      potentialMatches = await prisma.profile.findMany({
+        where: baseWhereClause,
+        include: {
+          user: {
+            include: {
+              photos: true,
+            },
+          },
+        },
+        take: limit * 3,
+      })
+    }
+
+    // If still no matches, return empty array
+    if (potentialMatches.length === 0) {
+      return []
+    }
 
     // Calculate match scores for each profile
     const matchesWithScores = await Promise.all(

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { signIn } from 'next-auth/react'
 import Link from 'next/link'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
@@ -95,12 +96,27 @@ export default function RegisterPage() {
       } else {
         toast({
           title: 'Success',
-          description: 'Registration successful! Redirecting to onboarding...',
+          description: 'Registration successful! Logging you in...',
         })
-        // Wait a moment for the toast to show
-        setTimeout(() => {
+
+        // Automatically sign in the user
+        const signInResult = await signIn('credentials', {
+          email: formData.email,
+          password: formData.password,
+          redirect: false,
+        })
+
+        if (signInResult?.ok) {
+          // Redirect to onboarding
           router.push('/onboarding')
-        }, 1000)
+        } else {
+          toast({
+            title: 'Error',
+            description: 'Registration successful but login failed. Please sign in manually.',
+            variant: 'destructive',
+          })
+          router.push('/auth/login')
+        }
       }
     } catch (error) {
       toast({

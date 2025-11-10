@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import OnboardingForm from '@/components/onboarding-form'
+import OnboardingWizard from '@/components/onboarding-wizard'
 
 export default async function OnboardingPage() {
   const session = await getServerSession(authOptions)
@@ -11,13 +11,17 @@ export default async function OnboardingPage() {
     redirect('/auth/login')
   }
 
-  // Check if user already has a profile
-  const profile = await prisma.profile.findUnique({
-    where: { userId: session.user.id }
+  // Check if onboarding is already completed
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: {
+      onboardingCompleted: true,
+      name: true
+    }
   })
 
-  // If profile exists, redirect to discover page
-  if (profile) {
+  // If onboarding is completed, redirect to discover page
+  if (user?.onboardingCompleted) {
     redirect('/discover')
   }
 
@@ -32,7 +36,7 @@ export default async function OnboardingPage() {
             Help us find your perfect match by completing your profile
           </p>
         </div>
-        <OnboardingForm userId={session.user.id} />
+        <OnboardingWizard userId={session.user.id} initialName={user?.name || undefined} />
       </div>
     </div>
   )

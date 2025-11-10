@@ -16,6 +16,23 @@ export async function GET(request: NextRequest) {
       )
     }
 
+    // Check if user has completed onboarding
+    const { prisma } = await import('@/lib/prisma')
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      include: { profile: true },
+    })
+
+    if (!user?.onboardingCompleted || !user.profile) {
+      return NextResponse.json({
+        matches: [],
+        hasMore: false,
+        offset: 0,
+        message: 'Please complete your profile to see matches',
+        needsOnboarding: true,
+      })
+    }
+
     // Get query parameters
     const searchParams = request.nextUrl.searchParams
     const limit = parseInt(searchParams.get('limit') || '20')
@@ -60,6 +77,7 @@ export async function GET(request: NextRequest) {
       matches: formattedMatches,
       hasMore: matches.length === limit,
       offset: offset + matches.length,
+      needsOnboarding: false,
     })
   } catch (error) {
     console.error('Error fetching discovery feed:', error)
