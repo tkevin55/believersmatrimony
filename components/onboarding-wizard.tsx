@@ -176,6 +176,7 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
       country: 'India',
       openToRelocate: 'no',
       isBaptized: 'yes',
+      height: 165, // Default height (5'5" / 165cm)
       bodyType: 'AVERAGE',
       siblingsCount: 0,
       familyType: 'NUCLEAR',

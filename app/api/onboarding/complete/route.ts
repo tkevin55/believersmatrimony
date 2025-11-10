@@ -69,6 +69,30 @@ export async function POST(request: Request) {
       )
     }
 
+    // Validate enum values
+    const validGenders = ['MALE', 'FEMALE']
+    const validDenominations = ['BAPTIST', 'METHODIST', 'PRESBYTERIAN', 'PENTECOSTAL', 'NON_DENOMINATIONAL',
+      'LUTHERAN', 'ANGLICAN', 'EPISCOPAL', 'REFORMED', 'EVANGELICAL', 'CSI', 'CNI', 'AG', 'IPC',
+      'MAR_THOMA', 'SEVENTH_DAY_ADVENTIST', 'BRETHREN', 'OTHER']
+
+    if (!validGenders.includes(formData.gender)) {
+      console.error('❌ Invalid gender value:', formData.gender)
+      return NextResponse.json({
+        error: 'Invalid gender value',
+        received: formData.gender
+      }, { status: 400 })
+    }
+
+    if (!validDenominations.includes(formData.denomination)) {
+      console.error('❌ Invalid denomination value:', formData.denomination)
+      return NextResponse.json({
+        error: 'Invalid denomination value',
+        received: formData.denomination
+      }, { status: 400 })
+    }
+
+    console.log('✅ Enum validation passed')
+
     // Check if user has already completed onboarding
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -84,12 +108,19 @@ export async function POST(request: Request) {
 
     // Perform the complete onboarding in a transaction
     const result = await prisma.$transaction(async (tx) => {
+      // Combine country code with phone number
+      const fullPhoneNumber = formData.countryCode && formData.phoneNumber
+        ? `${formData.countryCode}${formData.phoneNumber}`
+        : formData.phoneNumber
+
+      console.log('📞 Phone number:', { countryCode: formData.countryCode, phoneNumber: formData.phoneNumber, full: fullPhoneNumber })
+
       // Update user with name and phone
       await tx.user.update({
         where: { id: userId },
         data: {
           name: formData.name,
-          phoneNumber: formData.phoneNumber,
+          phoneNumber: fullPhoneNumber,
         }
       })
 
@@ -257,16 +288,49 @@ export async function POST(request: Request) {
       name: error instanceof Error ? error.name : undefined,
     })
 
-    // Return more specific error message
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
+    // Check for Prisma-specific errors
+    let errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
+    let statusCode = 500
+    let hint = 'Please check all required fields are filled correctly'
+
+    // Handle unique constraint violations
+    if (errorMessage.includes('Unique constraint failed') || errorMessage.includes('unique constraint')) {
+      if (errorMessage.includes('phoneNumber')) {
+        errorMessage = 'This phone number is already registered with another account'
+        hint = 'Please use a different phone number or contact support if this is your number'
+        statusCode = 400
+      } else if (errorMessage.includes('email')) {
+        errorMessage = 'This email is already registered'
+        hint = 'Please use a different email or try logging in'
+        statusCode = 400
+      } else {
+        errorMessage = 'A duplicate value was found. Please check your information.'
+        statusCode = 400
+      }
+    }
+
+    // Handle enum errors
+    if (errorMessage.includes('Invalid') && errorMessage.includes('enum')) {
+      errorMessage = 'Invalid selection for one of the fields'
+      hint = 'Please check all dropdown selections are valid'
+      statusCode = 400
+    }
+
+    // Handle type errors
+    if (errorMessage.includes('Expected') && errorMessage.includes('received')) {
+      errorMessage = 'Invalid data type for one of the fields'
+      hint = 'Please ensure all fields are filled with the correct type of information'
+      statusCode = 400
+    }
 
     return NextResponse.json(
       {
         error: 'Failed to complete onboarding',
         details: errorMessage,
-        hint: 'Please check all required fields are filled correctly'
+        hint: hint,
+        technicalError: error instanceof Error ? error.message : String(error)
       },
-      { status: 500 }
+      { status: statusCode }
     )
   }
 }
