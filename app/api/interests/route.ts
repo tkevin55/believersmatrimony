@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { checkQuota, incrementQuota } from '@/lib/quotas'
 
 // GET - Fetch sent and received interests
 export async function GET(req: NextRequest) {
@@ -168,6 +169,20 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    // Check quota before allowing the action
+    const quotaCheck = await checkQuota(session.user.id, 'interest')
+
+    if (!quotaCheck.allowed) {
+      return NextResponse.json(
+        {
+          error: quotaCheck.reason,
+          suggestPremium: quotaCheck.suggestPremium,
+          upgradeUrl: '/premium',
+        },
+        { status: 429 } // Too Many Requests
+      )
+    }
+
     // Create the interest and log activities
     const [interest] = await prisma.$transaction([
       prisma.interest.create({
@@ -218,6 +233,9 @@ export async function POST(req: NextRequest) {
         }
       })
     ])
+
+    // Increment quota usage
+    await incrementQuota(session.user.id, 'interest')
 
     return NextResponse.json(interest, { status: 201 })
   } catch (error) {

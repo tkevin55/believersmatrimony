@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { checkMutualInterest, checkExistingMatch } from '@/lib/matching'
+import { checkQuota, incrementQuota } from '@/lib/quotas'
 
 // GET - Fetch likes (sent or received)
 export async function GET(request: NextRequest) {
@@ -79,6 +80,23 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'likedUserId is required' },
         { status: 400 }
+      )
+    }
+
+    // Check quota before allowing the action
+    const quotaCheck = await checkQuota(
+      session.user.id,
+      isSuperLike ? 'superlike' : 'like'
+    )
+
+    if (!quotaCheck.allowed) {
+      return NextResponse.json(
+        {
+          error: quotaCheck.reason,
+          suggestPremium: quotaCheck.suggestPremium,
+          upgradeUrl: '/premium',
+        },
+        { status: 429 } // Too Many Requests
       )
     }
 
@@ -179,6 +197,9 @@ export async function POST(request: NextRequest) {
         },
       }),
     ])
+
+    // Increment quota usage
+    await incrementQuota(session.user.id, isSuperLike ? 'superlike' : 'like')
 
     // Check if mutual like exists
     const isMutualLike = await checkMutualInterest(session.user.id, likedUserId)

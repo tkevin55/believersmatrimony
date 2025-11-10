@@ -3,9 +3,10 @@
 import { useEffect, useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Eye, Heart, Users, TrendingUp, Search, UserPlus, Edit } from 'lucide-react'
+import { Eye, Heart, Users, TrendingUp, Search, UserPlus, Edit, Crown, Sparkles, MessageCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { Progress } from '@/components/ui/progress'
+import { Badge } from '@/components/ui/badge'
 
 interface Stats {
   profileViews: number
@@ -15,13 +16,34 @@ interface Stats {
   profileCompletionPercentage: number
 }
 
+interface Quotas {
+  tier: string
+  likes: {
+    used: number
+    limit: number
+    remaining: number
+  }
+  superLikes: {
+    used: number
+    limit: number
+    remaining: number
+  }
+  interests: {
+    used: number
+    limit: number
+    remaining: number
+  }
+}
+
 export default function OverviewTab() {
   const router = useRouter()
   const [stats, setStats] = useState<Stats | null>(null)
+  const [quotas, setQuotas] = useState<Quotas | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     fetchStats()
+    fetchQuotas()
   }, [])
 
   const fetchStats = async () => {
@@ -35,6 +57,18 @@ export default function OverviewTab() {
       console.error('Error fetching stats:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchQuotas = async () => {
+    try {
+      const response = await fetch('/api/quotas')
+      if (response.ok) {
+        const data = await response.json()
+        setQuotas(data)
+      }
+    } catch (error) {
+      console.error('Error fetching quotas:', error)
     }
   }
 
@@ -82,6 +116,138 @@ export default function OverviewTab() {
               <Edit className="h-4 w-4 mr-2" />
               Complete Profile
             </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Quota Display - Only for FREE users */}
+      {quotas && quotas.tier === 'FREE' && (
+        <Card className="border-orange-200 dark:border-orange-900 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-950/20 dark:to-amber-950/20">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-xs">
+                    FREE PLAN
+                  </Badge>
+                  Your Daily Limits
+                </CardTitle>
+                <CardDescription>
+                  Upgrade to Premium for unlimited access
+                </CardDescription>
+              </div>
+              <Crown className="h-8 w-8 text-orange-500" />
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid gap-4 sm:grid-cols-3">
+              {/* Likes Quota */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-2">
+                    <Heart className="h-4 w-4 text-rose-500" />
+                    <span className="font-medium">Likes Today</span>
+                  </div>
+                  <span className="text-xs text-muted-foreground">
+                    {quotas.likes.remaining}/{quotas.likes.limit}
+                  </span>
+                </div>
+                <Progress
+                  value={(quotas.likes.used / quotas.likes.limit) * 100}
+                  className="h-2"
+                />
+                {quotas.likes.remaining === 0 && (
+                  <p className="text-xs text-rose-600 dark:text-rose-400">
+                    Daily limit reached
+                  </p>
+                )}
+              </div>
+
+              {/* Super Likes Quota */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="h-4 w-4 text-primary" />
+                    <span className="font-medium">Super Likes</span>
+                  </div>
+                  <span className="text-xs text-muted-foreground">
+                    {quotas.superLikes.remaining}/{quotas.superLikes.limit}
+                  </span>
+                </div>
+                <Progress
+                  value={(quotas.superLikes.used / quotas.superLikes.limit) * 100}
+                  className="h-2"
+                />
+                {quotas.superLikes.remaining === 0 && (
+                  <p className="text-xs text-rose-600 dark:text-rose-400">
+                    Weekly limit reached
+                  </p>
+                )}
+              </div>
+
+              {/* Interests Quota */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-2">
+                    <MessageCircle className="h-4 w-4 text-blue-500" />
+                    <span className="font-medium">Interests</span>
+                  </div>
+                  <span className="text-xs text-muted-foreground">
+                    {quotas.interests.remaining}/{quotas.interests.limit}
+                  </span>
+                </div>
+                <Progress
+                  value={(quotas.interests.used / quotas.interests.limit) * 100}
+                  className="h-2"
+                />
+                {quotas.interests.remaining === 0 && (
+                  <p className="text-xs text-rose-600 dark:text-rose-400">
+                    Weekly limit reached
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between pt-2 border-t">
+              <div className="text-sm text-muted-foreground">
+                Want unlimited access?
+              </div>
+              <Button
+                onClick={() => router.push('/premium')}
+                size="sm"
+                className="gap-2"
+              >
+                <Crown className="h-4 w-4" />
+                Upgrade to Premium
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Premium Badge - For Premium Users */}
+      {quotas && quotas.tier !== 'FREE' && (
+        <Card className="border-primary bg-gradient-to-br from-primary/5 to-primary/10">
+          <CardContent className="py-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Crown className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg flex items-center gap-2">
+                    {quotas.tier} Member
+                    <Badge variant="default" className="text-xs">
+                      ACTIVE
+                    </Badge>
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Enjoying unlimited likes, super likes, and interests
+                  </p>
+                </div>
+              </div>
+              <Sparkles className="h-8 w-8 text-primary" />
+            </div>
           </CardContent>
         </Card>
       )}
