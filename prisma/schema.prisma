@@ -1,0 +1,412 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  INACTIVE
+  DELETED
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  MODERATOR
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum InterestStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+}
+
+enum ReportReason {
+  INAPPROPRIATE_PHOTOS
+  FAKE_PROFILE
+  HARASSMENT
+  SPAM
+  OTHER
+}
+
+enum ReportStatus {
+  PENDING
+  REVIEWED
+  RESOLVED
+}
+
+enum VerificationType {
+  EMAIL
+  PHONE
+  PHOTO
+}
+
+enum VerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum NotificationType {
+  NEW_MATCH
+  INTEREST_RECEIVED
+  INTEREST_ACCEPTED
+  NEW_MESSAGE
+  PROFILE_VIEW
+  PROFILE_LIKE
+  SUPER_LIKE
+  DAILY_MATCHES
+}
+
+enum Denomination {
+  BAPTIST
+  METHODIST
+  PRESBYTERIAN
+  PENTECOSTAL
+  NON_DENOMINATIONAL
+  LUTHERAN
+  ANGLICAN
+  EPISCOPAL
+  REFORMED
+  EVANGELICAL
+  OTHER
+}
+
+enum EducationLevel {
+  HIGH_SCHOOL
+  ASSOCIATE
+  BACHELOR
+  MASTER
+  DOCTORATE
+  PROFESSIONAL
+}
+
+enum BodyType {
+  SLIM
+  AVERAGE
+  ATHLETIC
+  CURVY
+  PLUS_SIZE
+}
+
+enum FamilyType {
+  NUCLEAR
+  JOINT
+  SINGLE_PARENT
+}
+
+model User {
+  id            String     @id @default(cuid())
+  email         String     @unique
+  emailVerified DateTime?
+  password      String?
+  name          String?
+  image         String?
+  phoneNumber   String?    @unique
+  phoneVerified Boolean    @default(false)
+  status        UserStatus @default(ACTIVE)
+  role          UserRole   @default(USER)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  lastActive    DateTime   @default(now())
+
+  // Relations
+  profile            Profile?
+  accounts           Account[]
+  sessions           Session[]
+  partnerPreferences PartnerPreferences?
+  photos             Photo[]
+  sentInterests      Interest[]          @relation("SentInterests")
+  receivedInterests  Interest[]          @relation("ReceivedInterests")
+  matches1           Match[]             @relation("MatchUser1")
+  matches2           Match[]             @relation("MatchUser2")
+  sentMessages       Message[]           @relation("SentMessages")
+  receivedMessages   Message[]           @relation("ReceivedMessages")
+  likesGiven         Like[]              @relation("LikesGiven")
+  likesReceived      Like[]              @relation("LikesReceived")
+  blocksInitiated    Block[]             @relation("BlocksInitiated")
+  blocksReceived     Block[]             @relation("BlocksReceived")
+  reportsInitiated   Report[]            @relation("ReportsInitiated")
+  reportsReceived    Report[]            @relation("ReportsReceived")
+  notifications      Notification[]
+  verifications      Verification[]
+
+  @@index([email])
+  @@index([status])
+  @@index([lastActive])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Profile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Personal Info
+  dateOfBirth DateTime
+  gender      Gender
+  aboutMe     String?  @db.Text
+
+  // Faith Background
+  denomination          Denomination
+  churchName            String?
+  yearsAsBeliever       Int?
+  isBaptized            Boolean      @default(false)
+  churchInvolvementLevel String?
+
+  // Physical Attributes
+  height          Int? // in cm
+  bodyType        BodyType?
+
+  // Education & Career
+  educationLevel  EducationLevel?
+  fieldOfStudy    String?
+  occupation      String?
+  incomeRange     String?
+
+  // Family Background
+  parentsOccupation String?
+  siblingsCount     Int?
+  birthOrder        String?
+  familyType        FamilyType?
+  familyValues      String? @db.Text
+
+  // Lifestyle
+  drinking       String?
+  smoking        String?
+  dietPreference String?
+  hobbies        String? @db.Text
+
+  // Location
+  city            String?
+  state           String?
+  country         String?
+  openToRelocate  Boolean @default(false)
+
+  // Privacy
+  isVisible       Boolean @default(true)
+  visibilityMode  String  @default("all") // all, matched_only, hidden
+
+  // Profile Stats
+  profileViews    Int     @default(0)
+  completionPercentage Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([denomination])
+  @@index([city])
+  @@index([gender])
+  @@index([isVisible])
+}
+
+model Photo {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  url           String
+  publicId      String?  // Cloudinary public ID
+  order         Int      @default(0)
+  isPrimary     Boolean  @default(false)
+  isVerified    Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId])
+  @@index([isPrimary])
+}
+
+model PartnerPreferences {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  ageMin         Int?
+  ageMax         Int?
+  heightMin      Int?     // in cm
+  heightMax      Int?     // in cm
+  educationLevels String[] // Array of EducationLevel
+  denominations  String[] // Array of Denomination
+  locations      String[] // Array of cities/states
+  incomeRange    String?
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Interest {
+  id         String         @id @default(cuid())
+  senderId   String
+  receiverId String
+  sender     User           @relation("SentInterests", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver   User           @relation("ReceivedInterests", fields: [receiverId], references: [id], onDelete: Cascade)
+  message    String?        @db.Text
+  status     InterestStatus @default(PENDING)
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  @@unique([senderId, receiverId])
+  @@index([receiverId, status])
+  @@index([senderId])
+}
+
+model Match {
+  id         String    @id @default(cuid())
+  user1Id    String
+  user2Id    String
+  user1      User      @relation("MatchUser1", fields: [user1Id], references: [id], onDelete: Cascade)
+  user2      User      @relation("MatchUser2", fields: [user2Id], references: [id], onDelete: Cascade)
+  matchedAt  DateTime  @default(now())
+  messages   Message[]
+
+  @@unique([user1Id, user2Id])
+  @@index([user1Id])
+  @@index([user2Id])
+}
+
+model Message {
+  id         String      @id @default(cuid())
+  matchId    String
+  match      Match       @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  senderId   String
+  receiverId String
+  sender     User        @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver   User        @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+  content    String      @db.Text
+  type       MessageType @default(TEXT)
+  isRead     Boolean     @default(false)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@index([matchId])
+  @@index([senderId])
+  @@index([receiverId])
+  @@index([isRead])
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  likerId   String
+  likedId   String
+  liker     User     @relation("LikesGiven", fields: [likerId], references: [id], onDelete: Cascade)
+  liked     User     @relation("LikesReceived", fields: [likedId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([likerId, likedId])
+  @@index([likedId])
+}
+
+model Block {
+  id        String   @id @default(cuid())
+  blockerId String
+  blockedId String
+  blocker   User     @relation("BlocksInitiated", fields: [blockerId], references: [id], onDelete: Cascade)
+  blocked   User     @relation("BlocksReceived", fields: [blockedId], references: [id], onDelete: Cascade)
+  reason    String?  @db.Text
+  createdAt DateTime @default(now())
+
+  @@unique([blockerId, blockedId])
+  @@index([blockerId])
+  @@index([blockedId])
+}
+
+model Report {
+  id          String       @id @default(cuid())
+  reporterId  String
+  reportedId  String
+  reporter    User         @relation("ReportsInitiated", fields: [reporterId], references: [id], onDelete: Cascade)
+  reported    User         @relation("ReportsReceived", fields: [reportedId], references: [id], onDelete: Cascade)
+  reason      ReportReason
+  description String?      @db.Text
+  status      ReportStatus @default(PENDING)
+  reviewedBy  String?
+  reviewNote  String?      @db.Text
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([status])
+  @@index([reportedId])
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType
+  title     String
+  content   String           @db.Text
+  link      String?
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  @@index([userId, isRead])
+  @@index([createdAt])
+}
+
+model Verification {
+  id         String             @id @default(cuid())
+  userId     String
+  user       User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type       VerificationType
+  data       String?            @db.Text // Could store photo URL or verification code
+  status     VerificationStatus @default(PENDING)
+  verifiedBy String?
+  verifiedAt DateTime?
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @updatedAt
+
+  @@index([userId, type])
+  @@index([status])
+}
