@@ -488,7 +488,13 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
 
       if (!response.ok) {
         const error = await response.json()
-        throw new Error(error.error || 'Failed to complete onboarding')
+        console.error('Onboarding error:', error)
+
+        // Show detailed error information
+        const errorMessage = error.details || error.error || 'Failed to complete onboarding'
+        const errorHint = error.hint ? `\n${error.hint}` : ''
+
+        throw new Error(errorMessage + errorHint)
       }
 
       toast({
@@ -499,6 +505,7 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
       router.push('/discover')
       router.refresh()
     } catch (error) {
+      console.error('Submit error:', error)
       toast({
         title: 'Error',
         description: error instanceof Error ? error.message : 'An error occurred',
