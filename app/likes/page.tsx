@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { toast } from '@/hooks/use-toast'
 import {
   Heart, Sparkles, X, Loader2, MapPin, Briefcase, GraduationCap,
-  Church, ArrowLeft, User
+  Church, ArrowLeft, User, Crown, Lock
 } from 'lucide-react'
 import { calculateAge } from '@/lib/utils'
 
@@ -46,6 +46,7 @@ export default function WhoLikedMePage() {
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
   const [filter, setFilter] = useState<'all' | 'superLikes'>('all')
+  const [subscription, setSubscription] = useState<any>(null)
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -56,8 +57,21 @@ export default function WhoLikedMePage() {
   useEffect(() => {
     if (status === 'authenticated') {
       fetchLikes()
+      fetchSubscription()
     }
   }, [status])
+
+  const fetchSubscription = async () => {
+    try {
+      const response = await fetch('/api/subscription')
+      if (response.ok) {
+        const data = await response.json()
+        setSubscription(data.subscription)
+      }
+    } catch (error) {
+      console.error('Error fetching subscription:', error)
+    }
+  }
 
   const fetchLikes = async () => {
     try {
@@ -136,6 +150,7 @@ export default function WhoLikedMePage() {
   }
 
   const displayLikes = filter === 'all' ? likes : superLikes
+  const isPremium = subscription?.tier === 'PREMIUM' || subscription?.tier === 'PREMIUM_PLUS'
 
   if (status === 'loading' || loading) {
     return (
@@ -219,11 +234,28 @@ export default function WhoLikedMePage() {
                       <img
                         src={primaryPhoto.url}
                         alt={liker.name}
-                        className="w-full h-full object-cover"
+                        className={`w-full h-full object-cover ${!isPremium ? 'blur-xl' : ''}`}
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
-                        <User className="h-24 w-24 text-muted-foreground opacity-50" />
+                        <User className={`h-24 w-24 text-muted-foreground opacity-50 ${!isPremium ? 'blur-xl' : ''}`} />
+                      </div>
+                    )}
+
+                    {/* Premium Overlay for Free Users */}
+                    {!isPremium && (
+                      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm flex flex-col items-center justify-center p-4">
+                        <Lock className="h-12 w-12 text-white mb-3" />
+                        <h3 className="text-white text-lg font-bold text-center mb-2">
+                          Upgrade to See Who Likes You
+                        </h3>
+                        <Button
+                          onClick={() => router.push('/premium')}
+                          className="bg-primary hover:bg-primary/90 text-white"
+                        >
+                          <Crown className="h-4 w-4 mr-2" />
+                          Upgrade to Premium
+                        </Button>
                       </div>
                     )}
 
@@ -242,7 +274,7 @@ export default function WhoLikedMePage() {
                   <div className="p-4">
                     <div className="mb-3">
                       <h3 className="text-xl font-bold mb-1">
-                        {liker.name}, {age}
+                        {isPremium ? `${liker.name}, ${age}` : '••••••, ••'}
                       </h3>
 
                       {location && (
@@ -275,41 +307,51 @@ export default function WhoLikedMePage() {
                     </div>
 
                     {/* Actions */}
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex-1"
-                        onClick={() => handlePass(liker.id)}
-                        disabled={actionLoading === liker.id}
-                      >
-                        <X className="h-4 w-4 mr-1" />
-                        Pass
-                      </Button>
+                    {isPremium ? (
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex-1"
+                          onClick={() => handlePass(liker.id)}
+                          disabled={actionLoading === liker.id}
+                        >
+                          <X className="h-4 w-4 mr-1" />
+                          Pass
+                        </Button>
 
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex-1 border-rose-500 text-rose-500 hover:bg-rose-50"
-                        onClick={() => handleLikeBack(liker.id, false)}
-                        disabled={actionLoading === liker.id}
-                      >
-                        {actionLoading === liker.id ? (
-                          <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                        ) : (
-                          <Heart className="h-4 w-4 mr-1" />
-                        )}
-                        Like Back
-                      </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex-1 border-rose-500 text-rose-500 hover:bg-rose-50"
+                          onClick={() => handleLikeBack(liker.id, false)}
+                          disabled={actionLoading === liker.id}
+                        >
+                          {actionLoading === liker.id ? (
+                            <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                          ) : (
+                            <Heart className="h-4 w-4 mr-1" />
+                          )}
+                          Like Back
+                        </Button>
 
+                        <Button
+                          size="sm"
+                          className="bg-primary hover:bg-primary/90"
+                          onClick={() => router.push(`/profile/${liker.id}`)}
+                        >
+                          View Profile
+                        </Button>
+                      </div>
+                    ) : (
                       <Button
-                        size="sm"
-                        className="bg-primary hover:bg-primary/90"
-                        onClick={() => router.push(`/profile/${liker.id}`)}
+                        className="w-full bg-primary hover:bg-primary/90"
+                        onClick={() => router.push('/premium')}
                       >
-                        View Profile
+                        <Crown className="h-4 w-4 mr-2" />
+                        Upgrade to See & Respond
                       </Button>
-                    </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>

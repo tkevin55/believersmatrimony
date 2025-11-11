@@ -107,7 +107,7 @@ export default function PremiumPage() {
           <h1 className="text-4xl font-bold">Upgrade to Premium</h1>
         </div>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Find your perfect match without limits. Unlock unlimited likes, super likes, and interests to connect with believers across the platform.
+          Find your perfect match without limits. Unlock unlimited likes, see who liked you, and connect with believers across the platform.
         </p>
       </div>
 
@@ -122,7 +122,7 @@ export default function PremiumPage() {
       )}
 
       {/* Pricing Cards */}
-      <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-16">
+      <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-16">
         {/* Free Plan */}
         <Card className="relative">
           <CardHeader>
@@ -188,7 +188,7 @@ export default function PremiumPage() {
           <div className="absolute -top-4 left-1/2 -translate-x-1/2">
             <Badge className="px-4 py-1 bg-primary">
               <Sparkles className="h-3 w-3 mr-1" />
-              MOST POPULAR
+              RECOMMENDED
             </Badge>
           </div>
           <CardHeader>
@@ -196,9 +196,9 @@ export default function PremiumPage() {
               <Crown className="h-6 w-6 text-primary" />
               Premium
             </CardTitle>
-            <CardDescription>Unlimited connections and features</CardDescription>
+            <CardDescription>Unlimited connections and exclusive features</CardDescription>
             <div className="mt-4">
-              <span className="text-4xl font-bold">₹999</span>
+              <span className="text-4xl font-bold">₹799</span>
               <span className="text-muted-foreground">/month</span>
             </div>
           </CardHeader>
@@ -241,7 +241,7 @@ export default function PremiumPage() {
                     <Eye className="h-4 w-4 text-primary" />
                     See who liked you
                   </p>
-                  <p className="text-sm text-muted-foreground">View all likes and super likes</p>
+                  <p className="text-sm text-muted-foreground">View all likes and super likes without blur</p>
                 </div>
               </div>
               <div className="flex items-start gap-2">
@@ -261,8 +261,15 @@ export default function PremiumPage() {
               <div className="flex items-start gap-2">
                 <Check className="h-5 w-5 text-primary mt-0.5" />
                 <div>
-                  <p className="font-medium">Ad-free experience</p>
-                  <p className="text-sm text-muted-foreground">Browse without interruptions</p>
+                  <p className="font-medium">Monthly video profile</p>
+                  <p className="text-sm text-muted-foreground">Stand out with video intro</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2">
+                <Check className="h-5 w-5 text-primary mt-0.5" />
+                <div>
+                  <p className="font-medium">Read receipts</p>
+                  <p className="text-sm text-muted-foreground">Know when messages are read</p>
                 </div>
               </div>
             </div>
@@ -274,74 +281,6 @@ export default function PremiumPage() {
               disabled={loading || subscription?.tier === 'PREMIUM'}
             >
               {loading ? 'Processing...' : subscription?.tier === 'PREMIUM' ? 'Current Plan' : 'Upgrade to Premium'}
-            </Button>
-          </CardFooter>
-        </Card>
-
-        {/* Premium Plus Plan */}
-        <Card className="relative border-purple-500">
-          <CardHeader>
-            <CardTitle className="text-2xl flex items-center gap-2">
-              <Crown className="h-6 w-6 text-purple-500" />
-              Premium Plus
-            </CardTitle>
-            <CardDescription>Everything in Premium + exclusive perks</CardDescription>
-            <div className="mt-4">
-              <span className="text-4xl font-bold">₹1,999</span>
-              <span className="text-muted-foreground">/month</span>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400 font-medium mb-2">
-                <Check className="h-5 w-5" />
-                Everything in Premium, plus:
-              </div>
-              <div className="flex items-start gap-2">
-                <Check className="h-5 w-5 text-purple-500 mt-0.5" />
-                <div>
-                  <p className="font-medium">Dedicated support</p>
-                  <p className="text-sm text-muted-foreground">Priority customer service</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-2">
-                <Check className="h-5 w-5 text-purple-500 mt-0.5" />
-                <div>
-                  <p className="font-medium">Profile verification badge</p>
-                  <p className="text-sm text-muted-foreground">Get verified faster</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-2">
-                <Check className="h-5 w-5 text-purple-500 mt-0.5" />
-                <div>
-                  <p className="font-medium">Exclusive matchmaking</p>
-                  <p className="text-sm text-muted-foreground">AI-powered recommendations</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-2">
-                <Check className="h-5 w-5 text-purple-500 mt-0.5" />
-                <div>
-                  <p className="font-medium">Monthly video profile</p>
-                  <p className="text-sm text-muted-foreground">Stand out with video intro</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-2">
-                <Check className="h-5 w-5 text-purple-500 mt-0.5" />
-                <div>
-                  <p className="font-medium">Read receipts</p>
-                  <p className="text-sm text-muted-foreground">Know when messages are read</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-          <CardFooter>
-            <Button
-              variant="outline"
-              className="w-full border-purple-500 text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-950"
-              onClick={() => handleUpgrade('PREMIUM_PLUS')}
-              disabled={loading || subscription?.tier === 'PREMIUM_PLUS'}
-            >
-              {loading ? 'Processing...' : subscription?.tier === 'PREMIUM_PLUS' ? 'Current Plan' : 'Upgrade to Premium Plus'}
             </Button>
           </CardFooter>
         </Card>
