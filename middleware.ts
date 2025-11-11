@@ -33,7 +33,15 @@ export default withAuth(
   },
   {
     callbacks: {
-      authorized: ({ token }) => !!token,
+      authorized: ({ req, token }) => {
+        const path = req.nextUrl.pathname;
+        // Allow public access to seed-database
+        if (path === '/seed-database') {
+          return true;
+        }
+        // Require token for all other routes
+        return !!token;
+      },
     },
   }
 );
