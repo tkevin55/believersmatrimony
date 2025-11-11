@@ -8,7 +8,7 @@ import { ProfileCard } from '@/components/profile-card'
 import { MatchModal } from '@/components/match-modal'
 import { Button } from '@/components/ui/button'
 import { Loader2, Heart, Users, Sparkles } from 'lucide-react'
-import { useToast } from '@/components/ui/use-toast'
+import { useToast } from '@/hooks/use-toast'
 
 interface Profile {
   id: string
