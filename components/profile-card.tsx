@@ -131,7 +131,7 @@ export function ProfileCard({
     >
       <Card className="overflow-hidden shadow-xl">
         {/* Photo Section */}
-        <div className="relative h-96 bg-gradient-to-b from-gray-200 to-gray-300">
+        <div className="relative h-72 sm:h-80 md:h-96 bg-gradient-to-b from-gray-200 to-gray-300">
           {profile.primaryPhoto && !imageError ? (
             <img
               src={profile.primaryPhoto}
@@ -171,7 +171,7 @@ export function ProfileCard({
         </div>
 
         {/* Profile Info Section */}
-        <div className="p-6 space-y-4">
+        <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
           {/* Name and Basic Info */}
           <div>
             <h2 className="text-2xl font-bold mb-1">
@@ -266,29 +266,29 @@ export function ProfileCard({
           )}
 
           {/* Action Buttons */}
-          <div className="flex gap-3 pt-4">
+          <div className="flex gap-2 sm:gap-3 pt-2 sm:pt-4">
             {/* Pass Button */}
             <Button
               variant="outline"
               size="lg"
-              className="flex-1 border-2 hover:border-destructive hover:bg-destructive/10"
+              className="flex-1 border-2 hover:border-destructive hover:bg-destructive/10 h-12 sm:h-auto"
               onClick={handlePass}
               disabled={isLoading || isLoadingSuperLikes}
             >
-              <X className="h-5 w-5 mr-2" />
-              Pass
+              <X className="h-5 w-5 sm:mr-2" />
+              <span className="hidden sm:inline">Pass</span>
             </Button>
 
             {/* Like Button */}
             <Button
               variant="default"
               size="lg"
-              className="flex-1 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600"
+              className="flex-1 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 h-12 sm:h-auto"
               onClick={handleLike}
               disabled={isLoading || isLoadingSuperLikes}
             >
-              <Heart className="h-5 w-5 mr-2" />
-              Like
+              <Heart className="h-5 w-5 sm:mr-2" />
+              <span className="hidden sm:inline">Like</span>
             </Button>
 
             {/* Super Like Button */}
@@ -296,14 +296,14 @@ export function ProfileCard({
               variant="outline"
               size="lg"
               className={cn(
-                "flex-1 border-2 border-yellow-500 hover:bg-yellow-500 hover:text-white transition-colors",
+                "flex-1 border-2 border-yellow-500 hover:bg-yellow-500 hover:text-white transition-colors h-12 sm:h-auto",
                 remainingSuperLikes <= 0 && "opacity-50 cursor-not-allowed"
               )}
               onClick={handleSuperLike}
               disabled={isLoading || isLoadingSuperLikes || remainingSuperLikes <= 0}
             >
-              <Star className="h-5 w-5 mr-2 fill-yellow-500" />
-              Super
+              <Star className="h-5 w-5 sm:mr-2 fill-yellow-500" />
+              <span className="hidden sm:inline">Super</span>
             </Button>
           </div>
 
