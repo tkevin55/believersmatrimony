@@ -44,7 +44,7 @@ export async function GET(req: NextRequest) {
               profile: {
                 select: {
                   gender: true,
-                  city: true,
+                  district: true,
                   state: true
                 }
               }
