@@ -89,8 +89,6 @@ const step4Schema = z.object({
 
 const step5Schema = z.object({
   height: z.number().min(122, 'Height is required').max(213, 'Height is required'),
-  bodyType: z.string().min(1, 'Body type is required'),
-  complexion: z.string().optional(),
   languages: z.array(z.string()).min(1, 'Select at least one language'),
 })
 
@@ -179,7 +177,6 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
       openToRelocate: 'no',
       isBaptized: 'yes',
       height: 165, // Default height (5'5" / 165cm)
-      bodyType: 'AVERAGE',
       siblingsCount: 0,
       familyType: 'NUCLEAR',
       partnerAgeMin: 25,
@@ -385,12 +382,10 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
         }
         break
       case 5:
-        isValid = await trigger(['height', 'bodyType', 'languages'])
+        isValid = await trigger(['height', 'languages'])
         if (isValid) {
           stepData = {
             height: watch('height'),
-            bodyType: watch('bodyType'),
-            complexion: watch('complexion'),
             languages: watch('languages'),
           }
         }
@@ -1074,47 +1069,6 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
                 {errors.height && (
                   <p className="text-sm text-red-500">{errors.height.message}</p>
                 )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="bodyType">Body Type *</Label>
-                <Select
-                  value={watch('bodyType')}
-                  onValueChange={(value) => setValue('bodyType', value, { shouldValidate: true })}
-                >
-                  <SelectTrigger className={cn(errors.bodyType && 'border-red-500')}>
-                    <SelectValue placeholder="Select body type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="SLIM">Slim</SelectItem>
-                    <SelectItem value="ATHLETIC">Athletic</SelectItem>
-                    <SelectItem value="AVERAGE">Average</SelectItem>
-                    <SelectItem value="CURVY">Heavyset</SelectItem>
-                    <SelectItem value="PLUS_SIZE">Prefer not to say</SelectItem>
-                  </SelectContent>
-                </Select>
-                {errors.bodyType && (
-                  <p className="text-sm text-red-500">{errors.bodyType.message}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="complexion">Complexion (Optional)</Label>
-                <Select
-                  value={watch('complexion') || ''}
-                  onValueChange={(value) => setValue('complexion', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select complexion" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Fair">Fair</SelectItem>
-                    <SelectItem value="Wheatish">Wheatish</SelectItem>
-                    <SelectItem value="Dusky">Dusky</SelectItem>
-                    <SelectItem value="Dark">Dark</SelectItem>
-                    <SelectItem value="Prefer not to say">Prefer not to say</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
 
               <div className="space-y-2">
