@@ -29,7 +29,7 @@ export async function GET() {
             image: true,
             profile: {
               select: {
-                city: true,
+                district: true,
                 state: true,
                 gender: true,
               }

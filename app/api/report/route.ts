@@ -179,7 +179,7 @@ export async function GET(request: NextRequest) {
               status: true,
               profile: {
                 select: {
-                  city: true,
+                  district: true,
                   state: true,
                   gender: true,
                 }

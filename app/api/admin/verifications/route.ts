@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
                 select: {
                   gender: true,
                   dateOfBirth: true,
-                  city: true,
+                  district: true,
                   state: true
                 }
               },
