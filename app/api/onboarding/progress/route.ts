@@ -49,8 +49,8 @@ export async function PATCH(request: Request) {
               userId,
               dateOfBirth: new Date(data.dateOfBirth),
               gender: data.gender,
-              city: '',
               state: '',
+              district: '',
               country: '',
               denomination: 'OTHER',
             }
@@ -71,7 +71,7 @@ export async function PATCH(request: Request) {
         await prisma.profile.update({
           where: { userId },
           data: {
-            city: data.city,
+            district: data.district,
             state: data.state,
             country: data.country,
             openToRelocate: data.openToRelocate === 'yes',

@@ -64,7 +64,7 @@ export async function POST(request: Request) {
           smoking: profile.smoking,
           dietPreference: profile.dietPreference,
           hobbies: profile.hobbies,
-          city: profile.city,
+          district: profile.district,
           state: profile.state,
           country: profile.country,
           openToRelocate: profile.openToRelocate,

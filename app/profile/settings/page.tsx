@@ -57,7 +57,7 @@ const profileSchema = z.object({
   hobbies: z.string().optional(),
 
   // Location
-  city: z.string().min(1, 'City is required'),
+  district: z.string().min(1, 'District is required'),
   state: z.string().min(1, 'State is required'),
   country: z.string().min(1, 'Country is required'),
   openToRelocate: z.boolean(),
@@ -141,7 +141,7 @@ export default function ProfileSettingsPage() {
         smoking: profile.smoking || '',
         dietPreference: profile.dietPreference || '',
         hobbies: profile.hobbies || '',
-        city: profile.city || '',
+        district: profile.district || '',
         state: profile.state || '',
         country: profile.country || '',
         openToRelocate: profile.openToRelocate || false,
@@ -347,10 +347,10 @@ export default function ProfileSettingsPage() {
 
                 <div className="grid grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="city">City *</Label>
-                    <Input id="city" {...register('city')} />
-                    {errors.city && (
-                      <p className="text-sm text-red-500">{errors.city.message}</p>
+                    <Label htmlFor="district">District *</Label>
+                    <Input id="district" {...register('district')} />
+                    {errors.district && (
+                      <p className="text-sm text-red-500">{errors.district.message}</p>
                     )}
                   </div>
 

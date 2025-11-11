@@ -32,7 +32,7 @@ const profileUpdateSchema = z.object({
   smoking: z.string().optional(),
   dietPreference: z.string().optional(),
   hobbies: z.string().optional(),
-  city: z.string().optional(),
+  district: z.string().optional(),
   state: z.string().optional(),
   country: z.string().optional(),
   openToRelocate: z.boolean().optional(),
@@ -47,7 +47,7 @@ function calculateProfileCompletion(profile: any): number {
     'yearsAsBeliever', 'isBaptized', 'churchInvolvementLevel',
     'height', 'educationLevel', 'fieldOfStudy',
     'occupation', 'incomeRange', 'parentsOccupation', 'siblingsCount',
-    'familyType', 'familyValues', 'hobbies', 'city', 'state', 'country'
+    'familyType', 'familyValues', 'hobbies', 'district', 'state', 'country'
   ]
 
   const filledFields = fields.filter(field => {

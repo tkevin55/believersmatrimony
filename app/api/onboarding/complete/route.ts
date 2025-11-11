@@ -26,7 +26,7 @@ export async function POST(request: Request) {
         name: !!formData.name,
         dateOfBirth: !!formData.dateOfBirth,
         gender: !!formData.gender,
-        city: !!formData.city,
+        district: !!formData.district,
         denomination: !!formData.denomination,
         height: !!formData.height,
         educationLevel: !!formData.educationLevel,
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
     }
 
     // Validate required fields
-    const requiredFields = ['name', 'dateOfBirth', 'gender', 'city', 'state', 'country', 'denomination', 'height', 'educationLevel', 'occupation']
+    const requiredFields = ['name', 'dateOfBirth', 'gender', 'district', 'state', 'country', 'denomination', 'height', 'educationLevel', 'occupation']
     const missingFields = requiredFields.filter(field => !formData[field])
 
     if (missingFields.length > 0) {
@@ -152,7 +152,6 @@ export async function POST(request: Request) {
       const profileData = {
         dateOfBirth: new Date(formData.dateOfBirth),
         gender: formData.gender,
-        city: formData.district || formData.city || '', // Support both for backward compatibility
         district: formData.district,
         state: formData.state,
         country: formData.country,

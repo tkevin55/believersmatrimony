@@ -37,7 +37,7 @@ interface Verification {
     profile?: {
       gender: string
       dateOfBirth: string
-      city: string | null
+      district: string | null
       state: string | null
     }
     photos: Array<{
@@ -287,7 +287,7 @@ export default function AdminVerificationsPage() {
                               <p className="text-xs text-muted-foreground">
                                 {selectedVerification.user.profile.gender} •{' '}
                                 {calculateAge(selectedVerification.user.profile.dateOfBirth)} years •{' '}
-                                {selectedVerification.user.profile.city},{' '}
+                                {selectedVerification.user.profile.district},{' '}
                                 {selectedVerification.user.profile.state}
                               </p>
                             )}

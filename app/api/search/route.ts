@@ -153,7 +153,7 @@ export async function GET(request: NextRequest) {
     // Location filter
     if (locations.length > 0) {
       whereClause.OR = [
-        { city: { in: locations } },
+        { district: { in: locations } },
         { state: { in: locations } },
       ]
     }
@@ -237,9 +237,9 @@ export async function GET(request: NextRequest) {
         orderBy = { createdAt: 'desc' }
         break
       case 'distance':
-        // For simplicity, order by city match first, then state
+        // For simplicity, order by district match first, then state
         // In production, use proper geolocation
-        orderBy = { city: 'asc' }
+        orderBy = { district: 'asc' }
         break
       case 'relevance':
       default:
