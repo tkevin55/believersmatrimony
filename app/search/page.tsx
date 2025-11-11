@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, Suspense } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Filter, SlidersHorizontal } from 'lucide-react'
@@ -68,7 +68,7 @@ interface SearchResponse {
   }
 }
 
-export default function SearchPage() {
+function SearchContent() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -345,5 +345,17 @@ export default function SearchPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
+      </div>
+    }>
+      <SearchContent />
+    </Suspense>
   )
 }
