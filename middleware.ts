@@ -6,8 +6,8 @@ export default withAuth(
     const token = req.nextauth.token;
     const path = req.nextUrl.pathname;
 
-    // Allow access to auth pages always
-    if (path.startsWith('/auth/')) {
+    // Allow access to auth pages and seed-database always
+    if (path.startsWith('/auth/') || path === '/seed-database') {
       return NextResponse.next();
     }
 
