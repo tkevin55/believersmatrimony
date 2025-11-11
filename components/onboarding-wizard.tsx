@@ -233,6 +233,38 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
 
   const totalSteps = 8
 
+  // Load saved progress when component mounts
+  useEffect(() => {
+    const loadProgress = async () => {
+      try {
+        const response = await fetch('/api/onboarding/progress')
+        if (response.ok) {
+          const result = await response.json()
+          if (result.hasProgress && result.data) {
+            // Populate form fields with saved data
+            const savedData = result.data
+            Object.keys(savedData).forEach((key) => {
+              const value = savedData[key]
+              if (value !== null && value !== undefined) {
+                setValue(key as any, value)
+              }
+            })
+
+            // Restore photos
+            if (savedData.photos && savedData.photos.length > 0) {
+              setPhotos(savedData.photos)
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error loading progress:', error)
+        // Don't show error toast - just silently fail and let user start fresh
+      }
+    }
+
+    loadProgress()
+  }, [setValue])
+
   // Handle photo upload
   const onDrop = (acceptedFiles: File[]) => {
     const currentPhotoCount = photos.length

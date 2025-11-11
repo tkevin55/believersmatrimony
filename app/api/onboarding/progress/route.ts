@@ -3,6 +3,136 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
+export async function GET(request: Request) {
+  try {
+    const session = await getServerSession(authOptions)
+
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
+
+    const userId = session.user.id
+
+    // Fetch user with profile, photos, and partner preferences
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        profile: true,
+        photos: {
+          orderBy: { order: 'asc' }
+        },
+        partnerPreferences: true
+      }
+    })
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'User not found' },
+        { status: 404 }
+      )
+    }
+
+    // If no profile exists yet, return empty progress
+    if (!user.profile) {
+      return NextResponse.json({
+        hasProgress: false,
+        data: null
+      })
+    }
+
+    // Parse parentsOccupation back to separate fields
+    let fatherOccupation = ''
+    let motherOccupation = ''
+    if (user.profile.parentsOccupation) {
+      // Handle both old format (comma) and new format (pipe)
+      let match = user.profile.parentsOccupation.match(/Father: ([^|]+) \| Mother: (.+)/)
+      if (!match) {
+        // Fallback to old format for backwards compatibility
+        match = user.profile.parentsOccupation.match(/Father: ([^,]+), Mother: (.+)/)
+      }
+      if (match) {
+        fatherOccupation = match[1].trim() !== 'N/A' ? match[1].trim() : ''
+        motherOccupation = match[2].trim() !== 'N/A' ? match[2].trim() : ''
+      }
+    }
+
+    // Parse church name and location
+    let churchName = user.profile.churchName || ''
+    let churchLocation = ''
+    if (churchName.includes(',')) {
+      const parts = churchName.split(',')
+      churchName = parts[0].trim()
+      churchLocation = parts.slice(1).join(',').trim()
+    }
+
+    // Convert profile data to form format
+    const formData = {
+      name: user.name,
+      phoneNumber: user.phoneNumber?.replace(/^\+\d+/, ''), // Remove country code
+      countryCode: user.phoneNumber?.match(/^\+\d+/)?.[0] || '+91',
+      dateOfBirth: user.profile.dateOfBirth?.toISOString().split('T')[0],
+      gender: user.profile.gender,
+      district: user.profile.district,
+      state: user.profile.state,
+      country: user.profile.country,
+      openToRelocate: user.profile.openToRelocate ? 'yes' : 'no',
+      denomination: user.profile.denomination,
+      churchName,
+      churchLocation,
+      yearsAsBeliever: user.profile.yearsAsBeliever?.toString(),
+      isBaptized: user.profile.isBaptized ? 'yes' : 'no',
+      churchInvolvement: user.profile.churchInvolvementLevel,
+      faithTestimony: user.profile.faithTestimony,
+      favoriteVerseReference: user.profile.favoriteVerseReference,
+      favoriteVerseWhy: user.profile.favoriteVerseWhy,
+      height: user.profile.height,
+      motherTongue: user.profile.motherTongue,
+      languages: user.profile.languages || [],
+      educationLevel: user.profile.educationLevel,
+      fieldOfStudy: user.profile.fieldOfStudy,
+      occupation: user.profile.occupation,
+      incomeRange: user.profile.incomeRange,
+      fatherOccupation,
+      motherOccupation,
+      siblingsCount: user.profile.siblingsCount || 0,
+      birthOrder: user.profile.birthOrder,
+      familyType: user.profile.familyType,
+      familyValues: user.profile.familyValues,
+      drinking: user.profile.drinking,
+      smoking: user.profile.smoking,
+      diet: user.profile.dietPreference,
+      hobbies: user.profile.hobbies?.split(', ').filter(Boolean) || [],
+      photos: user.photos.map((photo: any) => ({
+        data: photo.url,
+        order: photo.order,
+        isPrimary: photo.isPrimary
+      })),
+      partnerAgeMin: user.partnerPreferences?.ageMin,
+      partnerAgeMax: user.partnerPreferences?.ageMax,
+      partnerHeightMin: user.partnerPreferences?.heightMin,
+      partnerHeightMax: user.partnerPreferences?.heightMax,
+      partnerMinEducation: user.partnerPreferences?.educationLevels?.[0],
+      partnerDenominations: user.partnerPreferences?.denominations || [],
+      partnerLocations: user.partnerPreferences?.locations || [],
+    }
+
+    return NextResponse.json({
+      hasProgress: true,
+      data: formData
+    })
+
+  } catch (error) {
+    console.error('Progress fetch error:', error)
+    return NextResponse.json(
+      { error: 'An error occurred while fetching progress' },
+      { status: 500 }
+    )
+  }
+}
+
 export async function PATCH(request: Request) {
   try {
     const session = await getServerSession(authOptions)
@@ -153,7 +283,7 @@ export async function PATCH(request: Request) {
         await prisma.profile.update({
           where: { userId },
           data: {
-            parentsOccupation: `Father: ${data.fatherOccupation}, Mother: ${data.motherOccupation}`,
+            parentsOccupation: `Father: ${data.fatherOccupation} | Mother: ${data.motherOccupation}`,
             siblingsCount: data.siblingsCount,
             birthOrder: data.birthOrder,
             familyType: data.familyType,

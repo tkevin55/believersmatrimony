@@ -171,7 +171,7 @@ export async function POST(request: Request) {
         fieldOfStudy: formData.fieldOfStudy || null,
         occupation: formData.occupation || null,
         incomeRange: formData.incomeRange || null,
-        parentsOccupation: `Father: ${formData.fatherOccupation || 'N/A'}, Mother: ${formData.motherOccupation || 'N/A'}`,
+        parentsOccupation: `Father: ${formData.fatherOccupation || 'N/A'} | Mother: ${formData.motherOccupation || 'N/A'}`,
         siblingsCount: siblingsValue,
         birthOrder: formData.birthOrder || null,
         familyType: formData.familyType || null,
