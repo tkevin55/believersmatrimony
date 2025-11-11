@@ -113,18 +113,54 @@ enum EducationLevel {
   PROFESSIONAL
 }
 
-enum BodyType {
-  SLIM
-  AVERAGE
-  ATHLETIC
-  CURVY
-  PLUS_SIZE
-}
-
 enum FamilyType {
   NUCLEAR
   JOINT
   SINGLE_PARENT
+}
+
+enum MotherTongue {
+  HINDI
+  ENGLISH
+  TAMIL
+  TELUGU
+  KANNADA
+  MALAYALAM
+  MARATHI
+  BENGALI
+  GUJARATI
+  PUNJABI
+  URDU
+  ODIA
+  ASSAMESE
+  KONKANI
+  MANIPURI
+  NEPALI
+  SINDHI
+  KASHMIRI
+  SANSKRIT
+  OTHER
+}
+
+enum PromptCategory {
+  FAITH_AND_BELIEF
+  PERSONALITY_AND_DAILY_LIFE
+  RELATIONSHIP_AND_MARRIAGE
+  LIFESTYLE_AND_MISSION
+  CREATIVITY_AND_FUN
+}
+
+enum ChildrenPreference {
+  YES
+  NO
+  MAYBE
+  OPEN
+}
+
+enum HasChildrenStatus {
+  NO
+  YES_LIVING_WITH_ME
+  YES_NOT_LIVING_WITH_ME
 }
 
 enum IncomeRange {
@@ -145,21 +181,6 @@ enum ChurchInvolvement {
   MINISTRY_LEADER
   ELDER_DEACON
   OCCASIONAL_ATTENDER
-}
-
-enum ActivityType {
-  PROFILE_VIEW
-  LIKE_SENT
-  LIKE_RECEIVED
-  SUPERLIKE_SENT
-  SUPERLIKE_RECEIVED
-  INTEREST_SENT
-  INTEREST_RECEIVED
-  INTEREST_ACCEPTED
-  INTEREST_DECLINED
-  MATCH_CREATED
-  MESSAGE_SENT
-  MESSAGE_RECEIVED
 }
 
 enum SubscriptionTier {
@@ -213,11 +234,11 @@ model User {
   reportsReceived    Report[]            @relation("ReportsReceived")
   notifications      Notification[]
   verifications      Verification[]
-  activities         Activity[]          @relation("UserActivities")
-  activityTargets    Activity[]          @relation("ActivityTargets")
   subscription       Subscription?
   dailyQuotas        DailyQuota[]
   churchVerification ChurchVerification?
+  promptAnswers      PromptAnswer[]
+  userInterests      UserInterest[]
 
   @@index([email])
   @@index([status])
@@ -276,11 +297,12 @@ model Profile {
   isBaptized            Boolean      @default(false)
   churchInvolvementLevel ChurchInvolvement?
   faithTestimony        String?      @db.Text
+  favoriteVerseReference String?
+  favoriteVerseWhy      String?      @db.Text
 
-  // Physical Attributes
+  // Physical Attributes & Language
   height          Int? // in cm
-  bodyType        BodyType?
-  complexion      String?
+  motherTongue    MotherTongue?
   languages       String[]
 
   // Education & Career
@@ -302,9 +324,14 @@ model Profile {
   dietPreference String?
   hobbies        String? @db.Text
 
+  // Children
+  hasChildren         HasChildrenStatus?
+  openToChildren      ChildrenPreference?
+  wantChildrenFuture  ChildrenPreference?
+
   // Location
-  city            String?
   state           String?
+  district        String?
   country         String?
   openToRelocate  Boolean @default(false)
 
@@ -320,7 +347,8 @@ model Profile {
   updatedAt DateTime @updatedAt
 
   @@index([denomination])
-  @@index([city])
+  @@index([state])
+  @@index([district])
   @@index([gender])
   @@index([isVisible])
 }
@@ -497,19 +525,62 @@ model SuperLikeQuota {
   @@index([userId])
 }
 
-model Activity {
-  id           String       @id @default(cuid())
-  userId       String
-  user         User         @relation("UserActivities", fields: [userId], references: [id], onDelete: Cascade)
-  type         ActivityType
-  targetUserId String?
-  targetUser   User?        @relation("ActivityTargets", fields: [targetUserId], references: [id], onDelete: Cascade)
-  metadata     Json?
-  createdAt    DateTime     @default(now())
+model Prompt {
+  id          String         @id @default(cuid())
+  category    PromptCategory
+  text        String         @db.Text
+  order       Int            @default(0)
+  isActive    Boolean        @default(true)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  answers     PromptAnswer[]
 
-  @@index([userId, createdAt])
-  @@index([targetUserId])
-  @@index([type])
+  @@index([category])
+  @@index([isActive])
+}
+
+model PromptAnswer {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  promptId  String
+  prompt    Prompt   @relation(fields: [promptId], references: [id], onDelete: Cascade)
+  answer    String   @db.Text
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, promptId])
+  @@index([userId])
+  @@index([promptId])
+}
+
+model InterestOption {
+  id             String         @id @default(cuid())
+  name           String
+  emoji          String
+  category       String
+  order          Int            @default(0)
+  isActive       Boolean        @default(true)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  userInterests  UserInterest[]
+
+  @@index([category])
+  @@index([isActive])
+}
+
+model UserInterest {
+  id               String         @id @default(cuid())
+  userId           String
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  interestOptionId String
+  interestOption   InterestOption @relation(fields: [interestOptionId], references: [id], onDelete: Cascade)
+  createdAt        DateTime       @default(now())
+
+  @@unique([userId, interestOptionId])
+  @@index([userId])
+  @@index([interestOptionId])
 }
 
 model Subscription {
