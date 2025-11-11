@@ -690,7 +690,7 @@ export default function EditProfilePage() {
                     <SelectValue placeholder={watch('state') ? "Select district" : "Select state first"} />
                   </SelectTrigger>
                   <SelectContent className="max-h-[300px]">
-                    {watch('state') && getDistrictsByState(watch('state')).map((district) => (
+                    {watch('state') && getDistrictsByState(watch('state') || '').map((district) => (
                       <SelectItem key={district} value={district}>
                         {district}
                       </SelectItem>

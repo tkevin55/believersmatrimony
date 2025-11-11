@@ -31,7 +31,8 @@ const DEFAULT_FILTERS: SearchFilters = {
   heightMin: 140,
   heightMax: 220,
   denominations: [],
-  locations: [],
+  states: [],
+  districts: [],
   educationLevels: [],
   occupation: '',
   incomeRange: '',
@@ -102,7 +103,8 @@ function SearchContent() {
       heightMin: params.heightMin ? parseInt(params.heightMin) : DEFAULT_FILTERS.heightMin,
       heightMax: params.heightMax ? parseInt(params.heightMax) : DEFAULT_FILTERS.heightMax,
       denominations: params.denominations ? params.denominations.split(',') : [],
-      locations: params.locations ? params.locations.split(',') : [],
+      states: params.states ? params.states.split(',') : [],
+      districts: params.districts ? params.districts.split(',') : [],
       educationLevels: params.educationLevels ? params.educationLevels.split(',') : [],
       occupation: params.occupation || '',
       incomeRange: params.incomeRange || '',
@@ -155,8 +157,11 @@ function SearchContent() {
         if (filters.denominations.length > 0) {
           params.append('denominations', filters.denominations.join(','))
         }
-        if (filters.locations.length > 0) {
-          params.append('locations', filters.locations.join(','))
+        if (filters.states.length > 0) {
+          params.append('states', filters.states.join(','))
+        }
+        if (filters.districts.length > 0) {
+          params.append('districts', filters.districts.join(','))
         }
         if (filters.educationLevels.length > 0) {
           params.append('educationLevels', filters.educationLevels.join(','))
