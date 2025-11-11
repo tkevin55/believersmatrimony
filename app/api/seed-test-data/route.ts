@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { PrismaClient, Gender } from '@prisma/client'
+import { PrismaClient, Gender, Denomination, EducationLevel, BodyType, FamilyType, IncomeRange, ChurchInvolvement } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
@@ -106,12 +106,43 @@ export async function GET(request: Request) {
       errors: [] as string[],
     }
 
-    const denominations = ['PENTECOSTAL', 'BAPTIST', 'METHODIST', 'PRESBYTERIAN', 'NON_DENOMINATIONAL', 'CSI', 'AG', 'MAR_THOMA']
-    const educationLevels = ['BACHELOR', 'MASTER', 'DOCTORATE', 'PROFESSIONAL']
-    const bodyTypes = ['SLIM', 'AVERAGE', 'ATHLETIC']
-    const familyTypes = ['NUCLEAR', 'JOINT']
-    const incomeRanges = ['THREE_TO_FIVE_LAKHS', 'FIVE_TO_SEVEN_LAKHS', 'SEVEN_TO_TEN_LAKHS', 'TEN_TO_FIFTEEN_LAKHS', 'FIFTEEN_TO_TWENTY_LAKHS']
-    const involvements = ['REGULAR_ATTENDER', 'VOLUNTEER', 'MINISTRY_LEADER']
+    const denominations: Denomination[] = [
+      Denomination.PENTECOSTAL,
+      Denomination.BAPTIST,
+      Denomination.METHODIST,
+      Denomination.PRESBYTERIAN,
+      Denomination.NON_DENOMINATIONAL,
+      Denomination.CSI,
+      Denomination.AG,
+      Denomination.MAR_THOMA
+    ]
+    const educationLevels: EducationLevel[] = [
+      EducationLevel.BACHELOR,
+      EducationLevel.MASTER,
+      EducationLevel.DOCTORATE,
+      EducationLevel.PROFESSIONAL
+    ]
+    const bodyTypes: BodyType[] = [
+      BodyType.SLIM,
+      BodyType.AVERAGE,
+      BodyType.ATHLETIC
+    ]
+    const familyTypes: FamilyType[] = [
+      FamilyType.NUCLEAR,
+      FamilyType.JOINT
+    ]
+    const incomeRanges: IncomeRange[] = [
+      IncomeRange.THREE_TO_FIVE_LAKHS,
+      IncomeRange.FIVE_TO_SEVEN_LAKHS,
+      IncomeRange.SEVEN_TO_TEN_LAKHS,
+      IncomeRange.TEN_TO_FIFTEEN_LAKHS,
+      IncomeRange.FIFTEEN_TO_TWENTY_LAKHS
+    ]
+    const involvements: ChurchInvolvement[] = [
+      ChurchInvolvement.REGULAR_ATTENDER,
+      ChurchInvolvement.VOLUNTEER,
+      ChurchInvolvement.MINISTRY_LEADER
+    ]
 
     const hashedPassword = await bcrypt.hash('Test@123', 10)
 
@@ -162,24 +193,24 @@ export async function GET(request: Request) {
                 state,
                 country: 'India',
                 openToRelocate: true,
-                denomination: 'BAPTIST',
+                denomination: Denomination.BAPTIST,
                 churchName: 'Grace Community Church',
                 yearsAsBeliever: 15,
                 isBaptized: true,
-                churchInvolvementLevel: 'VOLUNTEER',
+                churchInvolvementLevel: ChurchInvolvement.VOLUNTEER,
                 faithTestimony: 'I accepted Christ as my Savior at a young age and have been growing in faith ever since. I am actively involved in my local church and seek a partner who shares my commitment to faith.',
                 height: testAccount.gender === Gender.MALE ? 175 : 162,
-                bodyType: 'AVERAGE',
+                bodyType: BodyType.AVERAGE,
                 complexion: 'Fair',
                 languages: ['English', 'Hindi', 'Kannada'],
-                educationLevel: 'BACHELOR',
+                educationLevel: EducationLevel.BACHELOR,
                 fieldOfStudy: testAccount.gender === Gender.MALE ? 'Computer Science' : 'Business Administration',
                 occupation: testAccount.gender === Gender.MALE ? 'Software Engineer' : 'Marketing Manager',
-                incomeRange: 'TEN_TO_FIFTEEN_LAKHS',
+                incomeRange: IncomeRange.TEN_TO_FIFTEEN_LAKHS,
                 parentsOccupation: 'Father: Business, Mother: Teacher',
                 siblingsCount: 1,
                 birthOrder: 'Eldest',
-                familyType: 'NUCLEAR',
+                familyType: FamilyType.NUCLEAR,
                 familyValues: 'Traditional Christian values',
                 drinking: 'Never',
                 smoking: 'Never',
@@ -195,10 +226,10 @@ export async function GET(request: Request) {
                 ageMax: testAccount.gender === Gender.MALE ? 32 : 35,
                 heightMin: testAccount.gender === Gender.MALE ? 155 : 170,
                 heightMax: testAccount.gender === Gender.MALE ? 170 : 185,
-                educationLevels: ['BACHELOR', 'MASTER'],
-                denominations: ['BAPTIST', 'PENTECOSTAL', 'NON_DENOMINATIONAL'],
+                educationLevels: [EducationLevel.BACHELOR, EducationLevel.MASTER],
+                denominations: [Denomination.BAPTIST, Denomination.PENTECOSTAL, Denomination.NON_DENOMINATIONAL],
                 locations: ['Bangalore', 'Mumbai', 'Delhi'],
-                incomeRange: 'FIVE_TO_SEVEN_LAKHS',
+                incomeRange: IncomeRange.FIVE_TO_SEVEN_LAKHS,
               }
             },
             photos: {
