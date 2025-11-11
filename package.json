@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "seed:profiles": "npx tsx scripts/seed-profiles.ts",
+    "seed:test": "npx tsx scripts/seed-50-profiles.ts",
     "postinstall": "prisma generate"
   },
   "dependencies": {
