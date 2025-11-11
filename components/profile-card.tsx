@@ -27,6 +27,8 @@ interface ProfileCardProps {
     matchPercentage: number
     churchName?: string | null
     yearsAsBeliever?: number | null
+    interests?: Array<{ id: string; name: string; emoji: string }> | null
+    prompts?: Array<{ question: string; answer: string }> | null
   }
   onLike: (userId: string, isSuperLike?: boolean) => Promise<void>
   onPass: (userId: string) => void
@@ -222,6 +224,43 @@ export function ProfileCard({
               </div>
             )}
           </div>
+
+          {/* Interests */}
+          {profile.interests && profile.interests.length > 0 && (
+            <div className="space-y-2">
+              <h4 className="text-xs font-semibold text-muted-foreground uppercase">Interests</h4>
+              <div className="flex flex-wrap gap-2">
+                {profile.interests.map((interest) => (
+                  <Badge
+                    key={interest.id}
+                    variant="secondary"
+                    className="text-sm px-2 py-1"
+                  >
+                    <span className="mr-1">{interest.emoji}</span>
+                    {interest.name}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Prompt Answers */}
+          {profile.prompts && profile.prompts.length > 0 && (
+            <div className="space-y-2">
+              {profile.prompts.map((prompt, index) => (
+                <Card key={index} className="bg-muted/30">
+                  <CardContent className="p-3">
+                    <p className="text-xs font-semibold text-primary mb-1">
+                      {prompt.question}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {prompt.answer}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
 
           {/* About Me Section */}
           {profile.aboutMe && (

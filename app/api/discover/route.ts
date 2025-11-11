@@ -49,17 +49,57 @@ export async function GET(request: NextRequest) {
     // Get curated matches
     const matches = await getCuratedMatches(session.user.id, limit, offset)
 
+    // Get interests and prompt answers for all matches
+    const matchUserIds = matches.map((m: any) => m.userId)
+
+    const [userInterests, promptAnswers] = await Promise.all([
+      prisma.userInterest.findMany({
+        where: { userId: { in: matchUserIds } },
+        include: { interestOption: true },
+        take: matchUserIds.length * 3 // Max 3 per user
+      }),
+      prisma.promptAnswer.findMany({
+        where: { userId: { in: matchUserIds } },
+        include: { prompt: true },
+        take: matchUserIds.length * 2, // Max 2 per user
+        orderBy: { order: 'asc' }
+      })
+    ])
+
+    // Group by userId
+    const interestsByUser = userInterests.reduce((acc: any, ui) => {
+      if (!acc[ui.userId]) acc[ui.userId] = []
+      if (acc[ui.userId].length < 3) { // Max 3 interests per card
+        acc[ui.userId].push(ui.interestOption)
+      }
+      return acc
+    }, {})
+
+    const promptsByUser = promptAnswers.reduce((acc: any, pa) => {
+      if (!acc[pa.userId]) acc[pa.userId] = []
+      if (acc[pa.userId].length < 2) { // Max 2 prompts per card
+        acc[pa.userId].push({
+          question: pa.prompt.text,
+          answer: pa.answer
+        })
+      }
+      return acc
+    }, {})
+
     // Format matches for response
     const formattedMatches = matches.map((match: any) => {
       const age = calculateAge(match.dateOfBirth)
       const primaryPhoto = match.user.photos.find((p: any) => p.isPrimary) || match.user.photos[0]
+      const location = match.district && match.state
+        ? `${match.district}, ${match.state}`
+        : [match.city, match.state].filter(Boolean).join(', ')
 
       return {
         id: match.userId,
         name: match.user.name,
         age,
         gender: match.gender,
-        location: [match.city, match.state].filter(Boolean).join(', '),
+        location,
         denomination: match.denomination,
         educationLevel: match.educationLevel,
         occupation: match.occupation,
@@ -70,6 +110,8 @@ export async function GET(request: NextRequest) {
         profileViews: match.profileViews,
         churchName: match.churchName,
         yearsAsBeliever: match.yearsAsBeliever,
+        interests: interestsByUser[match.userId] || [],
+        prompts: promptsByUser[match.userId] || [],
       }
     })
 
