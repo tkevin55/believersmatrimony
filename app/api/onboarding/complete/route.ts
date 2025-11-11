@@ -42,8 +42,14 @@ export async function POST(request: Request) {
       )
     }
 
-    // Validate required fields
-    const requiredFields = ['name', 'dateOfBirth', 'gender', 'city', 'state', 'country', 'denomination', 'height', 'educationLevel', 'occupation']
+    // Validate required fields (state is only required for India)
+    const requiredFields = ['name', 'dateOfBirth', 'gender', 'city', 'country', 'denomination', 'height', 'educationLevel', 'occupation']
+
+    // Add state to required fields only if country is India
+    if (formData.country === 'India') {
+      requiredFields.push('state')
+    }
+
     const missingFields = requiredFields.filter(field => !formData[field])
 
     if (missingFields.length > 0) {

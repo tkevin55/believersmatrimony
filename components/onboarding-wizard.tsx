@@ -39,6 +39,26 @@ const INDIAN_STATES = [
   'Uttarakhand', 'West Bengal', 'Delhi', 'Puducherry', 'Jammu and Kashmir', 'Ladakh'
 ]
 
+const COUNTRIES = [
+  'Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Argentina', 'Armenia', 'Australia',
+  'Austria', 'Azerbaijan', 'Bahamas', 'Bahrain', 'Bangladesh', 'Barbados', 'Belarus', 'Belgium',
+  'Belize', 'Benin', 'Bhutan', 'Bolivia', 'Bosnia and Herzegovina', 'Botswana', 'Brazil', 'Brunei',
+  'Bulgaria', 'Burkina Faso', 'Burundi', 'Cambodia', 'Cameroon', 'Canada', 'Chad', 'Chile', 'China',
+  'Colombia', 'Costa Rica', 'Croatia', 'Cuba', 'Cyprus', 'Czech Republic', 'Denmark', 'Ecuador',
+  'Egypt', 'El Salvador', 'Estonia', 'Ethiopia', 'Fiji', 'Finland', 'France', 'Georgia', 'Germany',
+  'Ghana', 'Greece', 'Guatemala', 'Haiti', 'Honduras', 'Hungary', 'Iceland', 'India', 'Indonesia',
+  'Iran', 'Iraq', 'Ireland', 'Israel', 'Italy', 'Jamaica', 'Japan', 'Jordan', 'Kazakhstan', 'Kenya',
+  'Kuwait', 'Latvia', 'Lebanon', 'Liberia', 'Libya', 'Lithuania', 'Luxembourg', 'Madagascar',
+  'Malaysia', 'Maldives', 'Mali', 'Malta', 'Mexico', 'Mongolia', 'Morocco', 'Mozambique', 'Myanmar',
+  'Nepal', 'Netherlands', 'New Zealand', 'Nicaragua', 'Niger', 'Nigeria', 'Norway', 'Oman', 'Pakistan',
+  'Palestine', 'Panama', 'Papua New Guinea', 'Paraguay', 'Peru', 'Philippines', 'Poland', 'Portugal',
+  'Qatar', 'Romania', 'Russia', 'Rwanda', 'Saudi Arabia', 'Senegal', 'Serbia', 'Singapore', 'Slovakia',
+  'Slovenia', 'Somalia', 'South Africa', 'South Korea', 'South Sudan', 'Spain', 'Sri Lanka', 'Sudan',
+  'Sweden', 'Switzerland', 'Syria', 'Taiwan', 'Tanzania', 'Thailand', 'Trinidad and Tobago', 'Tunisia',
+  'Turkey', 'Uganda', 'Ukraine', 'United Arab Emirates', 'United Kingdom', 'United States', 'Uruguay',
+  'Venezuela', 'Vietnam', 'Yemen', 'Zambia', 'Zimbabwe'
+]
+
 const INDIAN_LANGUAGES = [
   'English', 'Hindi', 'Tamil', 'Telugu', 'Malayalam', 'Kannada', 'Bengali', 'Marathi',
   'Gujarati', 'Punjabi', 'Odia', 'Urdu', 'Assamese', 'Konkani', 'Manipuri', 'Nepali',
@@ -62,7 +82,7 @@ const step1Schema = z.object({
 
 const step2Schema = z.object({
   city: z.string().min(1, 'City is required'),
-  state: z.string().min(1, 'State is required'),
+  state: z.string().optional(), // Optional - only required for India
   country: z.string().min(1, 'Country is required'),
   openToRelocate: z.enum(['yes', 'no'], { required_error: 'Please select an option' }),
   preferredCities: z.array(z.string()).optional(),
@@ -159,6 +179,7 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
   const [currentStep, setCurrentStep] = useState(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSavingProgress, setIsSavingProgress] = useState(false)
+  const [isSkipping, setIsSkipping] = useState(false)
   const [photos, setPhotos] = useState<PhotoFile[]>([])
   const [draggedPhotoIndex, setDraggedPhotoIndex] = useState<number | null>(null)
 
@@ -350,11 +371,26 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
         }
         break
       case 2:
-        isValid = await trigger(['city', 'state', 'country', 'openToRelocate'])
+        const country = watch('country')
+        const fieldsToValidate = ['city', 'country', 'openToRelocate']
+
+        // Only validate state for India
+        if (country === 'India') {
+          fieldsToValidate.push('state')
+          if (!watch('state')) {
+            toast({
+              title: 'Validation Error',
+              description: 'State is required for India',
+            })
+            return
+          }
+        }
+
+        isValid = await trigger(fieldsToValidate as any)
         if (isValid) {
           stepData = {
             city: watch('city'),
-            state: watch('state'),
+            state: watch('state') || null,
             country: watch('country'),
             openToRelocate: watch('openToRelocate'),
             preferredCities: watch('preferredCities'),
@@ -450,6 +486,18 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
       setCurrentStep(currentStep - 1)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
+  }
+
+  const handleSkip = () => {
+    setIsSkipping(true)
+    toast({
+      title: 'Profile Incomplete',
+      description: 'You can complete your profile anytime from your profile settings.',
+    })
+    // Redirect to discover page without completing onboarding
+    setTimeout(() => {
+      router.push('/discover')
+    }, 1000)
   }
 
   const onSubmit = async (data: FormData) => {
@@ -637,6 +685,9 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
         )
 
       case 2:
+        const selectedCountry = watch('country')
+        const isIndia = selectedCountry === 'India'
+
         return (
           <div className="space-y-6">
             <div>
@@ -646,65 +697,71 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
 
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="city">Current City *</Label>
-                <Input
-                  id="city"
-                  {...register('city')}
-                  list="cities"
-                  placeholder="Select or type your city"
-                  className={cn(errors.city && 'border-red-500')}
-                />
-                <datalist id="cities">
-                  {INDIAN_CITIES.map((city) => (
-                    <option key={city} value={city} />
-                  ))}
-                </datalist>
-                {errors.city && (
-                  <p className="text-sm text-red-500">{errors.city.message}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="state">State/Province *</Label>
-                <Select
-                  value={watch('state') || ''}
-                  onValueChange={(value) => setValue('state', value, { shouldValidate: true })}
-                >
-                  <SelectTrigger className={cn(errors.state && 'border-red-500')}>
-                    <SelectValue placeholder="Select state" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {INDIAN_STATES.map((state) => (
-                      <SelectItem key={state} value={state}>{state}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors.state && (
-                  <p className="text-sm text-red-500">{errors.state.message}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
                 <Label htmlFor="country">Country *</Label>
                 <Select
                   value={watch('country')}
-                  onValueChange={(value) => setValue('country', value, { shouldValidate: true })}
+                  onValueChange={(value) => {
+                    setValue('country', value, { shouldValidate: true })
+                    // Clear state if not India
+                    if (value !== 'India') {
+                      setValue('state', '')
+                    }
+                  }}
                 >
                   <SelectTrigger className={cn(errors.country && 'border-red-500')}>
-                    <SelectValue />
+                    <SelectValue placeholder="Select country" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="India">India</SelectItem>
-                    <SelectItem value="United States">United States</SelectItem>
-                    <SelectItem value="United Kingdom">United Kingdom</SelectItem>
-                    <SelectItem value="Canada">Canada</SelectItem>
-                    <SelectItem value="Australia">Australia</SelectItem>
-                    <SelectItem value="UAE">UAE</SelectItem>
-                    <SelectItem value="Singapore">Singapore</SelectItem>
+                  <SelectContent className="max-h-[300px]">
+                    {COUNTRIES.map((country) => (
+                      <SelectItem key={country} value={country}>{country}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 {errors.country && (
                   <p className="text-sm text-red-500">{errors.country.message}</p>
+                )}
+              </div>
+
+              {isIndia && (
+                <div className="space-y-2">
+                  <Label htmlFor="state">State *</Label>
+                  <Select
+                    value={watch('state') || ''}
+                    onValueChange={(value) => setValue('state', value, { shouldValidate: true })}
+                  >
+                    <SelectTrigger className={cn(errors.state && 'border-red-500')}>
+                      <SelectValue placeholder="Select state" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {INDIAN_STATES.map((state) => (
+                        <SelectItem key={state} value={state}>{state}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {errors.state && (
+                    <p className="text-sm text-red-500">{errors.state.message}</p>
+                  )}
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <Label htmlFor="city">{isIndia ? 'District/City' : 'City'} *</Label>
+                <Input
+                  id="city"
+                  {...register('city')}
+                  list={isIndia ? "cities" : undefined}
+                  placeholder={isIndia ? "Select or type your district/city" : "Enter your city"}
+                  className={cn(errors.city && 'border-red-500')}
+                />
+                {isIndia && (
+                  <datalist id="cities">
+                    {INDIAN_CITIES.map((city) => (
+                      <option key={city} value={city} />
+                    ))}
+                  </datalist>
+                )}
+                {errors.city && (
+                  <p className="text-sm text-red-500">{errors.city.message}</p>
                 )}
               </div>
 
@@ -1184,6 +1241,7 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
                   {...register('fieldOfStudy')}
                   placeholder="e.g., Computer Science, Medicine, Business"
                   className={cn(errors.fieldOfStudy && 'border-red-500')}
+                  autoComplete="off"
                 />
                 {errors.fieldOfStudy && (
                   <p className="text-sm text-red-500">{errors.fieldOfStudy.message}</p>
@@ -1270,6 +1328,7 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
                   {...register('motherOccupation')}
                   placeholder="Enter mother's occupation"
                   className={cn(errors.motherOccupation && 'border-red-500')}
+                  autoComplete="off"
                 />
                 {errors.motherOccupation && (
                   <p className="text-sm text-red-500">{errors.motherOccupation.message}</p>
@@ -1650,51 +1709,71 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
           {renderStep()}
 
-          <div className="flex justify-between pt-6 border-t">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={prevStep}
-              disabled={currentStep === 1 || isSubmitting || isSavingProgress}
-            >
-              <ChevronLeft className="mr-2 h-4 w-4" />
-              Back
-            </Button>
-
-            {currentStep < totalSteps ? (
+          <div className="space-y-4">
+            <div className="flex justify-between pt-6 border-t">
               <Button
                 type="button"
-                onClick={nextStep}
-                disabled={isSubmitting || isSavingProgress || (currentStep === 4 && photos.length < 3)}
+                variant="outline"
+                onClick={prevStep}
+                disabled={currentStep === 1 || isSubmitting || isSavingProgress || isSkipping}
               >
-                {isSavingProgress ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Saving...
-                  </>
-                ) : (
-                  <>
-                    Next
-                    <ChevronRight className="ml-2 h-4 w-4" />
-                  </>
-                )}
+                <ChevronLeft className="mr-2 h-4 w-4" />
+                Back
               </Button>
-            ) : (
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="bg-primary hover:bg-primary/90"
+
+              {currentStep < totalSteps ? (
+                <Button
+                  type="button"
+                  onClick={nextStep}
+                  disabled={isSubmitting || isSavingProgress || isSkipping || (currentStep === 4 && photos.length < 3)}
+                >
+                  {isSavingProgress ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      Next
+                      <ChevronRight className="ml-2 h-4 w-4" />
+                    </>
+                  )}
+                </Button>
+              ) : (
+                <Button
+                  type="submit"
+                  disabled={isSubmitting || isSkipping}
+                  className="bg-primary hover:bg-primary/90"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Completing Profile...
+                    </>
+                  ) : (
+                    'Complete My Profile'
+                  )}
+                </Button>
+              )}
+            </div>
+
+            <div className="text-center">
+              <button
+                type="button"
+                onClick={handleSkip}
+                disabled={isSubmitting || isSavingProgress || isSkipping}
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors underline disabled:opacity-50"
               >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Completing Profile...
-                  </>
+                {isSkipping ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                    Redirecting...
+                  </span>
                 ) : (
-                  'Complete My Profile'
+                  "I'll complete my profile later"
                 )}
-              </Button>
-            )}
+              </button>
+            </div>
           </div>
         </form>
       </CardContent>
