@@ -15,6 +15,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Slider } from '@/components/ui/slider'
 import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { toast } from '@/hooks/use-toast'
 import { Loader2, ChevronLeft, ChevronRight, Upload, X, GripVertical, Image as ImageIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -186,6 +196,7 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
   const [isSavingProgress, setIsSavingProgress] = useState(false)
   const [photos, setPhotos] = useState<PhotoFile[]>([])
   const [draggedPhotoIndex, setDraggedPhotoIndex] = useState<number | null>(null)
+  const [showSkipDialog, setShowSkipDialog] = useState(false)
 
   const {
     register,
@@ -477,24 +488,28 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
     }
   }
 
-  const skipOnboarding = async () => {
-    if (confirm('Are you sure you want to skip onboarding? You can complete your profile anytime from your dashboard.')) {
-      try {
-        // Mark user as having started onboarding (partial completion)
-        await fetch('/api/onboarding/progress', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ step: currentStep, data: {} }),
-        })
+  const handleSkipConfirm = async () => {
+    try {
+      setShowSkipDialog(false)
+      // Mark user as having started onboarding (partial completion)
+      await fetch('/api/onboarding/progress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, step: currentStep, data: {} }),
+      })
 
-        router.push('/dashboard')
-        toast({
-          title: 'Onboarding Skipped',
-          description: 'You can complete your profile anytime from your dashboard',
-        })
-      } catch (error) {
-        console.error('Error skipping onboarding:', error)
-      }
+      router.push('/dashboard')
+      toast({
+        title: 'Onboarding Skipped',
+        description: 'You can complete your profile anytime from your dashboard',
+      })
+    } catch (error) {
+      console.error('Error skipping onboarding:', error)
+      toast({
+        title: 'Error',
+        description: 'Failed to skip onboarding. Please try again.',
+        variant: 'destructive',
+      })
     }
   }
 
@@ -1772,7 +1787,7 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
                 <Button
                   type="button"
                   variant="ghost"
-                  onClick={skipOnboarding}
+                  onClick={() => setShowSkipDialog(true)}
                   disabled={isSubmitting || isSavingProgress}
                   className="text-muted-foreground hover:text-foreground"
                 >
@@ -1783,6 +1798,24 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
           </div>
         </form>
       </CardContent>
+
+      {/* Skip Confirmation Dialog */}
+      <AlertDialog open={showSkipDialog} onOpenChange={setShowSkipDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Skip Onboarding?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to skip the onboarding process? You can complete your profile anytime from your dashboard, but having a complete profile helps you get better matches.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleSkipConfirm}>
+              Yes, Skip for Now
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   )
 }
