@@ -18,6 +18,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { toast } from '@/hooks/use-toast'
 import { Loader2, ChevronLeft, ChevronRight, Upload, X, GripVertical, Image as ImageIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { getAllStates, getDistrictsByState } from '@/lib/indian-locations'
 
 // Indian cities for autocomplete
 const INDIAN_CITIES = [
@@ -84,8 +85,8 @@ const step1Schema = z.object({
 })
 
 const step2Schema = z.object({
-  city: z.string().min(1, 'City is required'),
   state: z.string().min(1, 'State is required'),
+  district: z.string().min(1, 'District is required'),
   country: z.string().min(1, 'Country is required'),
   openToRelocate: z.enum(['yes', 'no'], { required_error: 'Please select an option' }),
   preferredCities: z.array(z.string()).optional(),
@@ -373,11 +374,11 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
         }
         break
       case 2:
-        isValid = await trigger(['city', 'state', 'country', 'openToRelocate'])
+        isValid = await trigger(['state', 'district', 'country', 'openToRelocate'])
         if (isValid) {
           stepData = {
-            city: watch('city'),
             state: watch('state'),
+            district: watch('district'),
             country: watch('country'),
             openToRelocate: watch('openToRelocate'),
             preferredCities: watch('preferredCities'),
@@ -661,6 +662,9 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
         )
 
       case 2:
+        const selectedState = watch('state')
+        const districts = selectedState ? getDistrictsByState(selectedState) : []
+
         return (
           <div className="space-y-6">
             <div>
@@ -670,41 +674,49 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
 
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="city">Current City *</Label>
-                <Input
-                  id="city"
-                  {...register('city')}
-                  list="cities"
-                  placeholder="Select or type your city"
-                  className={cn(errors.city && 'border-red-500')}
-                />
-                <datalist id="cities">
-                  {INDIAN_CITIES.map((city) => (
-                    <option key={city} value={city} />
-                  ))}
-                </datalist>
-                {errors.city && (
-                  <p className="text-sm text-red-500">{errors.city.message}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="state">State/Province *</Label>
+                <Label htmlFor="state">State *</Label>
                 <Select
                   value={watch('state') || ''}
-                  onValueChange={(value) => setValue('state', value, { shouldValidate: true })}
+                  onValueChange={(value) => {
+                    setValue('state', value, { shouldValidate: true })
+                    setValue('district', '') // Reset district when state changes
+                  }}
                 >
                   <SelectTrigger className={cn(errors.state && 'border-red-500')}>
-                    <SelectValue placeholder="Select state" />
+                    <SelectValue placeholder="Select your state" />
                   </SelectTrigger>
-                  <SelectContent>
-                    {INDIAN_STATES.map((state) => (
+                  <SelectContent className="max-h-[300px]">
+                    {getAllStates().map((state) => (
                       <SelectItem key={state} value={state}>{state}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
                 {errors.state && (
                   <p className="text-sm text-red-500">{errors.state.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="district">District *</Label>
+                <Select
+                  value={watch('district') || ''}
+                  onValueChange={(value) => setValue('district', value, { shouldValidate: true })}
+                  disabled={!selectedState}
+                >
+                  <SelectTrigger className={cn(errors.district && 'border-red-500')}>
+                    <SelectValue placeholder={selectedState ? "Select your district" : "Select state first"} />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-[300px]">
+                    {districts.map((district) => (
+                      <SelectItem key={district} value={district}>{district}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.district && (
+                  <p className="text-sm text-red-500">{errors.district.message}</p>
+                )}
+                {!selectedState && (
+                  <p className="text-xs text-muted-foreground">Please select a state first</p>
                 )}
               </div>
 

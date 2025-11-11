@@ -152,7 +152,8 @@ export async function POST(request: Request) {
       const profileData = {
         dateOfBirth: new Date(formData.dateOfBirth),
         gender: formData.gender,
-        city: formData.city,
+        city: formData.district || formData.city || '', // Support both for backward compatibility
+        district: formData.district,
         state: formData.state,
         country: formData.country,
         openToRelocate: formData.openToRelocate === 'yes',
