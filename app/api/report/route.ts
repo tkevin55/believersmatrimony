@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
       data: {
         reporterId: session.user.id,
         reportedId: validatedData.reportedId,
-        reason: validatedData.reason as string,
+        reason: validatedData.reason as any,
         description: validatedData.description,
         status: 'PENDING',
       },

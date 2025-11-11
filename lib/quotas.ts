@@ -83,8 +83,8 @@ async function getWeekQuota(userId: string) {
   })
 
   const weeklyStats = {
-    superLikesUsed: quotas.reduce((sum, q) => sum + q.superLikesUsed, 0),
-    interestsUsed: quotas.reduce((sum, q) => sum + q.interestsUsed, 0),
+    superLikesUsed: quotas.reduce((sum: number, q: any) => sum + q.superLikesUsed, 0),
+    interestsUsed: quotas.reduce((sum: number, q: any) => sum + q.interestsUsed, 0),
   }
 
   return weeklyStats
@@ -96,7 +96,7 @@ export async function checkQuota(
   action: 'like' | 'superlike' | 'interest'
 ): Promise<{ allowed: boolean; reason?: string; suggestPremium?: boolean }> {
   const tier = await getUserTier(userId)
-  const limits = QUOTA_LIMITS[tier]
+  const limits = QUOTA_LIMITS[tier as keyof typeof QUOTA_LIMITS]
 
   // Premium users have no limits
   if (tier !== 'FREE') {
@@ -161,7 +161,7 @@ export async function incrementQuota(
 // Get user's remaining quotas
 export async function getRemainingQuotas(userId: string) {
   const tier = await getUserTier(userId)
-  const limits = QUOTA_LIMITS[tier]
+  const limits = QUOTA_LIMITS[tier as keyof typeof QUOTA_LIMITS]
 
   if (tier !== 'FREE') {
     return {

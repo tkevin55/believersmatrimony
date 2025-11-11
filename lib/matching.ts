@@ -1,9 +1,10 @@
 import { prisma } from '@/lib/prisma'
-import { Profile, User, Photo, Denomination, EducationLevel } from '@prisma/client'
 
-interface ProfileWithUser extends Profile {
-  user: User & {
-    photos: Photo[]
+interface ProfileWithUser {
+  [key: string]: any
+  user: {
+    [key: string]: any
+    photos: any[]
   }
 }
 
@@ -49,8 +50,8 @@ function calculateLocationScore(
  * Calculate denomination compatibility score
  */
 function calculateDenominationScore(
-  userDenomination: Denomination,
-  matchDenomination: Denomination,
+  userDenomination: string,
+  matchDenomination: string,
   preferredDenominations?: string[]
 ): number {
   // Exact match
@@ -122,8 +123,8 @@ function calculateAgeScore(
  * Calculate education level compatibility score
  */
 function calculateEducationScore(
-  userEducation?: EducationLevel | null,
-  matchEducation?: EducationLevel | null,
+  userEducation?: string | null,
+  matchEducation?: string | null,
   preferredEducationLevels?: string[]
 ): number {
   if (!userEducation || !matchEducation) return 50
@@ -163,8 +164,8 @@ function calculateEducationScore(
  * Calculate lifestyle compatibility score
  */
 function calculateLifestyleScore(
-  userProfile: Profile,
-  matchProfile: Profile
+  userProfile: any,
+  matchProfile: any
 ): number {
   let score = 0
   let factors = 0
@@ -357,9 +358,9 @@ export async function getCuratedMatches(
 
     const excludedUserIds = [
       userId,
-      ...likedUsers.map((l) => l.likedId),
-      ...blockedByUser.map((b) => b.blockedId),
-      ...blockedUser.map((b) => b.blockerId),
+      ...likedUsers.map((l: any) => l.likedId),
+      ...blockedByUser.map((b: any) => b.blockedId),
+      ...blockedUser.map((b: any) => b.blockerId),
     ]
 
     // Build query filters

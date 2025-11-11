@@ -1,7 +1,6 @@
 import { getServerSession } from 'next-auth'
 import { authOptions } from './auth'
 import { prisma } from './prisma'
-import { UserRole } from '@prisma/client'
 
 export async function requireAdmin() {
   const session = await getServerSession(authOptions)

@@ -1,9 +1,8 @@
 import { prisma } from '@/lib/prisma'
-import { NotificationType } from '@prisma/client'
 
 interface CreateNotificationParams {
   userId: string
-  type: NotificationType
+  type: string
   title: string
   content: string
   link?: string

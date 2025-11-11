@@ -530,7 +530,7 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
   }
 
   // Generate height options
-  const heightOptions = []
+  const heightOptions: { value: number; label: string }[] = []
   for (let cm = 122; cm <= 213; cm += 3) {
     heightOptions.push({ value: cm, label: cmToFeetInches(cm) })
   }

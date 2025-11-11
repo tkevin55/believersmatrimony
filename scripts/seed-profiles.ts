@@ -1,4 +1,4 @@
-import { PrismaClient, Gender, Denomination, EducationLevel, BodyType, FamilyType, IncomeRange, ChurchInvolvement } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
@@ -106,18 +106,18 @@ function generatePlaceholderImage(color: string): string {
 async function main() {
   console.log('🌱 Starting to seed 100 profiles...')
 
-  const denominations = Object.values(Denomination)
-  const educationLevels = Object.values(EducationLevel)
-  const bodyTypes = Object.values(BodyType)
-  const familyTypes = Object.values(FamilyType)
-  const incomeRanges = Object.values(IncomeRange)
-  const involvements = Object.values(ChurchInvolvement)
+  const denominations = ['CATHOLIC', 'PROTESTANT', 'ORTHODOX', 'PENTECOSTAL', 'BAPTIST', 'METHODIST', 'LUTHERAN', 'PRESBYTERIAN', 'ANGLICAN', 'EVANGELICAL', 'NON_DENOMINATIONAL', 'OTHER']
+  const educationLevels = ['HIGH_SCHOOL', 'ASSOCIATE', 'BACHELORS', 'MASTERS', 'DOCTORATE', 'TRADE_SCHOOL']
+  const bodyTypes = ['SLIM', 'AVERAGE', 'ATHLETIC', 'HEAVY']
+  const familyTypes = ['NUCLEAR', 'JOINT']
+  const incomeRanges = ['BELOW_5L', 'L5_TO_10L', 'L10_TO_20L', 'L20_TO_30L', 'ABOVE_30L']
+  const involvements = ['WEEKLY', 'MONTHLY', 'OCCASIONALLY', 'RARELY']
 
   const hashedPassword = await bcrypt.hash('Password123!', 10)
 
   for (let i = 0; i < 100; i++) {
-    const gender: Gender = i % 2 === 0 ? Gender.MALE : Gender.FEMALE
-    const firstName = gender === Gender.MALE
+    const gender: string = i % 2 === 0 ? 'MALE' : 'FEMALE'
+    const firstName = gender === 'MALE'
       ? randomElement(FIRST_NAMES_MALE)
       : randomElement(FIRST_NAMES_FEMALE)
     const lastName = randomElement(LAST_NAMES)
@@ -128,7 +128,7 @@ async function main() {
     const city = randomElement(CITIES)
     const state = randomElement(STATES)
     const denomination = randomElement(denominations)
-    const height = gender === Gender.MALE ? randomNumber(165, 190) : randomNumber(152, 175)
+    const height = gender === 'MALE' ? randomNumber(165, 190) : randomNumber(152, 175)
 
     try {
       console.log(`Creating profile ${i + 1}/100: ${fullName}`)
@@ -173,7 +173,7 @@ async function main() {
               smoking: randomElement(['Never', 'Occasionally', 'Prefer not to say']),
               dietPreference: randomElement(['Vegetarian', 'Eggetarian', 'Non-vegetarian']),
               hobbies: randomElement(HOBBIES),
-              aboutMe: `I am a ${gender === Gender.MALE ? 'man' : 'woman'} of faith seeking a life partner who shares my values and beliefs. I enjoy ${randomElement(['serving in church', 'spending time in fellowship', 'Bible study and prayer', 'ministry work'])} and am looking forward to building a Christ-centered home.`,
+              aboutMe: `I am a ${gender === 'MALE' ? 'man' : 'woman'} of faith seeking a life partner who shares my values and beliefs. I enjoy ${randomElement(['serving in church', 'spending time in fellowship', 'Bible study and prayer', 'ministry work'])} and am looking forward to building a Christ-centered home.`,
               completionPercentage: 100,
             }
           },
@@ -181,8 +181,8 @@ async function main() {
             create: {
               ageMin: dob.getFullYear() - new Date().getFullYear() - 5,
               ageMax: dob.getFullYear() - new Date().getFullYear() + 10,
-              heightMin: gender === Gender.MALE ? 152 : 165,
-              heightMax: gender === Gender.MALE ? 175 : 190,
+              heightMin: gender === 'MALE' ? 152 : 165,
+              heightMax: gender === 'MALE' ? 175 : 190,
               educationLevels: [randomElement(educationLevels), randomElement(educationLevels)],
               denominations: [denomination, randomElement(denominations)],
               locations: [city, randomElement(CITIES)],
