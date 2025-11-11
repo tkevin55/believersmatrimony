@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { X, ChevronDown, ChevronUp } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -16,6 +16,8 @@ import {
 } from '@/components/ui/select'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Switch } from '@/components/ui/switch'
+import { Badge } from '@/components/ui/badge'
+import { getAllStates, getDistrictsByState } from '@/lib/indian-locations'
 
 export interface SearchFilters {
   ageMin: number
@@ -23,7 +25,8 @@ export interface SearchFilters {
   heightMin: number
   heightMax: number
   denominations: string[]
-  locations: string[]
+  states: string[]
+  districts: string[]
   educationLevels: string[]
   occupation: string
   incomeRange: string
@@ -92,13 +95,23 @@ export function FilterSidebar({ filters, onFiltersChange, onReset }: FilterSideb
     age: true,
     height: true,
     denomination: true,
-    location: false,
+    location: true,
     education: false,
     occupation: false,
     income: false,
     lifestyle: false,
     special: false,
   })
+  const [selectedState, setSelectedState] = useState<string>('')
+  const [availableDistricts, setAvailableDistricts] = useState<string[]>([])
+
+  useEffect(() => {
+    if (selectedState) {
+      setAvailableDistricts(getDistrictsByState(selectedState))
+    } else {
+      setAvailableDistricts([])
+    }
+  }, [selectedState])
 
   const toggleSection = (section: string) => {
     setExpandedSections((prev) => ({
@@ -123,6 +136,29 @@ export function FilterSidebar({ filters, onFiltersChange, onReset }: FilterSideb
       ? filters.educationLevels.filter((l) => l !== level)
       : [...filters.educationLevels, level]
     updateFilters({ educationLevels: newLevels })
+  }
+
+  const addState = (state: string) => {
+    if (state && !filters.states.includes(state)) {
+      updateFilters({ states: [...filters.states, state] })
+    }
+  }
+
+  const removeState = (state: string) => {
+    updateFilters({
+      states: filters.states.filter(s => s !== state),
+      districts: filters.districts.filter(d => !getDistrictsByState(state).includes(d))
+    })
+  }
+
+  const addDistrict = (district: string) => {
+    if (district && !filters.districts.includes(district)) {
+      updateFilters({ districts: [...filters.districts, district] })
+    }
+  }
+
+  const removeDistrict = (district: string) => {
+    updateFilters({ districts: filters.districts.filter(d => d !== district) })
   }
 
   const FilterSection = ({
@@ -219,21 +255,95 @@ export function FilterSidebar({ filters, onFiltersChange, onReset }: FilterSideb
 
         {/* Location */}
         <FilterSection title="Location" sectionKey="location">
-          <div className="space-y-2">
-            <Input
-              placeholder="Enter city or state"
-              value={filters.locations.join(', ')}
-              onChange={(e) => {
-                const locations = e.target.value
-                  .split(',')
-                  .map((l) => l.trim())
-                  .filter((l) => l.length > 0)
-                updateFilters({ locations })
-              }}
-            />
-            <p className="text-xs text-muted-foreground">
-              Separate multiple locations with commas
-            </p>
+          <div className="space-y-4">
+            {/* State Selection */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Add State</Label>
+              <Select
+                value={selectedState}
+                onValueChange={(value) => {
+                  setSelectedState(value)
+                  addState(value)
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select state" />
+                </SelectTrigger>
+                <SelectContent className="max-h-[300px]">
+                  {getAllStates().map((state) => (
+                    <SelectItem key={state} value={state}>
+                      {state}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* District Selection */}
+            {selectedState && (
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Add District from {selectedState}</Label>
+                <Select
+                  value=""
+                  onValueChange={(value) => {
+                    addDistrict(value)
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select district" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-[300px]">
+                    {availableDistricts.map((district) => (
+                      <SelectItem key={district} value={district}>
+                        {district}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            {/* Selected States */}
+            {filters.states.length > 0 && (
+              <div className="space-y-2">
+                <Label className="text-xs text-muted-foreground">Selected States</Label>
+                <div className="flex flex-wrap gap-2">
+                  {filters.states.map((state) => (
+                    <Badge key={state} variant="secondary" className="cursor-pointer">
+                      {state}
+                      <X
+                        className="h-3 w-3 ml-1"
+                        onClick={() => removeState(state)}
+                      />
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Selected Districts */}
+            {filters.districts.length > 0 && (
+              <div className="space-y-2">
+                <Label className="text-xs text-muted-foreground">Selected Districts</Label>
+                <div className="flex flex-wrap gap-2">
+                  {filters.districts.map((district) => (
+                    <Badge key={district} variant="outline" className="cursor-pointer">
+                      {district}
+                      <X
+                        className="h-3 w-3 ml-1"
+                        onClick={() => removeDistrict(district)}
+                      />
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {filters.states.length === 0 && filters.districts.length === 0 && (
+              <p className="text-xs text-muted-foreground">
+                No location filters applied. Select states or districts above.
+              </p>
+            )}
           </div>
         </FilterSection>
 

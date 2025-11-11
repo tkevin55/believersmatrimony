@@ -15,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox'
 import { toast } from '@/hooks/use-toast'
 import { Loader2, Save, ArrowLeft } from 'lucide-react'
+import { getAllStates, getDistrictsByState } from '@/lib/indian-locations'
 
 const profileSchema = z.object({
   aboutMe: z.string().min(50, 'About me should be at least 50 characters').max(1000).optional(),
@@ -42,6 +43,7 @@ const profileSchema = z.object({
   dietPreference: z.string().optional(),
   hobbies: z.string().optional(),
   city: z.string().optional(),
+  district: z.string().optional(),
   state: z.string().optional(),
   country: z.string().optional(),
   openToRelocate: z.boolean().optional(),
@@ -657,21 +659,45 @@ export default function EditProfilePage() {
           <CardContent className="space-y-4">
             <div className="grid md:grid-cols-3 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="city">City</Label>
-                <Input
-                  id="city"
-                  {...register('city')}
-                  placeholder="Your city"
-                />
+                <Label htmlFor="state">State</Label>
+                <Select
+                  value={watch('state') || ''}
+                  onValueChange={(value) => {
+                    setValue('state', value)
+                    setValue('district', '') // Reset district when state changes
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select state" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-[300px]">
+                    {getAllStates().map((state) => (
+                      <SelectItem key={state} value={state}>
+                        {state}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="state">State</Label>
-                <Input
-                  id="state"
-                  {...register('state')}
-                  placeholder="Your state"
-                />
+                <Label htmlFor="district">District</Label>
+                <Select
+                  value={watch('district') || ''}
+                  onValueChange={(value) => setValue('district', value)}
+                  disabled={!watch('state')}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={watch('state') ? "Select district" : "Select state first"} />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-[300px]">
+                    {watch('state') && getDistrictsByState(watch('state')).map((district) => (
+                      <SelectItem key={district} value={district}>
+                        {district}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-2">
