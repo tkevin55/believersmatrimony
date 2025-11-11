@@ -477,6 +477,27 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
     }
   }
 
+  const skipOnboarding = async () => {
+    if (confirm('Are you sure you want to skip onboarding? You can complete your profile anytime from your dashboard.')) {
+      try {
+        // Mark user as having started onboarding (partial completion)
+        await fetch('/api/onboarding/progress', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ step: currentStep, data: {} }),
+        })
+
+        router.push('/dashboard')
+        toast({
+          title: 'Onboarding Skipped',
+          description: 'You can complete your profile anytime from your dashboard',
+        })
+      } catch (error) {
+        console.error('Error skipping onboarding:', error)
+      }
+    }
+  }
+
   const onSubmit = async (data: FormData) => {
     // Validate step 8 fields
     const isValid = await trigger([
@@ -1697,50 +1718,67 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
           {renderStep()}
 
-          <div className="flex justify-between pt-6 border-t">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={prevStep}
-              disabled={currentStep === 1 || isSubmitting || isSavingProgress}
-            >
-              <ChevronLeft className="mr-2 h-4 w-4" />
-              Back
-            </Button>
-
-            {currentStep < totalSteps ? (
+          <div className="pt-6 border-t space-y-3">
+            <div className="flex justify-between">
               <Button
                 type="button"
-                onClick={nextStep}
-                disabled={isSubmitting || isSavingProgress || (currentStep === 4 && photos.length < 3)}
+                variant="outline"
+                onClick={prevStep}
+                disabled={currentStep === 1 || isSubmitting || isSavingProgress}
               >
-                {isSavingProgress ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Saving...
-                  </>
-                ) : (
-                  <>
-                    Next
-                    <ChevronRight className="ml-2 h-4 w-4" />
-                  </>
-                )}
+                <ChevronLeft className="mr-2 h-4 w-4" />
+                Back
               </Button>
-            ) : (
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="bg-primary hover:bg-primary/90"
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Completing Profile...
-                  </>
-                ) : (
-                  'Complete My Profile'
-                )}
-              </Button>
+
+              {currentStep < totalSteps ? (
+                <Button
+                  type="button"
+                  onClick={nextStep}
+                  disabled={isSubmitting || isSavingProgress || (currentStep === 4 && photos.length < 3)}
+                >
+                  {isSavingProgress ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      Next
+                      <ChevronRight className="ml-2 h-4 w-4" />
+                    </>
+                  )}
+                </Button>
+              ) : (
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="bg-primary hover:bg-primary/90"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Completing Profile...
+                    </>
+                  ) : (
+                    'Complete My Profile'
+                  )}
+                </Button>
+              )}
+            </div>
+
+            {/* Skip Button - Only show if not on last step */}
+            {currentStep < totalSteps && currentStep > 1 && (
+              <div className="text-center">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={skipOnboarding}
+                  disabled={isSubmitting || isSavingProgress}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  Skip for now, I'll complete my profile later
+                </Button>
+              </div>
             )}
           </div>
         </form>
