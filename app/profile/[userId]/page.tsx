@@ -550,6 +550,12 @@ export default function ProfileViewPage({ params }: ProfileViewProps) {
                     <p className="font-medium">{formatHeight(profile.height)}</p>
                   </div>
                 )}
+                {profile.motherTongue && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Mother Tongue</p>
+                    <p className="font-medium">{profile.motherTongue.replace('_', ' ')}</p>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>

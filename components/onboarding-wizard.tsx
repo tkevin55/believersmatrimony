@@ -39,6 +39,29 @@ const INDIAN_STATES = [
   'Uttarakhand', 'West Bengal', 'Delhi', 'Puducherry', 'Jammu and Kashmir', 'Ladakh'
 ]
 
+const MOTHER_TONGUES = [
+  { value: 'HINDI', label: 'Hindi' },
+  { value: 'ENGLISH', label: 'English' },
+  { value: 'TAMIL', label: 'Tamil' },
+  { value: 'TELUGU', label: 'Telugu' },
+  { value: 'KANNADA', label: 'Kannada' },
+  { value: 'MALAYALAM', label: 'Malayalam' },
+  { value: 'MARATHI', label: 'Marathi' },
+  { value: 'BENGALI', label: 'Bengali' },
+  { value: 'GUJARATI', label: 'Gujarati' },
+  { value: 'PUNJABI', label: 'Punjabi' },
+  { value: 'URDU', label: 'Urdu' },
+  { value: 'ODIA', label: 'Odia' },
+  { value: 'ASSAMESE', label: 'Assamese' },
+  { value: 'KONKANI', label: 'Konkani' },
+  { value: 'MANIPURI', label: 'Manipuri' },
+  { value: 'NEPALI', label: 'Nepali' },
+  { value: 'SINDHI', label: 'Sindhi' },
+  { value: 'KASHMIRI', label: 'Kashmiri' },
+  { value: 'SANSKRIT', label: 'Sanskrit' },
+  { value: 'OTHER', label: 'Other' },
+]
+
 const INDIAN_LANGUAGES = [
   'English', 'Hindi', 'Tamil', 'Telugu', 'Malayalam', 'Kannada', 'Bengali', 'Marathi',
   'Gujarati', 'Punjabi', 'Odia', 'Urdu', 'Assamese', 'Konkani', 'Manipuri', 'Nepali',
@@ -89,6 +112,7 @@ const step4Schema = z.object({
 
 const step5Schema = z.object({
   height: z.number().min(122, 'Height is required').max(213, 'Height is required'),
+  motherTongue: z.string().min(1, 'Mother tongue is required'),
   languages: z.array(z.string()).min(1, 'Select at least one language'),
 })
 
@@ -382,10 +406,11 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
         }
         break
       case 5:
-        isValid = await trigger(['height', 'languages'])
+        isValid = await trigger(['height', 'motherTongue', 'languages'])
         if (isValid) {
           stepData = {
             height: watch('height'),
+            motherTongue: watch('motherTongue'),
             languages: watch('languages'),
           }
         }
@@ -1068,6 +1093,28 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
                 </Select>
                 {errors.height && (
                   <p className="text-sm text-red-500">{errors.height.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="motherTongue">Mother Tongue *</Label>
+                <Select
+                  value={watch('motherTongue') || ''}
+                  onValueChange={(value) => setValue('motherTongue', value, { shouldValidate: true })}
+                >
+                  <SelectTrigger className={cn(errors.motherTongue && 'border-red-500')}>
+                    <SelectValue placeholder="Select your mother tongue" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {MOTHER_TONGUES.map((tongue) => (
+                      <SelectItem key={tongue.value} value={tongue.value}>
+                        {tongue.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.motherTongue && (
+                  <p className="text-sm text-red-500">{errors.motherTongue.message}</p>
                 )}
               </div>
 

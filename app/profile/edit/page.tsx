@@ -24,6 +24,7 @@ const profileSchema = z.object({
   isBaptized: z.boolean().optional(),
   churchInvolvementLevel: z.string().optional(),
   height: z.number().min(100).max(250).optional(),
+  motherTongue: z.string().optional(),
   languages: z.array(z.string()).optional(),
   educationLevel: z.string().optional(),
   fieldOfStudy: z.string().optional(),
@@ -45,6 +46,29 @@ const profileSchema = z.object({
 })
 
 type ProfileFormData = z.infer<typeof profileSchema>
+
+const MOTHER_TONGUES = [
+  { value: 'HINDI', label: 'Hindi' },
+  { value: 'ENGLISH', label: 'English' },
+  { value: 'TAMIL', label: 'Tamil' },
+  { value: 'TELUGU', label: 'Telugu' },
+  { value: 'KANNADA', label: 'Kannada' },
+  { value: 'MALAYALAM', label: 'Malayalam' },
+  { value: 'MARATHI', label: 'Marathi' },
+  { value: 'BENGALI', label: 'Bengali' },
+  { value: 'GUJARATI', label: 'Gujarati' },
+  { value: 'PUNJABI', label: 'Punjabi' },
+  { value: 'URDU', label: 'Urdu' },
+  { value: 'ODIA', label: 'Odia' },
+  { value: 'ASSAMESE', label: 'Assamese' },
+  { value: 'KONKANI', label: 'Konkani' },
+  { value: 'MANIPURI', label: 'Manipuri' },
+  { value: 'NEPALI', label: 'Nepali' },
+  { value: 'SINDHI', label: 'Sindhi' },
+  { value: 'KASHMIRI', label: 'Kashmiri' },
+  { value: 'SANSKRIT', label: 'Sanskrit' },
+  { value: 'OTHER', label: 'Other' },
+]
 
 const INDIAN_LANGUAGES = [
   'English', 'Hindi', 'Tamil', 'Telugu', 'Malayalam', 'Kannada', 'Bengali', 'Marathi',
@@ -104,6 +128,7 @@ export default function EditProfilePage() {
           isBaptized: profile.isBaptized || false,
           churchInvolvementLevel: profile.churchInvolvementLevel || '',
           height: profile.height || 165,
+          motherTongue: profile.motherTongue || '',
           languages: profile.languages || [],
           educationLevel: profile.educationLevel || '',
           fieldOfStudy: profile.fieldOfStudy || '',
@@ -324,6 +349,25 @@ export default function EditProfilePage() {
                     {Math.floor(height / 30.48)}'{Math.round((height % 30.48) / 2.54)}"
                   </p>
                 )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="motherTongue">Mother Tongue</Label>
+                <Select
+                  value={watch('motherTongue') || ''}
+                  onValueChange={(value) => setValue('motherTongue', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select mother tongue" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {MOTHER_TONGUES.map((tongue) => (
+                      <SelectItem key={tongue.value} value={tongue.value}>
+                        {tongue.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 

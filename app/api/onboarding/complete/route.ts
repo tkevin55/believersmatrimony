@@ -163,6 +163,7 @@ export async function POST(request: Request) {
         churchInvolvementLevel: formData.churchInvolvement || null,
         faithTestimony: formData.faithTestimony || null,
         height: heightValue,
+        motherTongue: formData.motherTongue || null,
         languages: formData.languages || [],
         educationLevel: formData.educationLevel || null,
         fieldOfStudy: formData.fieldOfStudy || null,

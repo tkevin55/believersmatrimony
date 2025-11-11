@@ -129,6 +129,7 @@ export async function PATCH(request: Request) {
           where: { userId },
           data: {
             height: data.height,
+            motherTongue: data.motherTongue,
             languages: data.languages,
           }
         })
