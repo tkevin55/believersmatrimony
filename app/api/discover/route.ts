@@ -90,9 +90,7 @@ export async function GET(request: NextRequest) {
     const formattedMatches = matches.map((match: any) => {
       const age = calculateAge(match.dateOfBirth)
       const primaryPhoto = match.user.photos.find((p: any) => p.isPrimary) || match.user.photos[0]
-      const location = match.district && match.state
-        ? `${match.district}, ${match.state}`
-        : [match.city, match.state].filter(Boolean).join(', ')
+      const location = [match.district, match.state].filter(Boolean).join(', ')
 
       return {
         id: match.userId,

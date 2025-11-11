@@ -287,7 +287,7 @@ export async function GET(request: NextRequest) {
           name: profile.user.name,
           age,
           gender: profile.gender,
-          location: [profile.city, profile.state].filter(Boolean).join(', '),
+          location: [profile.district, profile.state].filter(Boolean).join(', '),
           denomination: profile.denomination,
           educationLevel: profile.educationLevel,
           occupation: profile.occupation,

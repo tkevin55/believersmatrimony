@@ -26,7 +26,7 @@ interface LikeProfile {
     profile: {
       dateOfBirth: string
       gender: string
-      city?: string
+      district?: string
       state?: string
       denomination?: string
       occupation?: string
@@ -223,7 +223,7 @@ export default function WhoLikedMePage() {
             const { liker } = like
             const age = calculateAge(new Date(liker.profile.dateOfBirth))
             const primaryPhoto = liker.photos.find((p) => p.isPrimary) || liker.photos[0]
-            const location = [liker.profile.city, liker.profile.state].filter(Boolean).join(', ')
+            const location = [liker.profile.district, liker.profile.state].filter(Boolean).join(', ')
 
             return (
               <Card key={like.id} className="overflow-hidden hover:shadow-lg transition-shadow">
