@@ -200,12 +200,6 @@ function calculateLifestyleScore(
     }
   }
 
-  // Body type (less important)
-  if (userProfile.bodyType && matchProfile.bodyType) {
-    factors++
-    score += 70 // Neutral score, body type shouldn't heavily influence match
-  }
-
   return factors > 0 ? score / factors : 50
 }
 

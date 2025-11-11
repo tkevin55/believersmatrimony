@@ -52,7 +52,6 @@ export async function POST(request: Request) {
           yearsAsBelievertrue: profile.yearsAsBelievertrue || 0,
           isBaptized: profile.isBaptized,
           height: profile.height,
-          bodyType: profile.bodyType,
           educationLevel: profile.educationLevel,
           fieldOfStudy: profile.fieldOfStudy,
           occupation: profile.occupation,

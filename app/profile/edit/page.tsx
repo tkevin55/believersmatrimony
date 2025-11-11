@@ -24,8 +24,6 @@ const profileSchema = z.object({
   isBaptized: z.boolean().optional(),
   churchInvolvementLevel: z.string().optional(),
   height: z.number().min(100).max(250).optional(),
-  bodyType: z.string().optional(),
-  complexion: z.string().optional(),
   languages: z.array(z.string()).optional(),
   educationLevel: z.string().optional(),
   fieldOfStudy: z.string().optional(),
@@ -106,8 +104,6 @@ export default function EditProfilePage() {
           isBaptized: profile.isBaptized || false,
           churchInvolvementLevel: profile.churchInvolvementLevel || '',
           height: profile.height || 165,
-          bodyType: profile.bodyType || '',
-          complexion: profile.complexion || '',
           languages: profile.languages || [],
           educationLevel: profile.educationLevel || '',
           fieldOfStudy: profile.fieldOfStudy || '',
@@ -328,43 +324,6 @@ export default function EditProfilePage() {
                     {Math.floor(height / 30.48)}'{Math.round((height % 30.48) / 2.54)}"
                   </p>
                 )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="bodyType">Body Type</Label>
-                <Select
-                  value={watch('bodyType') || ''}
-                  onValueChange={(value) => setValue('bodyType', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select body type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="SLIM">Slim</SelectItem>
-                    <SelectItem value="ATHLETIC">Athletic</SelectItem>
-                    <SelectItem value="AVERAGE">Average</SelectItem>
-                    <SelectItem value="CURVY">Heavyset</SelectItem>
-                    <SelectItem value="PLUS_SIZE">Prefer not to say</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="complexion">Complexion</Label>
-                <Select
-                  value={watch('complexion') || ''}
-                  onValueChange={(value) => setValue('complexion', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select complexion" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Fair">Fair</SelectItem>
-                    <SelectItem value="Wheatish">Wheatish</SelectItem>
-                    <SelectItem value="Dusky">Dusky</SelectItem>
-                    <SelectItem value="Dark">Dark</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
             </div>
 

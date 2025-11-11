@@ -550,12 +550,6 @@ export default function ProfileViewPage({ params }: ProfileViewProps) {
                     <p className="font-medium">{formatHeight(profile.height)}</p>
                   </div>
                 )}
-                {profile.bodyType && (
-                  <div>
-                    <p className="text-sm text-muted-foreground">Body Type</p>
-                    <p className="font-medium">{profile.bodyType.replace('_', ' ')}</p>
-                  </div>
-                )}
               </div>
             </CardContent>
           </Card>

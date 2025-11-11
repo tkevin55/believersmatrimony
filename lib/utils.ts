@@ -43,7 +43,6 @@ export function calculateProfileCompletion(profile: any): number {
     'aboutMe',
     'denomination',
     'height',
-    'bodyType',
     'educationLevel',
     'occupation',
     'city',

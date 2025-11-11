@@ -129,8 +129,6 @@ export async function PATCH(request: Request) {
           where: { userId },
           data: {
             height: data.height,
-            bodyType: data.bodyType,
-            complexion: data.complexion,
             languages: data.languages,
           }
         })

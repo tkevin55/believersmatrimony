@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { PrismaClient, Gender, Denomination, EducationLevel, BodyType, FamilyType, IncomeRange, ChurchInvolvement } from '@prisma/client'
+import { PrismaClient, Gender, Denomination, EducationLevel, FamilyType, IncomeRange, ChurchInvolvement } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
@@ -122,11 +122,6 @@ export async function GET(request: Request) {
       EducationLevel.DOCTORATE,
       EducationLevel.PROFESSIONAL
     ]
-    const bodyTypes: BodyType[] = [
-      BodyType.SLIM,
-      BodyType.AVERAGE,
-      BodyType.ATHLETIC
-    ]
     const familyTypes: FamilyType[] = [
       FamilyType.NUCLEAR,
       FamilyType.JOINT
@@ -200,8 +195,6 @@ export async function GET(request: Request) {
                 churchInvolvementLevel: ChurchInvolvement.VOLUNTEER,
                 faithTestimony: 'I accepted Christ as my Savior at a young age and have been growing in faith ever since. I am actively involved in my local church and seek a partner who shares my commitment to faith.',
                 height: testAccount.gender === Gender.MALE ? 175 : 162,
-                bodyType: BodyType.AVERAGE,
-                complexion: 'Fair',
                 languages: ['English', 'Hindi', 'Kannada'],
                 educationLevel: EducationLevel.BACHELOR,
                 fieldOfStudy: testAccount.gender === Gender.MALE ? 'Computer Science' : 'Business Administration',
@@ -293,8 +286,6 @@ export async function GET(request: Request) {
                 churchInvolvementLevel: randomElement(involvements),
                 faithTestimony: randomElement(TESTIMONIES),
                 height,
-                bodyType: randomElement(bodyTypes),
-                complexion: randomElement(['Fair', 'Wheatish', 'Dusky']),
                 languages: ['English', 'Hindi', randomElement(['Tamil', 'Telugu', 'Malayalam', 'Kannada'])],
                 educationLevel: randomElement(educationLevels),
                 fieldOfStudy: randomElement(FIELDS_OF_STUDY),

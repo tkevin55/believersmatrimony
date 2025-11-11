@@ -19,7 +19,6 @@ const profileUpdateSchema = z.object({
   isBaptized: z.boolean().optional(),
   churchInvolvementLevel: z.string().optional(),
   height: z.number().optional(),
-  bodyType: z.enum(['SLIM', 'AVERAGE', 'ATHLETIC', 'CURVY', 'PLUS_SIZE']).optional(),
   educationLevel: z.enum(['HIGH_SCHOOL', 'ASSOCIATE', 'BACHELOR', 'MASTER', 'DOCTORATE', 'PROFESSIONAL']).optional(),
   fieldOfStudy: z.string().optional(),
   occupation: z.string().optional(),
@@ -46,7 +45,7 @@ function calculateProfileCompletion(profile: any): number {
   const fields = [
     'dateOfBirth', 'gender', 'aboutMe', 'denomination', 'churchName',
     'yearsAsBeliever', 'isBaptized', 'churchInvolvementLevel',
-    'height', 'bodyType', 'educationLevel', 'fieldOfStudy',
+    'height', 'educationLevel', 'fieldOfStudy',
     'occupation', 'incomeRange', 'parentsOccupation', 'siblingsCount',
     'familyType', 'familyValues', 'hobbies', 'city', 'state', 'country'
   ]

@@ -43,7 +43,6 @@ export function ProfileCompletion({ profile, photos }: ProfileCompletionProps) {
       name: 'Physical Attributes',
       fields: [
         { label: 'Height', value: profile.height, required: true },
-        { label: 'Body Type', value: profile.bodyType },
       ]
     },
     {
