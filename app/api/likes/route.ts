@@ -171,32 +171,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Create the like and log activity in a transaction
-    await prisma.$transaction([
-      prisma.like.create({
-        data: {
-          likerId: session.user.id,
-          likedId: likedUserId,
-          isSuperLike: isSuperLike,
-        },
-      }),
-      // Log activity for sender
-      prisma.activity.create({
-        data: {
-          userId: session.user.id,
-          type: isSuperLike ? 'SUPERLIKE_SENT' : 'LIKE_SENT',
-          targetUserId: likedUserId,
-        },
-      }),
-      // Log activity for receiver
-      prisma.activity.create({
-        data: {
-          userId: likedUserId,
-          type: isSuperLike ? 'SUPERLIKE_RECEIVED' : 'LIKE_RECEIVED',
-          targetUserId: session.user.id,
-        },
-      }),
-    ])
+    // Create the like
+    await prisma.like.create({
+      data: {
+        likerId: session.user.id,
+        likedId: likedUserId,
+        isSuperLike: isSuperLike,
+      },
+    })
 
     // Increment quota usage
     await incrementQuota(session.user.id, isSuperLike ? 'superlike' : 'like')
@@ -212,33 +194,13 @@ export async function POST(request: NextRequest) {
       const existingMatch = await checkExistingMatch(session.user.id, likedUserId)
 
       if (!existingMatch) {
-        // Create match and log activity
+        // Create match
         match = await prisma.match.create({
           data: {
             user1Id: session.user.id,
             user2Id: likedUserId,
           },
         })
-
-        // Log match activity for both users
-        await Promise.all([
-          prisma.activity.create({
-            data: {
-              userId: session.user.id,
-              type: 'MATCH_CREATED',
-              targetUserId: likedUserId,
-              metadata: { matchId: match.id },
-            },
-          }),
-          prisma.activity.create({
-            data: {
-              userId: likedUserId,
-              type: 'MATCH_CREATED',
-              targetUserId: session.user.id,
-              metadata: { matchId: match.id },
-            },
-          }),
-        ])
 
         // Create interest records for both users
         const [interest1, interest2] = await Promise.all([

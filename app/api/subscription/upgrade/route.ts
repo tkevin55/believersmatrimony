@@ -56,18 +56,6 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    // Log activity
-    await prisma.activity.create({
-      data: {
-        userId: session.user.id,
-        type: 'PROFILE_VIEW', // We can add a new type like SUBSCRIPTION_UPGRADED later
-        metadata: {
-          subscriptionTier: tier,
-          amount,
-        },
-      },
-    })
-
     return NextResponse.json({
       success: true,
       subscription,

@@ -87,19 +87,6 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    // Log activity
-    await prisma.activity.create({
-      data: {
-        userId: verification.userId,
-        type: 'PROFILE_VIEW', // We can add a new type like CHURCH_VERIFIED later
-        metadata: {
-          churchVerification: true,
-          status: newStatus,
-          verifiedBy: verification.pastorName,
-        },
-      },
-    })
-
     return NextResponse.json({
       success: true,
       message: action === 'approve'

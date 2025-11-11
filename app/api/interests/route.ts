@@ -183,7 +183,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Create the interest and log activities
+    // Create the interest and notification
     const [interest] = await prisma.$transaction([
       prisma.interest.create({
         data: {
@@ -202,24 +202,6 @@ export async function POST(req: NextRequest) {
               }
             }
           }
-        }
-      }),
-      // Log activity for sender
-      prisma.activity.create({
-        data: {
-          userId: session.user.id,
-          type: 'INTEREST_SENT',
-          targetUserId: receiverId,
-          metadata: { message: message || null }
-        }
-      }),
-      // Log activity for receiver
-      prisma.activity.create({
-        data: {
-          userId: receiverId,
-          type: 'INTEREST_RECEIVED',
-          targetUserId: session.user.id,
-          metadata: { message: message || null }
         }
       }),
       // Create a notification for the receiver
