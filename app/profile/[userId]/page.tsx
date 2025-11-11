@@ -531,6 +531,18 @@ export default function ProfileViewPage({ params }: ProfileViewProps) {
                   </div>
                 )}
               </div>
+
+              {(profile.favoriteVerseReference || profile.favoriteVerseWhy) && (
+                <div className="border-t pt-4 mt-4">
+                  <p className="text-sm text-muted-foreground mb-2">Favorite Bible Verse</p>
+                  {profile.favoriteVerseReference && (
+                    <p className="font-semibold text-lg mb-1">{profile.favoriteVerseReference}</p>
+                  )}
+                  {profile.favoriteVerseWhy && (
+                    <p className="text-sm italic text-muted-foreground">"{profile.favoriteVerseWhy}"</p>
+                  )}
+                </div>
+              )}
             </CardContent>
           </Card>
 

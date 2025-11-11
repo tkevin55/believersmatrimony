@@ -100,6 +100,8 @@ const step3Schema = z.object({
   baptismYear: z.string().optional(),
   churchInvolvement: z.string().min(1, 'Church involvement is required'),
   faithTestimony: z.string().optional(),
+  favoriteVerseReference: z.string().optional(),
+  favoriteVerseWhy: z.string().max(200, 'Maximum 200 characters').optional(),
 })
 
 const step4Schema = z.object({
@@ -394,6 +396,8 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
             baptismYear: watch('baptismYear'),
             churchInvolvement: watch('churchInvolvement'),
             faithTestimony: watch('faithTestimony'),
+            favoriteVerseReference: watch('favoriteVerseReference'),
+            favoriteVerseWhy: watch('favoriteVerseWhy'),
           }
         }
         break
@@ -936,6 +940,36 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
                 <p className="text-sm text-muted-foreground text-right">
                   {watch('faithTestimony')?.length || 0}/500 characters
                 </p>
+              </div>
+
+              <div className="border-t pt-4 space-y-4">
+                <div>
+                  <h3 className="text-lg font-semibold mb-1">Favorite Bible Verse (Optional)</h3>
+                  <p className="text-sm text-muted-foreground">Share a verse that's meaningful to you</p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="favoriteVerseReference">Verse Reference</Label>
+                  <Input
+                    id="favoriteVerseReference"
+                    {...register('favoriteVerseReference')}
+                    placeholder="e.g., John 3:16, Philippians 4:13"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="favoriteVerseWhy">Why this verse matters to you</Label>
+                  <Textarea
+                    id="favoriteVerseWhy"
+                    {...register('favoriteVerseWhy')}
+                    placeholder="Share why this verse is special to you (max 200 characters)"
+                    className="min-h-[80px]"
+                    maxLength={200}
+                  />
+                  <p className="text-sm text-muted-foreground text-right">
+                    {watch('favoriteVerseWhy')?.length || 0}/200 characters
+                  </p>
+                </div>
               </div>
             </div>
           </div>

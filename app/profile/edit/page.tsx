@@ -23,6 +23,8 @@ const profileSchema = z.object({
   yearsAsBeliever: z.number().min(0).optional(),
   isBaptized: z.boolean().optional(),
   churchInvolvementLevel: z.string().optional(),
+  favoriteVerseReference: z.string().optional(),
+  favoriteVerseWhy: z.string().max(200).optional(),
   height: z.number().min(100).max(250).optional(),
   motherTongue: z.string().optional(),
   languages: z.array(z.string()).optional(),
@@ -127,6 +129,8 @@ export default function EditProfilePage() {
           yearsAsBeliever: profile.yearsAsBeliever || 0,
           isBaptized: profile.isBaptized || false,
           churchInvolvementLevel: profile.churchInvolvementLevel || '',
+          favoriteVerseReference: profile.favoriteVerseReference || '',
+          favoriteVerseWhy: profile.favoriteVerseWhy || '',
           height: profile.height || 165,
           motherTongue: profile.motherTongue || '',
           languages: profile.languages || [],
@@ -325,6 +329,38 @@ export default function EditProfilePage() {
               <Label htmlFor="isBaptized" className="cursor-pointer">
                 I am baptized
               </Label>
+            </div>
+
+            <div className="border-t pt-4 space-y-4">
+              <div>
+                <h4 className="font-medium mb-2">Favorite Bible Verse (Optional)</h4>
+                <p className="text-sm text-muted-foreground">Share a verse that's meaningful to you</p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="favoriteVerseReference">Verse Reference</Label>
+                <Input
+                  id="favoriteVerseReference"
+                  {...register('favoriteVerseReference')}
+                  placeholder="e.g., John 3:16, Philippians 4:13"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="favoriteVerseWhy">Why this verse matters to you</Label>
+                <Textarea
+                  id="favoriteVerseWhy"
+                  {...register('favoriteVerseWhy')}
+                  placeholder="Share why this verse is special to you (max 200 characters)"
+                  className="min-h-[80px]"
+                  maxLength={200}
+                />
+                {watch('favoriteVerseWhy') && (
+                  <p className="text-sm text-muted-foreground text-right">
+                    {watch('favoriteVerseWhy')?.length || 0}/200 characters
+                  </p>
+                )}
+              </div>
             </div>
           </CardContent>
         </Card>

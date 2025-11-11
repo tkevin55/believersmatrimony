@@ -162,6 +162,8 @@ export async function POST(request: Request) {
         isBaptized: formData.isBaptized === 'yes',
         churchInvolvementLevel: formData.churchInvolvement || null,
         faithTestimony: formData.faithTestimony || null,
+        favoriteVerseReference: formData.favoriteVerseReference || null,
+        favoriteVerseWhy: formData.favoriteVerseWhy || null,
         height: heightValue,
         motherTongue: formData.motherTongue || null,
         languages: formData.languages || [],
