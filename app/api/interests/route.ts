@@ -19,8 +19,8 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url)
     const type = searchParams.get('type') || 'all' // 'sent', 'received', or 'all'
 
-    let sentInterests = []
-    let receivedInterests = []
+    let sentInterests: any[] = []
+    let receivedInterests: any[] = []
 
     if (type === 'sent' || type === 'all') {
       sentInterests = await prisma.interest.findMany({
