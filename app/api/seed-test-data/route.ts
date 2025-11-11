@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, Gender } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
@@ -116,16 +116,22 @@ export async function GET(request: Request) {
     const hashedPassword = await bcrypt.hash('Test@123', 10)
 
     // Create 2 test accounts
-    const testAccounts = [
+    const testAccounts: Array<{
+      gender: Gender
+      firstName: string
+      lastName: string
+      email: string
+      age: number
+    }> = [
       {
-        gender: 'MALE',
+        gender: Gender.MALE,
         firstName: 'John',
         lastName: 'Test',
         email: 'john.test@demo.com',
         age: 28
       },
       {
-        gender: 'FEMALE',
+        gender: Gender.FEMALE,
         firstName: 'Sarah',
         lastName: 'Test',
         email: 'sarah.test@demo.com',
@@ -162,13 +168,13 @@ export async function GET(request: Request) {
                 isBaptized: true,
                 churchInvolvementLevel: 'VOLUNTEER',
                 faithTestimony: 'I accepted Christ as my Savior at a young age and have been growing in faith ever since. I am actively involved in my local church and seek a partner who shares my commitment to faith.',
-                height: testAccount.gender === 'MALE' ? 175 : 162,
+                height: testAccount.gender === Gender.MALE ? 175 : 162,
                 bodyType: 'AVERAGE',
                 complexion: 'Fair',
                 languages: ['English', 'Hindi', 'Kannada'],
                 educationLevel: 'BACHELOR',
-                fieldOfStudy: testAccount.gender === 'MALE' ? 'Computer Science' : 'Business Administration',
-                occupation: testAccount.gender === 'MALE' ? 'Software Engineer' : 'Marketing Manager',
+                fieldOfStudy: testAccount.gender === Gender.MALE ? 'Computer Science' : 'Business Administration',
+                occupation: testAccount.gender === Gender.MALE ? 'Software Engineer' : 'Marketing Manager',
                 incomeRange: 'TEN_TO_FIFTEEN_LAKHS',
                 parentsOccupation: 'Father: Business, Mother: Teacher',
                 siblingsCount: 1,
@@ -179,16 +185,16 @@ export async function GET(request: Request) {
                 smoking: 'Never',
                 dietPreference: 'Non-vegetarian',
                 hobbies: 'Reading, Music, Prayer groups, Traveling',
-                aboutMe: `I am a ${testAccount.age}-year-old ${testAccount.gender === 'MALE' ? 'man' : 'woman'} seeking a life partner who shares my faith and values. I enjoy serving in church, spending time with family, and pursuing personal growth. I believe in building a Christ-centered home and partnership.`,
+                aboutMe: `I am a ${testAccount.age}-year-old ${testAccount.gender === Gender.MALE ? 'man' : 'woman'} seeking a life partner who shares my faith and values. I enjoy serving in church, spending time with family, and pursuing personal growth. I believe in building a Christ-centered home and partnership.`,
                 completionPercentage: 100,
               }
             },
             partnerPreferences: {
               create: {
-                ageMin: testAccount.gender === 'MALE' ? 24 : 26,
-                ageMax: testAccount.gender === 'MALE' ? 32 : 35,
-                heightMin: testAccount.gender === 'MALE' ? 155 : 170,
-                heightMax: testAccount.gender === 'MALE' ? 170 : 185,
+                ageMin: testAccount.gender === Gender.MALE ? 24 : 26,
+                ageMax: testAccount.gender === Gender.MALE ? 32 : 35,
+                heightMin: testAccount.gender === Gender.MALE ? 155 : 170,
+                heightMax: testAccount.gender === Gender.MALE ? 170 : 185,
                 educationLevels: ['BACHELOR', 'MASTER'],
                 denominations: ['BAPTIST', 'PENTECOSTAL', 'NON_DENOMINATIONAL'],
                 locations: ['Bangalore', 'Mumbai', 'Delhi'],
@@ -219,8 +225,8 @@ export async function GET(request: Request) {
 
     // Create 48 more profiles (24 of each gender)
     for (let i = 0; i < 48; i++) {
-      const gender = i % 2 === 0 ? 'MALE' : 'FEMALE'
-      const firstName = gender === 'MALE' ? randomElement(FIRST_NAMES_MALE) : randomElement(FIRST_NAMES_FEMALE)
+      const gender: Gender = i % 2 === 0 ? Gender.MALE : Gender.FEMALE
+      const firstName = gender === Gender.MALE ? randomElement(FIRST_NAMES_MALE) : randomElement(FIRST_NAMES_FEMALE)
       const lastName = randomElement(LAST_NAMES)
       const fullName = `${firstName} ${lastName}`
       const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}${i + 100}@example.com`
@@ -229,7 +235,7 @@ export async function GET(request: Request) {
       const city = randomElement(CITIES)
       const state = randomElement(STATES)
       const denomination = randomElement(denominations)
-      const height = gender === 'MALE' ? randomNumber(165, 185) : randomNumber(152, 170)
+      const height = gender === Gender.MALE ? randomNumber(165, 185) : randomNumber(152, 170)
 
       try {
         await prisma.user.create({
@@ -272,7 +278,7 @@ export async function GET(request: Request) {
                 smoking: 'Never',
                 dietPreference: randomElement(['Vegetarian', 'Eggetarian', 'Non-vegetarian']),
                 hobbies: randomElement(HOBBIES),
-                aboutMe: `I am a ${gender === 'MALE' ? 'man' : 'woman'} of faith seeking a life partner who shares my values and beliefs. I enjoy serving in church and am looking forward to building a Christ-centered home.`,
+                aboutMe: `I am a ${gender === Gender.MALE ? 'man' : 'woman'} of faith seeking a life partner who shares my values and beliefs. I enjoy serving in church and am looking forward to building a Christ-centered home.`,
                 completionPercentage: 100,
               }
             },
@@ -280,8 +286,8 @@ export async function GET(request: Request) {
               create: {
                 ageMin: Math.max(22, new Date().getFullYear() - dob.getFullYear() - 5),
                 ageMax: new Date().getFullYear() - dob.getFullYear() + 8,
-                heightMin: gender === 'MALE' ? 152 : 165,
-                heightMax: gender === 'MALE' ? 170 : 185,
+                heightMin: gender === Gender.MALE ? 152 : 165,
+                heightMax: gender === Gender.MALE ? 170 : 185,
                 educationLevels: [randomElement(educationLevels), randomElement(educationLevels)],
                 denominations: [denomination, randomElement(denominations)],
                 locations: [city, randomElement(CITIES)],
