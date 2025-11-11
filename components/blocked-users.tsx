@@ -15,7 +15,7 @@ interface BlockedUser {
     name: string
     image: string | null
     profile: {
-      city: string | null
+      district: string | null
       state: string | null
       gender: string
     } | null

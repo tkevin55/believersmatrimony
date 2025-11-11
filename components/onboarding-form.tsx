@@ -148,7 +148,7 @@ export default function OnboardingForm({ userId }: OnboardingFormProps) {
             dateOfBirth: new Date(data.dateOfBirth),
             gender: data.gender,
             aboutMe: data.aboutMe,
-            city: data.city,
+            district: data.district,
             state: data.state,
             country: data.country,
             openToRelocate: data.openToRelocate,
@@ -254,10 +254,10 @@ export default function OnboardingForm({ userId }: OnboardingFormProps) {
           <div className="space-y-4">
             <h2 className="text-xl font-semibold">Location</h2>
             <div className="space-y-2">
-              <Label htmlFor="city">City</Label>
-              <Input id="city" {...register('city')} placeholder="New York" />
-              {errors.city && (
-                <p className="text-sm text-destructive">{errors.city.message}</p>
+              <Label htmlFor="district">District</Label>
+              <Input id="district" {...register('district')} placeholder="Mumbai" />
+              {errors.district && (
+                <p className="text-sm text-destructive">{errors.district.message}</p>
               )}
             </div>
             <div className="space-y-2">

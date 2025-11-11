@@ -14,7 +14,7 @@ interface User {
   image: string | null
   profile: {
     denomination: string
-    city: string
+    district: string
     state: string
     occupation: string
     aboutMe: string
@@ -54,7 +54,7 @@ export default function InterestCard({
   if (!user) return null
 
   const primaryPhoto = user.photos?.find((p) => p.isPrimary)
-  const location = [user.profile?.city, user.profile?.state].filter(Boolean).join(', ')
+  const location = [user.profile?.district, user.profile?.state].filter(Boolean).join(', ')
 
   const getStatusBadge = () => {
     switch (interest.status) {

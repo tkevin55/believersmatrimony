@@ -20,7 +20,7 @@ interface Activity {
     id: string
     name: string
     photo: string | null
-    city?: string
+    district?: string
     state?: string
     denomination?: string
   }
@@ -28,7 +28,7 @@ interface Activity {
     id: string
     name: string
     photo: string | null
-    city?: string
+    district?: string
     state?: string
     denomination?: string
   } | null
@@ -88,7 +88,7 @@ export default function ActivityTab() {
     const isYou = activity.isCurrentUser
     const otherUser = isYou ? activity.targetUser : activity.user
     const userName = otherUser?.name || 'Someone'
-    const location = otherUser?.city || otherUser?.state || ''
+    const location = otherUser?.district || otherUser?.state || ''
 
     switch (activity.type) {
       case 'PROFILE_VIEW':
@@ -217,9 +217,9 @@ export default function ActivityTab() {
                                   <p className="text-sm font-medium truncate">
                                     {getActivityText(activity)}
                                   </p>
-                                  {otherUser.city && (
+                                  {otherUser.district && (
                                     <p className="text-xs text-muted-foreground mt-1">
-                                      {otherUser.city}{otherUser.state ? `, ${otherUser.state}` : ''}
+                                      {otherUser.district}{otherUser.state ? `, ${otherUser.state}` : ''}
                                       {otherUser.denomination && ` • ${otherUser.denomination}`}
                                     </p>
                                   )}

@@ -16,7 +16,7 @@ interface User {
   image: string | null
   profile: {
     denomination: string
-    city: string
+    district: string
     state: string
     occupation: string
     aboutMe: string

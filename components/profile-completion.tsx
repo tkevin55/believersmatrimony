@@ -75,7 +75,7 @@ export function ProfileCompletion({ profile, photos }: ProfileCompletionProps) {
     {
       name: 'Location',
       fields: [
-        { label: 'City', value: profile.city, required: true },
+        { label: 'District', value: profile.district, required: true },
         { label: 'State', value: profile.state, required: true },
         { label: 'Country', value: profile.country, required: true },
         { label: 'Open to Relocate', value: profile.openToRelocate !== null },

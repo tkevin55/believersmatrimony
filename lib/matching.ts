@@ -25,15 +25,15 @@ interface MatchScore {
  * Simple implementation - in production, use proper geolocation
  */
 function calculateLocationScore(
-  userCity?: string | null,
+  userDistrict?: string | null,
   userState?: string | null,
-  matchCity?: string | null,
+  matchDistrict?: string | null,
   matchState?: string | null
 ): number {
-  if (!userCity || !matchCity) return 0
+  if (!userDistrict || !matchDistrict) return 0
 
-  // Exact city match
-  if (userCity.toLowerCase() === matchCity.toLowerCase()) {
+  // Exact district match
+  if (userDistrict.toLowerCase() === matchDistrict.toLowerCase()) {
     return 100
   }
 
@@ -255,9 +255,9 @@ export async function calculateMatchPercentage(
     )
 
     const locationScore = calculateLocationScore(
-      userProfile.city,
+      userProfile.district,
       userProfile.state,
-      matchProfile.city,
+      matchProfile.district,
       matchProfile.state
     )
 

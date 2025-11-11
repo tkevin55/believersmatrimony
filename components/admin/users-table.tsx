@@ -44,7 +44,7 @@ interface User {
   lastActive: string
   profile?: {
     gender: string
-    city: string | null
+    district: string | null
     state: string | null
   }
 }

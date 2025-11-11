@@ -41,7 +41,7 @@ interface Report {
     status: string
     profile?: {
       gender: string
-      city: string | null
+      district: string | null
       state: string | null
     }
   }
@@ -204,7 +204,7 @@ export function ReportReview({ report, onResolved }: ReportReviewProps) {
                   <div className="text-sm text-muted-foreground">{report.reported.email}</div>
                   {report.reported.profile && (
                     <div className="text-xs text-muted-foreground mt-1">
-                      {report.reported.profile.gender} • {report.reported.profile.city}, {report.reported.profile.state}
+                      {report.reported.profile.gender} • {report.reported.profile.district}, {report.reported.profile.state}
                     </div>
                   )}
                 </div>

@@ -16,7 +16,7 @@ interface MatchUser {
   image: string | null
   profile: {
     denomination: string
-    city: string
+    district: string
     state: string
     occupation: string
     aboutMe: string
@@ -67,7 +67,7 @@ export default function MatchesTab() {
     const searchLower = searchQuery.toLowerCase()
     return (
       user.name?.toLowerCase().includes(searchLower) ||
-      user.profile?.city?.toLowerCase().includes(searchLower) ||
+      user.profile?.district?.toLowerCase().includes(searchLower) ||
       user.profile?.occupation?.toLowerCase().includes(searchLower)
     )
   })
@@ -132,7 +132,7 @@ export default function MatchesTab() {
             {filteredMatches.map((match) => {
               const user = getMatchedUser(match, 'current-user-id')
               const primaryPhoto = user.photos?.find((p) => p.isPrimary)
-              const location = [user.profile?.city, user.profile?.state]
+              const location = [user.profile?.district, user.profile?.state]
                 .filter(Boolean)
                 .join(', ')
 
