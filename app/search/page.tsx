@@ -205,7 +205,6 @@ export default function SearchPage() {
         toast({
           title: 'Error',
           description: 'Failed to search profiles. Please try again.',
-          variant: 'destructive',
         })
       } finally {
         setIsLoading(false)

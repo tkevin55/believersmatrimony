@@ -91,7 +91,6 @@ export default function RegisterPage() {
         toast({
           title: 'Error',
           description: data.error || 'Registration failed',
-          variant: 'destructive',
         })
       } else {
         toast({
@@ -113,7 +112,6 @@ export default function RegisterPage() {
           toast({
             title: 'Error',
             description: 'Registration successful but login failed. Please sign in manually.',
-            variant: 'destructive',
           })
           router.push('/auth/login')
         }
@@ -122,7 +120,6 @@ export default function RegisterPage() {
       toast({
         title: 'Error',
         description: 'An error occurred during registration',
-        variant: 'destructive',
       })
     } finally {
       setIsLoading(false)

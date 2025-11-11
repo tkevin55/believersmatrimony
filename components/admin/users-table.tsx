@@ -84,8 +84,7 @@ export function UsersTable({ users, onRefresh }: UsersTableProps) {
     } catch (error) {
       toast({
         title: 'Error',
-        description: 'Failed to update user',
-        variant: 'destructive'
+        description: 'Failed to update user'
       })
     } finally {
       setLoading(false)

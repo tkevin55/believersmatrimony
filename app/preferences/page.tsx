@@ -89,7 +89,6 @@ export default function PreferencesPage() {
       toast({
         title: 'Error',
         description: 'Failed to load preferences',
-        variant: 'destructive',
       })
     } finally {
       setIsLoading(false)
@@ -130,7 +129,6 @@ export default function PreferencesPage() {
       toast({
         title: 'Error',
         description: error instanceof Error ? error.message : 'Failed to save preferences',
-        variant: 'destructive',
       })
     } finally {
       setIsSaving(false)

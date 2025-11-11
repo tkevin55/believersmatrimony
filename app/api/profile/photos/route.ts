@@ -115,7 +115,7 @@ export async function PUT(request: NextRequest) {
       const updates = z.array(photoReorderSchema).parse(body)
 
       // Verify all photos belong to the user
-      const photoIds = updates.map(u => u.photoId)
+      const photoIds = updates.map((u: any) => u.photoId)
       const photos = await prisma.photo.findMany({
         where: {
           id: { in: photoIds },

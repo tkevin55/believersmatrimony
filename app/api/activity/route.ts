@@ -92,7 +92,7 @@ export async function GET(request: NextRequest) {
     })
 
     // Format activities
-    const formattedActivities = activities.map((activity) => ({
+    const formattedActivities = activities.map((activity: any) => ({
       id: activity.id,
       type: activity.type,
       user: {

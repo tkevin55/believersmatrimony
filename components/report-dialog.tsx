@@ -56,7 +56,6 @@ export function ReportDialog({
       toast({
         title: 'Error',
         description: 'Please select a reason for reporting',
-        variant: 'destructive'
       })
       return
     }
@@ -65,7 +64,6 @@ export function ReportDialog({
       toast({
         title: 'Error',
         description: 'Please provide a description (at least 10 characters)',
-        variant: 'destructive'
       })
       return
     }
@@ -95,7 +93,6 @@ export function ReportDialog({
         toast({
           title: 'Error',
           description: data.error || 'Failed to submit report',
-          variant: 'destructive'
         })
       }
     } catch (error) {
@@ -103,7 +100,6 @@ export function ReportDialog({
       toast({
         title: 'Error',
         description: 'An unexpected error occurred',
-        variant: 'destructive'
       })
     } finally {
       setIsLoading(false)

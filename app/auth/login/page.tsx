@@ -44,7 +44,6 @@ export default function LoginPage() {
           description: result.error === 'CredentialsSignin'
             ? 'Invalid email or password'
             : result.error,
-          variant: 'destructive',
         })
       } else {
         toast({
@@ -58,7 +57,6 @@ export default function LoginPage() {
       toast({
         title: 'Error',
         description: 'An error occurred during login',
-        variant: 'destructive',
       })
     } finally {
       setIsLoading(false)
@@ -73,7 +71,6 @@ export default function LoginPage() {
       toast({
         title: 'Error',
         description: 'An error occurred with Google sign in',
-        variant: 'destructive',
       })
       setIsGoogleLoading(false)
     }

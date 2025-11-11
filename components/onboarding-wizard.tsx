@@ -205,7 +205,6 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
       toast({
         title: 'Too many photos',
         description: 'You can upload a maximum of 8 photos',
-        variant: 'destructive',
       })
       return
     }
@@ -215,7 +214,6 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
         toast({
           title: 'File too large',
           description: `${file.name} is larger than 5MB`,
-          variant: 'destructive',
         })
         return
       }
@@ -317,7 +315,6 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
       toast({
         title: 'Warning',
         description: 'Progress was not saved. Please continue.',
-        variant: 'destructive',
       })
     } finally {
       setIsSavingProgress(false)
@@ -340,7 +337,6 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
             toast({
               title: 'Age Restriction',
               description: 'You must be at least 18 years old to register',
-              variant: 'destructive',
             })
             return
           }
@@ -435,7 +431,6 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
       toast({
         title: 'Validation Error',
         description: 'Please fill in all required fields correctly',
-        variant: 'destructive',
       })
       return
     }
@@ -469,7 +464,6 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
       toast({
         title: 'Validation Error',
         description: 'Please fill in all required fields correctly',
-        variant: 'destructive',
       })
       return
     }
@@ -522,7 +516,6 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
       toast({
         title: 'Error',
         description: error instanceof Error ? error.message : 'An error occurred',
-        variant: 'destructive',
       })
     } finally {
       setIsSubmitting(false)

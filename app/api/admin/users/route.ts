@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAdmin, logAdminAction } from '@/lib/admin'
 import { prisma } from '@/lib/prisma'
-import { UserStatus, UserRole } from '@prisma/client'
 
 export async function GET(req: NextRequest) {
   try {
@@ -11,8 +10,8 @@ export async function GET(req: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '10')
     const search = searchParams.get('search') || ''
-    const status = searchParams.get('status') as UserStatus | null
-    const role = searchParams.get('role') as UserRole | null
+    const status = searchParams.get('status') as string | null
+    const role = searchParams.get('role') as string | null
     const sortBy = searchParams.get('sortBy') || 'createdAt'
     const sortOrder = searchParams.get('sortOrder') || 'desc'
 
@@ -120,13 +119,13 @@ export async function PUT(req: NextRequest) {
 
     switch (action) {
       case 'suspend':
-        updateData = { status: UserStatus.SUSPENDED }
+        updateData = { status: "SUSPENDED" }
         break
       case 'activate':
-        updateData = { status: UserStatus.ACTIVE }
+        updateData = { status: "ACTIVE" }
         break
       case 'delete':
-        updateData = { status: UserStatus.DELETED }
+        updateData = { status: "DELETED" }
         break
       default:
         return NextResponse.json(

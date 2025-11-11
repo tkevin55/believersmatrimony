@@ -73,7 +73,6 @@ export function ProfileCard({
       toast({
         title: 'No Super Likes Left',
         description: 'You\'ve used all your super likes this week. They reset every 7 days.',
-        variant: 'destructive',
       })
       return
     }
@@ -91,7 +90,6 @@ export function ProfileCard({
       toast({
         title: 'Error',
         description: 'Failed to send super like. Please try again.',
-        variant: 'destructive',
       })
     } finally {
       setIsLoadingSuperLikes(false)

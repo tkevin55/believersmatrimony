@@ -95,7 +95,6 @@ export default function ProfileViewPage({ params }: ProfileViewProps) {
       toast({
         title: 'Error',
         description: error.message || 'Failed to load profile',
-        variant: 'destructive',
       })
       router.push('/dashboard')
     } finally {
@@ -136,7 +135,6 @@ export default function ProfileViewPage({ params }: ProfileViewProps) {
       toast({
         title: 'Error',
         description: error.message || 'Failed to send interest',
-        variant: 'destructive'
       })
     } finally {
       setIsSendingInterest(false)
@@ -168,7 +166,6 @@ export default function ProfileViewPage({ params }: ProfileViewProps) {
       toast({
         title: 'Error',
         description: 'Failed to block user',
-        variant: 'destructive'
       })
     }
   }
@@ -200,7 +197,6 @@ export default function ProfileViewPage({ params }: ProfileViewProps) {
       toast({
         title: 'Error',
         description: 'Failed to submit report',
-        variant: 'destructive'
       })
     } finally {
       setIsReporting(false)

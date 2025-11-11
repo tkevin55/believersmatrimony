@@ -133,7 +133,6 @@ export default function EditProfilePage() {
       toast({
         title: 'Error',
         description: 'Failed to load profile data',
-        variant: 'destructive',
       })
     } finally {
       setIsLoading(false)
@@ -165,7 +164,6 @@ export default function EditProfilePage() {
       toast({
         title: 'Error',
         description: error instanceof Error ? error.message : 'Failed to update profile',
-        variant: 'destructive',
       })
     } finally {
       setIsSaving(false)

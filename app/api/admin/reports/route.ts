@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAdmin } from '@/lib/admin'
 import { prisma } from '@/lib/prisma'
-import { ReportStatus } from '@prisma/client'
 
 export async function GET(req: NextRequest) {
   try {
@@ -10,7 +9,7 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url)
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '10')
-    const status = searchParams.get('status') as ReportStatus | null
+    const status = searchParams.get('status') as string | null
 
     const skip = (page - 1) * limit
 

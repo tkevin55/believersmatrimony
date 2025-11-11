@@ -132,8 +132,7 @@ export default function AdminVerificationsPage() {
     } catch (error) {
       toast({
         title: 'Error',
-        description: 'Failed to update verification',
-        variant: 'destructive'
+        description: 'Failed to update verification'
       })
     } finally {
       setActionDialog({ open: false, action: null })

@@ -42,7 +42,6 @@ export default function SendInterestDialog({
       toast({
         title: 'Message too long',
         description: `Please keep your message under ${characterLimit} characters`,
-        variant: 'destructive'
       })
       return
     }
@@ -71,7 +70,6 @@ export default function SendInterestDialog({
         toast({
           title: 'Error',
           description: error.error || 'Failed to send interest',
-          variant: 'destructive'
         })
       }
     } catch (error) {
@@ -79,7 +77,6 @@ export default function SendInterestDialog({
       toast({
         title: 'Error',
         description: 'Failed to send interest. Please try again.',
-        variant: 'destructive'
       })
     } finally {
       setLoading(false)

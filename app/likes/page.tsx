@@ -76,7 +76,6 @@ export default function WhoLikedMePage() {
       toast({
         title: 'Error',
         description: 'Failed to load likes',
-        variant: 'destructive',
       })
     } finally {
       setLoading(false)
@@ -119,7 +118,6 @@ export default function WhoLikedMePage() {
       toast({
         title: 'Error',
         description: error instanceof Error ? error.message : 'Failed to send like',
-        variant: 'destructive',
       })
     } finally {
       setActionLoading(null)

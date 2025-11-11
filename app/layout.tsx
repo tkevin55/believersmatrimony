@@ -1,12 +1,12 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+// import { Inter } from 'next/font/google'
 import './globals.css'
 import AuthProvider from '@/components/auth-provider'
 import { Toaster } from '@/components/ui/toaster'
 import { Header } from '@/components/header'
 import { MobileNav } from '@/components/mobile-nav'
 
-const inter = Inter({ subsets: ['latin'] })
+// const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Believers Matrimony - Christian Matrimonial Platform',
@@ -20,7 +20,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body>
         <AuthProvider>
           <Header />
           <main className="min-h-screen pb-16 md:pb-0">

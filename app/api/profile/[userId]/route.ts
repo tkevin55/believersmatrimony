@@ -151,7 +151,7 @@ export async function GET(
       photos,
       interestStatus,
       isMatched,
-      verifications: verifications.map(v => v.type)
+      verifications: verifications.map((v: any) => v.type)
     })
   } catch (error) {
     console.error('Error fetching profile:', error)

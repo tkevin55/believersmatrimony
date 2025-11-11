@@ -49,8 +49,7 @@ export default function UserDetailsPage() {
       console.error('Error fetching user details:', error)
       toast({
         title: 'Error',
-        description: 'Failed to load user details',
-        variant: 'destructive'
+        description: 'Failed to load user details'
       })
     } finally {
       setLoading(false)
@@ -82,8 +81,7 @@ export default function UserDetailsPage() {
     } catch (error) {
       toast({
         title: 'Error',
-        description: 'Failed to update user',
-        variant: 'destructive'
+        description: 'Failed to update user'
       })
     } finally {
       setActionDialog({ open: false, action: null })

@@ -131,7 +131,6 @@ export default function OnboardingForm({ userId }: OnboardingFormProps) {
         toast({
           title: 'Error',
           description: 'You must be at least 18 years old to register',
-          variant: 'destructive',
         })
         setIsSubmitting(false)
         return
@@ -199,7 +198,6 @@ export default function OnboardingForm({ userId }: OnboardingFormProps) {
       toast({
         title: 'Error',
         description: error instanceof Error ? error.message : 'An error occurred',
-        variant: 'destructive',
       })
     } finally {
       setIsSubmitting(false)

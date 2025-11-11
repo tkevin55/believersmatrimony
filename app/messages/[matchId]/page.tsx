@@ -163,7 +163,6 @@ export default function ChatPage() {
       toast({
         title: 'Error',
         description: error.message || 'Failed to send message. Please try again.',
-        variant: 'destructive',
       })
     } finally {
       setIsSending(false)

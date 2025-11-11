@@ -108,7 +108,7 @@ export async function POST(request: Request) {
 
     // Perform the complete onboarding in a transaction
     // Increased timeout to 30 seconds to handle large photo uploads
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx: any) => {
       console.log('🔄 Transaction started')
 
       // Combine country code with phone number

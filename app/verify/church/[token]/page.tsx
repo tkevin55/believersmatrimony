@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { CheckCircle2, XCircle, Church, User, Mail, Calendar, MapPin, AlertCircle } from 'lucide-react'
-import { useToast } from '@/components/ui/use-toast'
+import { useToast } from '@/hooks/use-toast'
 
 interface VerificationDetails {
   userName: string
@@ -66,7 +66,6 @@ export default function ChurchVerificationPage() {
       toast({
         title: 'Message Required',
         description: 'Please provide a reason for declining the verification',
-        variant: 'destructive',
       })
       return
     }
@@ -98,7 +97,6 @@ export default function ChurchVerificationPage() {
       toast({
         title: 'Error',
         description: error.message || 'Failed to process verification',
-        variant: 'destructive',
       })
     } finally {
       setSubmitting(false)

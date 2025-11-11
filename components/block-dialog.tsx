@@ -61,7 +61,6 @@ export function BlockDialog({
         toast({
           title: 'Error',
           description: data.error || 'Failed to block user',
-          variant: 'destructive'
         })
       }
     } catch (error) {
@@ -69,7 +68,6 @@ export function BlockDialog({
       toast({
         title: 'Error',
         description: 'An unexpected error occurred',
-        variant: 'destructive'
       })
     } finally {
       setIsLoading(false)

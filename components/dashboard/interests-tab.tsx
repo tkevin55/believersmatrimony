@@ -62,7 +62,6 @@ export default function InterestsTab() {
       toast({
         title: 'Error',
         description: 'Failed to load interests',
-        variant: 'destructive'
       })
     } finally {
       setLoading(false)
@@ -89,7 +88,6 @@ export default function InterestsTab() {
         toast({
           title: 'Error',
           description: error.error || 'Failed to accept interest',
-          variant: 'destructive'
         })
       }
     } catch (error) {
@@ -97,7 +95,6 @@ export default function InterestsTab() {
       toast({
         title: 'Error',
         description: 'Failed to accept interest',
-        variant: 'destructive'
       })
     }
   }
@@ -122,7 +119,6 @@ export default function InterestsTab() {
         toast({
           title: 'Error',
           description: error.error || 'Failed to decline interest',
-          variant: 'destructive'
         })
       }
     } catch (error) {
@@ -130,7 +126,6 @@ export default function InterestsTab() {
       toast({
         title: 'Error',
         description: 'Failed to decline interest',
-        variant: 'destructive'
       })
     }
   }

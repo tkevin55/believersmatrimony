@@ -39,7 +39,7 @@ export async function POST(request: Request) {
     }
 
     // Create profile and partner preferences in a transaction
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx: any) => {
       // Create profile
       const newProfile = await tx.profile.create({
         data: {

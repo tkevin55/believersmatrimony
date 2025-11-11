@@ -82,7 +82,6 @@ export function ProfileCardCompact({
       toast({
         title: 'Error',
         description: 'Failed to like profile. Please try again.',
-        variant: 'destructive',
       })
     } finally {
       setIsLiking(false)

@@ -3,7 +3,6 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
-import { ReportReason } from '@prisma/client'
 
 // Report user schema
 const reportUserSchema = z.object({
@@ -60,7 +59,7 @@ export async function POST(request: NextRequest) {
       data: {
         reporterId: session.user.id,
         reportedId: validatedData.reportedId,
-        reason: validatedData.reason as ReportReason,
+        reason: validatedData.reason as string,
         description: validatedData.description,
         status: 'PENDING',
       },
@@ -91,7 +90,7 @@ export async function POST(request: NextRequest) {
     })
 
     // Create notifications for all admins
-    const adminNotifications = admins.map(admin => ({
+    const adminNotifications = admins.map((admin: any) => ({
       userId: admin.id,
       type: 'NEW_MESSAGE' as const, // Reusing NEW_MESSAGE type for admin alerts
       title: 'New User Report',

@@ -42,7 +42,6 @@ export function BlockedUsers() {
       toast({
         title: 'Error',
         description: 'Failed to load blocked users',
-        variant: 'destructive'
       })
     } finally {
       setIsLoading(false)
@@ -70,7 +69,6 @@ export function BlockedUsers() {
         toast({
           title: 'Error',
           description: data.error || 'Failed to unblock user',
-          variant: 'destructive'
         })
       }
     } catch (error) {
@@ -78,7 +76,6 @@ export function BlockedUsers() {
       toast({
         title: 'Error',
         description: 'An unexpected error occurred',
-        variant: 'destructive'
       })
     } finally {
       setUnblockingId(null)

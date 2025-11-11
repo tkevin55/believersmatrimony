@@ -50,9 +50,9 @@ export async function GET(request: NextRequest) {
     const matches = await getCuratedMatches(session.user.id, limit, offset)
 
     // Format matches for response
-    const formattedMatches = matches.map((match) => {
+    const formattedMatches = matches.map((match: any) => {
       const age = calculateAge(match.dateOfBirth)
-      const primaryPhoto = match.user.photos.find((p) => p.isPrimary) || match.user.photos[0]
+      const primaryPhoto = match.user.photos.find((p: any) => p.isPrimary) || match.user.photos[0]
 
       return {
         id: match.userId,

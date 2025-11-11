@@ -49,7 +49,7 @@ async function getConversations(userId: string) {
   })
 
   const conversations = await Promise.all(
-    matches.map(async (match) => {
+    matches.map(async (match: any) => {
       const otherUser = match.user1Id === userId ? match.user2 : match.user1
       const lastMessage = match.messages[0] || null
 

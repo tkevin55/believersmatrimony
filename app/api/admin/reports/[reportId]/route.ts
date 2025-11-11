@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAdmin, logAdminAction } from '@/lib/admin'
 import { prisma } from '@/lib/prisma'
-import { ReportStatus, UserStatus } from '@prisma/client'
 
 export async function PUT(
   req: NextRequest,
@@ -34,7 +33,7 @@ export async function PUT(
         updatedReport = await prisma.report.update({
           where: { id: params.reportId },
           data: {
-            status: ReportStatus.RESOLVED,
+            status: "RESOLVED",
             reviewedBy: admin.userId,
             reviewNote: reviewNote || 'Dismissed - No action needed',
             updatedAt: new Date()
@@ -46,7 +45,7 @@ export async function PUT(
         updatedReport = await prisma.report.update({
           where: { id: params.reportId },
           data: {
-            status: ReportStatus.RESOLVED,
+            status: "RESOLVED",
             reviewedBy: admin.userId,
             reviewNote: reviewNote || 'User warned',
             updatedAt: new Date()
@@ -70,14 +69,14 @@ export async function PUT(
         await prisma.user.update({
           where: { id: report.reportedId },
           data: {
-            status: UserStatus.SUSPENDED
+            status: "SUSPENDED"
           }
         })
 
         updatedReport = await prisma.report.update({
           where: { id: params.reportId },
           data: {
-            status: ReportStatus.RESOLVED,
+            status: "RESOLVED",
             reviewedBy: admin.userId,
             reviewNote: reviewNote || 'User suspended',
             updatedAt: new Date()
@@ -92,14 +91,14 @@ export async function PUT(
         await prisma.user.update({
           where: { id: report.reportedId },
           data: {
-            status: UserStatus.DELETED
+            status: "DELETED"
           }
         })
 
         updatedReport = await prisma.report.update({
           where: { id: params.reportId },
           data: {
-            status: ReportStatus.RESOLVED,
+            status: "RESOLVED",
             reviewedBy: admin.userId,
             reviewNote: reviewNote || 'User deleted',
             updatedAt: new Date()

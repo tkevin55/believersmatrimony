@@ -3,7 +3,6 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
-import { VerificationType } from '@prisma/client'
 
 // Verification request schema
 const verificationRequestSchema = z.object({
@@ -27,7 +26,7 @@ export async function POST(request: NextRequest) {
     const existingVerification = await prisma.verification.findFirst({
       where: {
         userId: session.user.id,
-        type: validatedData.type as VerificationType,
+        type: validatedData.type as string,
         status: 'PENDING'
       }
     })
@@ -43,7 +42,7 @@ export async function POST(request: NextRequest) {
     const verification = await prisma.verification.create({
       data: {
         userId: session.user.id,
-        type: validatedData.type as VerificationType,
+        type: validatedData.type as string,
         data: validatedData.data,
         status: 'PENDING',
       }
@@ -65,7 +64,7 @@ export async function POST(request: NextRequest) {
     })
 
     // Create notifications for all admins
-    const adminNotifications = admins.map(admin => ({
+    const adminNotifications = admins.map((admin: any) => ({
       userId: admin.id,
       type: 'NEW_MESSAGE' as const,
       title: 'New Verification Request',

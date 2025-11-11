@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAdmin, logAdminAction } from '@/lib/admin'
 import { prisma } from '@/lib/prisma'
-import { UserStatus } from '@prisma/client'
 
 export async function GET(
   req: NextRequest,
@@ -161,13 +160,13 @@ export async function PUT(
 
       switch (action) {
         case 'suspend':
-          updateData = { status: UserStatus.SUSPENDED }
+          updateData = { status: "SUSPENDED" }
           break
         case 'activate':
-          updateData = { status: UserStatus.ACTIVE }
+          updateData = { status: "ACTIVE" }
           break
         case 'delete':
-          updateData = { status: UserStatus.DELETED }
+          updateData = { status: "DELETED" }
           break
         default:
           return NextResponse.json(

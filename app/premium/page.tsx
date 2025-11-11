@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Check, Crown, Sparkles, Heart, MessageCircle, Eye, Zap } from 'lucide-react'
-import { useToast } from '@/components/ui/use-toast'
+import { useToast } from '@/hooks/use-toast'
 
 interface SubscriptionData {
   tier: string
@@ -78,7 +78,6 @@ export default function PremiumPage() {
       toast({
         title: 'Upgrade Failed',
         description: error.message || 'Something went wrong. Please try again.',
-        variant: 'destructive',
       })
     } finally {
       setLoading(false)

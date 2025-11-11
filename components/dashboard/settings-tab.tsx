@@ -78,7 +78,6 @@ export default function SettingsTab() {
       toast({
         title: 'Error',
         description: 'Failed to update account settings',
-        variant: 'destructive'
       })
     } finally {
       setLoading(false)
@@ -107,7 +106,6 @@ export default function SettingsTab() {
       toast({
         title: 'Error',
         description: 'Failed to update privacy settings',
-        variant: 'destructive'
       })
     } finally {
       setLoading(false)
@@ -141,7 +139,6 @@ export default function SettingsTab() {
       toast({
         title: 'Error',
         description: 'Failed to update notification preferences',
-        variant: 'destructive'
       })
     } finally {
       setLoading(false)

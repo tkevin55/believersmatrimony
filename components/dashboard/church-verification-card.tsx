@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Textarea } from '@/components/ui/textarea'
 import { Church, CheckCircle2, Clock, XCircle, AlertCircle, Send, Trash2 } from 'lucide-react'
-import { useToast } from '@/components/ui/use-toast'
+import { useToast } from '@/hooks/use-toast'
 import {
   Dialog,
   DialogContent,
@@ -72,7 +72,6 @@ export default function ChurchVerificationCard() {
       toast({
         title: 'Missing Information',
         description: 'Please fill in all required fields',
-        variant: 'destructive',
       })
       return
     }
@@ -108,7 +107,6 @@ export default function ChurchVerificationCard() {
       toast({
         title: 'Submission Failed',
         description: error.message || 'Failed to submit verification request',
-        variant: 'destructive',
       })
     } finally {
       setSubmitting(false)
@@ -139,7 +137,6 @@ export default function ChurchVerificationCard() {
       toast({
         title: 'Error',
         description: error.message || 'Failed to cancel verification',
-        variant: 'destructive',
       })
     }
   }

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAdmin, logAdminAction } from '@/lib/admin'
 import { prisma } from '@/lib/prisma'
-import { VerificationStatus } from '@prisma/client'
 
 export async function GET(req: NextRequest) {
   try {
@@ -10,7 +9,7 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url)
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '10')
-    const status = searchParams.get('status') as VerificationStatus | null
+    const status = searchParams.get('status') as string | null
 
     const skip = (page - 1) * limit
 
@@ -84,7 +83,7 @@ export async function PUT(req: NextRequest) {
 
     // Handle batch actions
     if (verificationIds && Array.isArray(verificationIds)) {
-      const status = action === 'approve' ? VerificationStatus.APPROVED : VerificationStatus.REJECTED
+      const status = action === 'approve' ? "APPROVED" : "REJECTED"
 
       await prisma.verification.updateMany({
         where: {
@@ -110,7 +109,7 @@ export async function PUT(req: NextRequest) {
           select: { userId: true }
         })
 
-        const userIds = verifications.map(v => v.userId)
+        const userIds = verifications.map((v: any) => v.userId)
 
         await prisma.photo.updateMany({
           where: {
@@ -151,7 +150,7 @@ export async function PUT(req: NextRequest) {
       )
     }
 
-    const status = action === 'approve' ? VerificationStatus.APPROVED : VerificationStatus.REJECTED
+    const status = action === 'approve' ? "APPROVED" : "REJECTED"
 
     const verification = await prisma.verification.update({
       where: { id: verificationId },

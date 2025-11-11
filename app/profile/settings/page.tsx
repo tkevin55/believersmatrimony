@@ -154,8 +154,7 @@ export default function ProfileSettingsPage() {
       console.error('Error fetching profile:', error)
       toast({
         title: 'Error',
-        description: 'Failed to load profile data',
-        variant: 'destructive',
+        description: 'Failed to load profile data'
       })
     } finally {
       setIsLoading(false)
@@ -184,8 +183,7 @@ export default function ProfileSettingsPage() {
       console.error('Error updating profile:', error)
       toast({
         title: 'Error',
-        description: 'Failed to update profile',
-        variant: 'destructive',
+        description: 'Failed to update profile'
       })
     } finally {
       setIsSaving(false)
@@ -212,8 +210,7 @@ export default function ProfileSettingsPage() {
       console.error('Error deleting account:', error)
       toast({
         title: 'Error',
-        description: 'Failed to delete account',
-        variant: 'destructive',
+        description: 'Failed to delete account'
       })
     } finally {
       setIsDeleting(false)

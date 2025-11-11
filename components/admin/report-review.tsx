@@ -89,8 +89,7 @@ export function ReportReview({ report, onResolved }: ReportReviewProps) {
     } catch (error) {
       toast({
         title: 'Error',
-        description: 'Failed to resolve report',
-        variant: 'destructive'
+        description: 'Failed to resolve report'
       })
     } finally {
       setLoading(false)
