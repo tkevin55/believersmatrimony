@@ -1,41 +1,53 @@
-import { withAuth } from 'next-auth/middleware'
-import { NextResponse } from 'next/server'
+import { withAuth } from "next-auth/middleware";
+import { NextResponse } from "next/server";
 
 export default withAuth(
-  async function middleware(req) {
-    const token = req.nextauth.token
-    const path = req.nextUrl.pathname
+  function middleware(req) {
+    const token = req.nextauth.token;
+    const path = req.nextUrl.pathname;
 
-    // Public paths that don't require onboarding
-    const publicPaths = ['/auth/', '/api/auth/', '/api/register']
-    const isPublicPath = publicPaths.some(p => path.startsWith(p))
-
-    if (isPublicPath) {
-      return NextResponse.next()
+    // Allow access to auth pages always
+    if (path.startsWith('/auth/')) {
+      return NextResponse.next();
     }
 
-    // Check if user has completed onboarding
-    if (token && !token.onboardingCompleted) {
-      // Allow access to onboarding page and its API
-      if (path.startsWith('/onboarding') || path.startsWith('/api/onboarding')) {
-        return NextResponse.next()
+    // If not logged in, redirect to login
+    if (!token) {
+      return NextResponse.redirect(new URL('/auth/login', req.url));
+    }
+
+    // If logged in but onboarding not complete
+    if (token.onboardingCompleted === false) {
+      // Allow access to onboarding page
+      if (path === '/onboarding') {
+        return NextResponse.next();
       }
-
-      // Redirect all other pages to onboarding
-      return NextResponse.redirect(new URL('/onboarding', req.url))
+      // Redirect other pages to onboarding
+      if (path !== '/onboarding') {
+        return NextResponse.redirect(new URL('/onboarding', req.url));
+      }
     }
 
-    return NextResponse.next()
+    // If onboarding complete, allow access
+    return NextResponse.next();
   },
   {
     callbacks: {
       authorized: ({ token }) => !!token,
     },
   }
-)
+);
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|public).*)',
+    /*
+     * Match all request paths except:
+     * - api routes
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public files
+     */
+    '/((?!api|_next/static|_next/image|favicon.ico|.*\\..*|auth/).*)',
   ],
-}
+};

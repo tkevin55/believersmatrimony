@@ -8,7 +8,7 @@ import { ProfileCard } from '@/components/profile-card'
 import { MatchModal } from '@/components/match-modal'
 import { Button } from '@/components/ui/button'
 import { Loader2, Heart, Users, Sparkles } from 'lucide-react'
-import { useToast } from '@/hooks/use-toast'
+import { useToast } from '@/components/ui/use-toast'
 
 interface Profile {
   id: string
@@ -56,6 +56,9 @@ export default function DiscoverPage() {
   const [matchModalOpen, setMatchModalOpen] = useState(false)
   const [currentMatch, setCurrentMatch] = useState<Match | null>(null)
 
+  // Get current profile
+  const currentProfile = profiles[currentIndex]
+
   // Redirect if not authenticated
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -70,7 +73,7 @@ export default function DiscoverPage() {
     }
   }, [status])
 
-  // Keyboard shortcuts
+  // Keyboard shortcuts - FIXED: Check currentProfile exists
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       // Only handle keyboard shortcuts when not typing in an input
@@ -78,6 +81,7 @@ export default function DiscoverPage() {
         return
       }
 
+      // Check if we have a current profile and not loading
       if (!currentProfile || isActionLoading) {
         return
       }
@@ -118,7 +122,6 @@ export default function DiscoverPage() {
         toast({
           title: 'Complete Your Profile',
           description: 'Please complete your profile to start discovering matches.',
-          variant: 'destructive',
         })
         router.push('/onboarding')
         return
@@ -133,7 +136,6 @@ export default function DiscoverPage() {
       toast({
         title: 'Error',
         description: error instanceof Error ? error.message : 'Failed to load profiles. Please try again.',
-        variant: 'destructive',
       })
     } finally {
       setIsLoading(false)
@@ -180,7 +182,6 @@ export default function DiscoverPage() {
       toast({
         title: 'Error',
         description: error instanceof Error ? error.message : 'Failed to like profile. Please try again.',
-        variant: 'destructive',
       })
     } finally {
       setIsActionLoading(false)
@@ -189,7 +190,6 @@ export default function DiscoverPage() {
 
   const handlePass = (userId: string) => {
     // Just move to next profile
-    // In a real app, you might want to track passes to avoid showing the same profile again
     handleNextProfile()
   }
 
@@ -226,8 +226,6 @@ export default function DiscoverPage() {
       </div>
     )
   }
-
-  const currentProfile = profiles[currentIndex]
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 to-secondary/5">
@@ -329,7 +327,7 @@ export default function DiscoverPage() {
                       size="lg"
                       variant="outline"
                       className="w-full"
-                      onClick={() => router.push('/settings/preferences')}
+                      onClick={() => router.push('/preferences')}
                     >
                       Update Preferences
                     </Button>
