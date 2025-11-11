@@ -472,7 +472,7 @@ export default function ProfileViewPage({ params }: ProfileViewProps) {
                   </CardDescription>
                   <div className="flex items-center gap-2 mt-2 text-muted-foreground">
                     <MapPin className="h-4 w-4" />
-                    <span>{profile.city}, {profile.state}, {profile.country}</span>
+                    <span>{profile.district}, {profile.state}, {profile.country}</span>
                   </div>
                 </div>
               </div>

@@ -261,7 +261,7 @@ export default function UserDetailsPage() {
                     <div>
                       <span className="text-muted-foreground">Location:</span>
                       <p className="font-medium">
-                        {user.profile.city}, {user.profile.state}, {user.profile.country}
+                        {user.profile.district}, {user.profile.state}, {user.profile.country}
                       </p>
                     </div>
                     <div>

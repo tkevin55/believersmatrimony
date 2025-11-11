@@ -147,7 +147,7 @@ export function BlockedUsers() {
 
                     {block.blocked.profile && (
                       <p className="text-sm text-muted-foreground">
-                        {block.blocked.profile.gender} • {block.blocked.profile.city}
+                        {block.blocked.profile.gender} • {block.blocked.profile.district}
                         {block.blocked.profile.state && `, ${block.blocked.profile.state}`}
                       </p>
                     )}
