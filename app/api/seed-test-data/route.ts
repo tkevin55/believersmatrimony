@@ -167,7 +167,7 @@ export async function GET(request: Request) {
 
     for (const testAccount of testAccounts) {
       const dob = new Date(new Date().getFullYear() - testAccount.age, 5, 15)
-      const city = 'Bangalore'
+      const district = 'Bangalore'
       const state = 'Karnataka'
 
       try {
@@ -184,7 +184,7 @@ export async function GET(request: Request) {
               create: {
                 dateOfBirth: dob,
                 gender: testAccount.gender,
-                city,
+                district,
                 state,
                 country: 'India',
                 openToRelocate: true,
@@ -256,7 +256,7 @@ export async function GET(request: Request) {
       const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}${i + 100}@example.com`
       const phoneNumber = generatePhoneNumber()
       const dob = generateDOB(22, 40)
-      const city = randomElement(CITIES)
+      const district = randomElement(CITIES)
       const state = randomElement(STATES)
       const denomination = randomElement(denominations)
       const height = gender === Gender.MALE ? randomNumber(165, 185) : randomNumber(152, 170)
@@ -275,7 +275,7 @@ export async function GET(request: Request) {
               create: {
                 dateOfBirth: dob,
                 gender,
-                city,
+                district,
                 state,
                 country: 'India',
                 openToRelocate: Math.random() > 0.5,
@@ -312,7 +312,7 @@ export async function GET(request: Request) {
                 heightMax: gender === Gender.MALE ? 170 : 185,
                 educationLevels: [randomElement(educationLevels), randomElement(educationLevels)],
                 denominations: [denomination, randomElement(denominations)],
-                locations: [city, randomElement(CITIES)],
+                locations: [district, randomElement(CITIES)],
                 incomeRange: randomElement(incomeRanges),
               }
             },
@@ -328,7 +328,7 @@ export async function GET(request: Request) {
           }
         })
 
-        results.profiles.push(`${fullName} (${gender}) - ${city}`)
+        results.profiles.push(`${fullName} (${gender}) - ${district}`)
       } catch (error: any) {
         if (error.code === 'P2002') {
           results.profiles.push(`${email} (duplicate - skipped)`)
