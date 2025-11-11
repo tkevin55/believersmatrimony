@@ -22,7 +22,7 @@ const onboardingSchema = z.object({
   aboutMe: z.string().optional(),
 
   // Location
-  city: z.string().min(1, 'City is required'),
+  district: z.string().min(1, 'District is required'),
   state: z.string().min(1, 'State is required'),
   country: z.string().min(1, 'Country is required'),
   openToRelocate: z.boolean(),

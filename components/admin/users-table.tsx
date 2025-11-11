@@ -158,8 +158,8 @@ export function UsersTable({ users, onRefresh }: UsersTableProps) {
                     <Badge variant="outline">{user.role}</Badge>
                   </TableCell>
                   <TableCell>
-                    {user.profile?.city && user.profile?.state
-                      ? `${user.profile.city}, ${user.profile.state}`
+                    {user.profile?.district && user.profile?.state
+                      ? `${user.profile.district}, ${user.profile.state}`
                       : '-'}
                   </TableCell>
                   <TableCell>
