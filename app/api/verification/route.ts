@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     const existingVerification = await prisma.verification.findFirst({
       where: {
         userId: session.user.id,
-        type: validatedData.type as string,
+        type: validatedData.type as any,
         status: 'PENDING'
       }
     })
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     const verification = await prisma.verification.create({
       data: {
         userId: session.user.id,
-        type: validatedData.type as string,
+        type: validatedData.type as any,
         data: validatedData.data,
         status: 'PENDING',
       }
