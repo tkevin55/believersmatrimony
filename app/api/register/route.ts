@@ -6,7 +6,6 @@ import { prisma } from '@/lib/prisma'
 const registerSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
-  name: z.string().min(2, 'Name must be at least 2 characters'),
   phoneNumber: z.string().optional(),
 })
 
@@ -24,7 +23,7 @@ export async function POST(request: Request) {
       )
     }
 
-    const { email, password, name, phoneNumber } = validationResult.data
+    const { email, password, phoneNumber } = validationResult.data
 
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
@@ -55,12 +54,11 @@ export async function POST(request: Request) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12)
 
-    // Create user
+    // Create user (name will be added during onboarding)
     const user = await prisma.user.create({
       data: {
         email,
         password: hashedPassword,
-        name,
         phoneNumber,
         status: 'ACTIVE',
         role: 'USER',
@@ -68,7 +66,6 @@ export async function POST(request: Request) {
       select: {
         id: true,
         email: true,
-        name: true,
       }
     })
 

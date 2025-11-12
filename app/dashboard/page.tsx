@@ -50,6 +50,11 @@ function DashboardContent() {
         <p className="text-muted-foreground">
           Manage your profile, view matches, and connect with believers.
         </p>
+        {session.user?.email && (
+          <p className="text-sm text-muted-foreground mt-1">
+            📧 {session.user.email}
+          </p>
+        )}
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">

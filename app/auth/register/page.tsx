@@ -13,7 +13,6 @@ import { toast } from '@/hooks/use-toast'
 import { Loader2 } from 'lucide-react'
 
 const registerSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters'),
   email: z.string().email('Invalid email address'),
   phoneNumber: z.string().optional(),
   password: z.string().min(8, 'Password must be at least 8 characters'),
@@ -30,7 +29,6 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [formData, setFormData] = useState<RegisterFormData>({
-    name: '',
     email: '',
     phoneNumber: '',
     password: '',
@@ -78,7 +76,6 @@ export default function RegisterPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: formData.name,
           email: formData.email,
           phoneNumber: formData.phoneNumber || undefined,
           password: formData.password,
@@ -134,28 +131,13 @@ export default function RegisterPage() {
             Create an Account
           </CardTitle>
           <CardDescription className="text-center">
-            Join Believers Matrimony to find your life partner in faith
+            Join Believers Matrimony to find your life partner in faith.
+            <br />
+            <span className="text-xs">You'll add your name in the next step.</span>
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
-              <Input
-                id="name"
-                name="name"
-                type="text"
-                placeholder="John Doe"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                disabled={isLoading}
-              />
-              {errors.name && (
-                <p className="text-sm text-destructive">{errors.name}</p>
-              )}
-            </div>
-
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
