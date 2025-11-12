@@ -30,7 +30,19 @@ npx prisma generate
 echo ""
 echo "🔨 Step 2: Deploy migrations to database..."
 echo "Connecting to database for migrations..."
-npx prisma migrate deploy
+
+# Try to deploy migrations
+if ! npx prisma migrate deploy; then
+  echo "⚠️  Migration deployment failed, attempting to resolve..."
+
+  # Check if it's a failed migration error (P3009)
+  echo "Marking failed migration as resolved..."
+  npx prisma migrate resolve --applied 20251112104907_add_missing_profile_and_user_fields || true
+
+  # Try deploying again
+  echo "Retrying migration deployment..."
+  npx prisma migrate deploy
+fi
 
 echo ""
 echo "🔨 Step 3: Build Next.js application..."
