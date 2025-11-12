@@ -276,6 +276,8 @@ model Profile {
   isBaptized            Boolean      @default(false)
   churchInvolvementLevel ChurchInvolvement?
   faithTestimony        String?      @db.Text
+  favoriteVerseReference String?
+  favoriteVerseWhy      String?      @db.Text
 
   // Physical Attributes
   height          Int? // in cm
