@@ -165,7 +165,7 @@ export async function POST(request: Request) {
         favoriteVerseReference: formData.favoriteVerseReference || null,
         favoriteVerseWhy: formData.favoriteVerseWhy || null,
         height: heightValue,
-        motherTongue: formData.motherTongue || null,
+        // motherTongue: formData.motherTongue || null, // Temporarily disabled - enum not in database
         languages: formData.languages || [],
         educationLevel: formData.educationLevel || null,
         fieldOfStudy: formData.fieldOfStudy || null,

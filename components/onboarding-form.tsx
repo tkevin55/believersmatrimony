@@ -22,9 +22,9 @@ const onboardingSchema = z.object({
   aboutMe: z.string().optional(),
 
   // Location
-  district: z.string().min(1, 'District is required'),
-  state: z.string().min(1, 'State is required'),
   country: z.string().min(1, 'Country is required'),
+  state: z.string().optional(),
+  district: z.string().optional(),
   openToRelocate: z.boolean(),
 
   // Faith
@@ -250,30 +250,121 @@ export default function OnboardingForm({ userId }: OnboardingFormProps) {
         )
 
       case 2:
+        const selectedCountry = watch('country')
+        const isIndia = selectedCountry === 'India'
+
         return (
           <div className="space-y-4">
             <h2 className="text-xl font-semibold">Location</h2>
             <div className="space-y-2">
-              <Label htmlFor="district">District</Label>
-              <Input id="district" {...register('district')} placeholder="Mumbai" />
-              {errors.district && (
-                <p className="text-sm text-destructive">{errors.district.message}</p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="state">State/Province</Label>
-              <Input id="state" {...register('state')} placeholder="New York" />
-              {errors.state && (
-                <p className="text-sm text-destructive">{errors.state.message}</p>
-              )}
-            </div>
-            <div className="space-y-2">
               <Label htmlFor="country">Country</Label>
-              <Input id="country" {...register('country')} placeholder="United States" />
+              <Select
+                value={watch('country')}
+                onValueChange={(value) => {
+                  setValue('country', value)
+                  // Clear state and district when country changes
+                  if (value !== 'India') {
+                    setValue('state', '')
+                    setValue('district', '')
+                  }
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select country" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="India">India</SelectItem>
+                  <SelectItem value="United States">United States</SelectItem>
+                  <SelectItem value="United Kingdom">United Kingdom</SelectItem>
+                  <SelectItem value="Canada">Canada</SelectItem>
+                  <SelectItem value="Australia">Australia</SelectItem>
+                  <SelectItem value="New Zealand">New Zealand</SelectItem>
+                  <SelectItem value="Singapore">Singapore</SelectItem>
+                  <SelectItem value="Malaysia">Malaysia</SelectItem>
+                  <SelectItem value="United Arab Emirates">United Arab Emirates</SelectItem>
+                  <SelectItem value="Saudi Arabia">Saudi Arabia</SelectItem>
+                  <SelectItem value="Qatar">Qatar</SelectItem>
+                  <SelectItem value="Kuwait">Kuwait</SelectItem>
+                  <SelectItem value="Bahrain">Bahrain</SelectItem>
+                  <SelectItem value="Oman">Oman</SelectItem>
+                  <SelectItem value="Germany">Germany</SelectItem>
+                  <SelectItem value="France">France</SelectItem>
+                  <SelectItem value="Netherlands">Netherlands</SelectItem>
+                  <SelectItem value="Switzerland">Switzerland</SelectItem>
+                  <SelectItem value="Italy">Italy</SelectItem>
+                  <SelectItem value="Spain">Spain</SelectItem>
+                  <SelectItem value="Ireland">Ireland</SelectItem>
+                  <SelectItem value="South Africa">South Africa</SelectItem>
+                  <SelectItem value="Kenya">Kenya</SelectItem>
+                  <SelectItem value="Nigeria">Nigeria</SelectItem>
+                  <SelectItem value="Ghana">Ghana</SelectItem>
+                  <SelectItem value="Other">Other</SelectItem>
+                </SelectContent>
+              </Select>
               {errors.country && (
                 <p className="text-sm text-destructive">{errors.country.message}</p>
               )}
             </div>
+            {isIndia && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="state">State</Label>
+                  <Select
+                    value={watch('state') || ''}
+                    onValueChange={(value) => setValue('state', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select state" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Andhra Pradesh">Andhra Pradesh</SelectItem>
+                      <SelectItem value="Arunachal Pradesh">Arunachal Pradesh</SelectItem>
+                      <SelectItem value="Assam">Assam</SelectItem>
+                      <SelectItem value="Bihar">Bihar</SelectItem>
+                      <SelectItem value="Chhattisgarh">Chhattisgarh</SelectItem>
+                      <SelectItem value="Goa">Goa</SelectItem>
+                      <SelectItem value="Gujarat">Gujarat</SelectItem>
+                      <SelectItem value="Haryana">Haryana</SelectItem>
+                      <SelectItem value="Himachal Pradesh">Himachal Pradesh</SelectItem>
+                      <SelectItem value="Jharkhand">Jharkhand</SelectItem>
+                      <SelectItem value="Karnataka">Karnataka</SelectItem>
+                      <SelectItem value="Kerala">Kerala</SelectItem>
+                      <SelectItem value="Madhya Pradesh">Madhya Pradesh</SelectItem>
+                      <SelectItem value="Maharashtra">Maharashtra</SelectItem>
+                      <SelectItem value="Manipur">Manipur</SelectItem>
+                      <SelectItem value="Meghalaya">Meghalaya</SelectItem>
+                      <SelectItem value="Mizoram">Mizoram</SelectItem>
+                      <SelectItem value="Nagaland">Nagaland</SelectItem>
+                      <SelectItem value="Odisha">Odisha</SelectItem>
+                      <SelectItem value="Punjab">Punjab</SelectItem>
+                      <SelectItem value="Rajasthan">Rajasthan</SelectItem>
+                      <SelectItem value="Sikkim">Sikkim</SelectItem>
+                      <SelectItem value="Tamil Nadu">Tamil Nadu</SelectItem>
+                      <SelectItem value="Telangana">Telangana</SelectItem>
+                      <SelectItem value="Tripura">Tripura</SelectItem>
+                      <SelectItem value="Uttar Pradesh">Uttar Pradesh</SelectItem>
+                      <SelectItem value="Uttarakhand">Uttarakhand</SelectItem>
+                      <SelectItem value="West Bengal">West Bengal</SelectItem>
+                      <SelectItem value="Delhi">Delhi</SelectItem>
+                      <SelectItem value="Puducherry">Puducherry</SelectItem>
+                      <SelectItem value="Chandigarh">Chandigarh</SelectItem>
+                      <SelectItem value="Jammu and Kashmir">Jammu and Kashmir</SelectItem>
+                      <SelectItem value="Ladakh">Ladakh</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {errors.state && (
+                    <p className="text-sm text-destructive">{errors.state.message}</p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="district">District/City</Label>
+                  <Input id="district" {...register('district')} placeholder="Mumbai" />
+                  {errors.district && (
+                    <p className="text-sm text-destructive">{errors.district.message}</p>
+                  )}
+                </div>
+              </>
+            )}
             <div className="flex items-center justify-between">
               <Label htmlFor="openToRelocate">Open to relocate?</Label>
               <Switch

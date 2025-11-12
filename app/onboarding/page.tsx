@@ -16,12 +16,15 @@ export default async function OnboardingPage() {
     where: { id: session.user.id },
     select: {
       onboardingCompleted: true,
-      name: true
+      name: true,
+      profile: {
+        select: { id: true }
+      }
     }
   })
 
-  // If onboarding is completed, redirect to discover page
-  if (user?.onboardingCompleted) {
+  // If onboarding is completed AND profile exists, redirect to discover page
+  if (user?.onboardingCompleted && user?.profile) {
     redirect('/discover')
   }
 

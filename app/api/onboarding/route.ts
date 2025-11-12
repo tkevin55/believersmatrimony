@@ -93,6 +93,12 @@ export async function POST(request: Request) {
         }
       })
 
+      // Mark onboarding as completed
+      await tx.user.update({
+        where: { id: userId },
+        data: { onboardingCompleted: true }
+      })
+
       return { profile: newProfile, preferences }
     })
 

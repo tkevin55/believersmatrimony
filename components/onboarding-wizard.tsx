@@ -1298,6 +1298,7 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
                   id="fieldOfStudy"
                   {...register('fieldOfStudy')}
                   placeholder="e.g., Computer Science, Medicine, Business"
+                  autoComplete="off"
                   className={cn(errors.fieldOfStudy && 'border-red-500')}
                 />
                 {errors.fieldOfStudy && (
@@ -1384,6 +1385,7 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
                   id="motherOccupation"
                   {...register('motherOccupation')}
                   placeholder="Enter mother's occupation"
+                  autoComplete="off"
                   className={cn(errors.motherOccupation && 'border-red-500')}
                 />
                 {errors.motherOccupation && (
