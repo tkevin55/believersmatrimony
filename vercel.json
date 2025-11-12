@@ -1,6 +1,5 @@
 {
-  "buildCommand": "bash scripts/build-with-migrations.sh",
-  "installCommand": "npm install",
   "framework": "nextjs",
-  "regions": ["iad1"]
+  "buildCommand": "npm run build",
+  "installCommand": "npm install"
 }
