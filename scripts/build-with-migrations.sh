@@ -32,17 +32,29 @@ echo "🔨 Step 2: Deploy migrations to database..."
 echo "Connecting to database for migrations..."
 
 # Try to deploy migrations
-if ! npx prisma migrate deploy; then
-  echo "⚠️  Migration deployment failed, attempting to resolve..."
+if ! npx prisma migrate deploy 2>&1 | tee /tmp/migrate-output.log; then
+  echo "⚠️  Migration deployment failed, checking error type..."
 
   # Check if it's a failed migration error (P3009)
-  echo "Marking failed migration as resolved..."
-  npx prisma migrate resolve --applied 20251112104907_add_missing_profile_and_user_fields || true
-
-  # Try deploying again
-  echo "Retrying migration deployment..."
-  npx prisma migrate deploy
+  if grep -q "P3009" /tmp/migrate-output.log; then
+    echo "Detected failed migration in database. This requires manual intervention."
+    echo ""
+    echo "❌ DEPLOYMENT FAILED: A previous migration failed and must be fixed manually."
+    echo ""
+    echo "To fix this:"
+    echo "1. Check which migration failed"
+    echo "2. Manually apply the migration SQL to the database"
+    echo "3. Mark it as resolved: npx prisma migrate resolve --applied <migration-name>"
+    echo "4. Then redeploy"
+    echo ""
+    exit 1
+  else
+    echo "Migration failed for unknown reason. Check logs above."
+    exit 1
+  fi
 fi
+
+echo "✅ All migrations applied successfully"
 
 echo ""
 echo "🔨 Step 3: Build Next.js application..."
