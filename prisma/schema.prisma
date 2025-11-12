@@ -210,6 +210,8 @@ model User {
   onboardingCompleted Boolean @default(false)
   status        UserStatus @default(ACTIVE)
   role          UserRole   @default(USER)
+  resetToken    String?    @unique
+  resetTokenExpiry DateTime?
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
   lastActive    DateTime   @default(now())
@@ -286,6 +288,8 @@ model Profile {
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // Personal Info
+  firstName   String?
+  lastName    String?
   dateOfBirth DateTime
   gender      Gender
   aboutMe     String?  @db.Text
@@ -297,6 +301,7 @@ model Profile {
   isBaptized            Boolean      @default(false)
   churchInvolvementLevel ChurchInvolvement?
   faithTestimony        String?      @db.Text
+  favoriteVerse         String?
   favoriteVerseReference String?
   favoriteVerseWhy      String?      @db.Text
 
@@ -342,6 +347,7 @@ model Profile {
   // Profile Stats
   profileViews    Int     @default(0)
   completionPercentage Int @default(0)
+  isComplete      Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
