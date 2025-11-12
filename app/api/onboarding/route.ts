@@ -49,7 +49,7 @@ export async function POST(request: Request) {
           aboutMe: profile.aboutMe,
           denomination: profile.denomination,
           churchName: profile.churchName,
-          yearsAsBelievertrue: profile.yearsAsBelievertrue || 0,
+          yearsAsBeliever: profile.yearsAsBeliever || 0,
           isBaptized: profile.isBaptized,
           height: profile.height,
           educationLevel: profile.educationLevel,

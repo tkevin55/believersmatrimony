@@ -154,7 +154,7 @@ export default function OnboardingForm({ userId }: OnboardingFormProps) {
             openToRelocate: data.openToRelocate,
             denomination: data.denomination,
             churchName: data.churchName,
-            yearsAsBelievertrue: data.yearsAsBeliever,
+            yearsAsBeliever: data.yearsAsBeliever,
             isBaptized: data.isBaptized,
             height: data.height,
             bodyType: data.bodyType,
