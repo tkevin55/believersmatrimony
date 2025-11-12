@@ -9,7 +9,7 @@ export async function GET() {
     })
 
     // Group prompts by category
-    const groupedPrompts = prompts.reduce((acc: any, prompt) => {
+    const groupedPrompts = prompts.reduce((acc: any, prompt: any) => {
       if (!acc[prompt.category]) {
         acc[prompt.category] = []
       }

@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
     ])
 
     // Group by userId
-    const interestsByUser = userInterests.reduce((acc: any, ui) => {
+    const interestsByUser = userInterests.reduce((acc: any, ui: any) => {
       if (!acc[ui.userId]) acc[ui.userId] = []
       if (acc[ui.userId].length < 3) { // Max 3 interests per card
         acc[ui.userId].push(ui.interestOption)
@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
       return acc
     }, {})
 
-    const promptsByUser = promptAnswers.reduce((acc: any, pa) => {
+    const promptsByUser = promptAnswers.reduce((acc: any, pa: any) => {
       if (!acc[pa.userId]) acc[pa.userId] = []
       if (acc[pa.userId].length < 2) { // Max 2 prompts per card
         acc[pa.userId].push({

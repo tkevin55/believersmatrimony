@@ -39,15 +39,15 @@ export async function GET() {
       status: 'ok',
       timestamp: new Date().toISOString(),
       database: {
-        profileColumns: profileColumns.map(c => c.column_name),
-        userColumns: userColumns.map(c => c.column_name),
+        profileColumns: profileColumns.map((c: any) => c.column_name),
+        userColumns: userColumns.map((c: any) => c.column_name),
         requiredProfileColumns: ['firstName', 'lastName', 'favoriteVerse', 'isComplete'],
         requiredUserColumns: ['resetToken', 'resetTokenExpiry'],
         missingProfileColumns: ['firstName', 'lastName', 'favoriteVerse', 'isComplete'].filter(
-          col => !profileColumns.some(c => c.column_name === col)
+          (col: string) => !profileColumns.some((c: any) => c.column_name === col)
         ),
         missingUserColumns: ['resetToken', 'resetTokenExpiry'].filter(
-          col => !userColumns.some(c => c.column_name === col)
+          (col: string) => !userColumns.some((c: any) => c.column_name === col)
         ),
       },
       migration: migrations[0] || null,

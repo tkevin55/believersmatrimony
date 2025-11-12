@@ -1,8 +1,16 @@
 import { NextResponse } from 'next/server'
-import { PrismaClient, Gender, Denomination, EducationLevel, FamilyType, IncomeRange, ChurchInvolvement } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
+
+// Enum types
+type Gender = 'MALE' | 'FEMALE'
+type Denomination = 'BAPTIST' | 'METHODIST' | 'PRESBYTERIAN' | 'PENTECOSTAL' | 'NON_DENOMINATIONAL' | 'LUTHERAN' | 'ANGLICAN' | 'EPISCOPAL' | 'REFORMED' | 'EVANGELICAL' | 'CSI' | 'CNI' | 'AG' | 'IPC' | 'MAR_THOMA' | 'SEVENTH_DAY_ADVENTIST' | 'BRETHREN' | 'OTHER'
+type EducationLevel = 'HIGH_SCHOOL' | 'ASSOCIATE' | 'BACHELOR' | 'MASTER' | 'DOCTORATE' | 'PROFESSIONAL'
+type FamilyType = 'NUCLEAR' | 'JOINT' | 'SINGLE_PARENT'
+type IncomeRange = 'BELOW_3_LAKHS' | 'THREE_TO_FIVE_LAKHS' | 'FIVE_TO_SEVEN_LAKHS' | 'SEVEN_TO_TEN_LAKHS' | 'TEN_TO_FIFTEEN_LAKHS' | 'FIFTEEN_TO_TWENTY_LAKHS' | 'TWENTY_TO_THIRTY_LAKHS' | 'ABOVE_THIRTY_LAKHS' | 'PREFER_NOT_TO_SAY'
+type ChurchInvolvement = 'REGULAR_ATTENDER' | 'VOLUNTEER' | 'MINISTRY_LEADER' | 'ELDER_DEACON' | 'OCCASIONAL_ATTENDER'
 
 // Configuration
 const CITIES = [

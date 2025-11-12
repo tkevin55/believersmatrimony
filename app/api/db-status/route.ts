@@ -35,16 +35,16 @@ export async function GET() {
     `
 
     const requiredTables = ['UserInterest', 'InterestOption', 'Prompt', 'PromptAnswer', 'PaymentLog']
-    const existingTableNames = tables.map(t => t.table_name)
-    const missingTables = requiredTables.filter(t => !existingTableNames.includes(t))
+    const existingTableNames = tables.map((t: any) => t.table_name)
+    const missingTables = requiredTables.filter((t: string) => !existingTableNames.includes(t))
 
     const requiredProfileCols = ['firstName', 'lastName', 'favoriteVerse', 'isComplete']
-    const existingProfileCols = profileColumns.map(c => c.column_name)
-    const missingProfileCols = requiredProfileCols.filter(c => !existingProfileCols.includes(c))
+    const existingProfileCols = profileColumns.map((c: any) => c.column_name)
+    const missingProfileCols = requiredProfileCols.filter((c: string) => !existingProfileCols.includes(c))
 
     const requiredUserCols = ['resetToken', 'resetTokenExpiry']
-    const existingUserCols = userColumns.map(c => c.column_name)
-    const missingUserCols = requiredUserCols.filter(c => !existingUserCols.includes(c))
+    const existingUserCols = userColumns.map((c: any) => c.column_name)
+    const missingUserCols = requiredUserCols.filter((c: string) => !existingUserCols.includes(c))
 
     const allGood = missingTables.length === 0 && missingProfileCols.length === 0 && missingUserCols.length === 0
 

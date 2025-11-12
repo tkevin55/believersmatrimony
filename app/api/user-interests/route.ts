@@ -20,7 +20,7 @@ export async function GET() {
     })
 
     return NextResponse.json({
-      interests: userInterests.map(ui => ui.interestOption)
+      interests: userInterests.map((ui: any) => ui.interestOption)
     })
   } catch (error) {
     console.error('Error fetching user interests:', error)
