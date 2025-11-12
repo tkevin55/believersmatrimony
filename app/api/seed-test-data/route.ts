@@ -115,36 +115,36 @@ export async function GET(request: Request) {
     }
 
     const denominations: Denomination[] = [
-      Denomination.PENTECOSTAL,
-      Denomination.BAPTIST,
-      Denomination.METHODIST,
-      Denomination.PRESBYTERIAN,
-      Denomination.NON_DENOMINATIONAL,
-      Denomination.CSI,
-      Denomination.AG,
-      Denomination.MAR_THOMA
+      'PENTECOSTAL',
+      'BAPTIST',
+      'METHODIST',
+      'PRESBYTERIAN',
+      'NON_DENOMINATIONAL',
+      'CSI',
+      'AG',
+      'MAR_THOMA'
     ]
     const educationLevels: EducationLevel[] = [
-      EducationLevel.BACHELOR,
-      EducationLevel.MASTER,
-      EducationLevel.DOCTORATE,
-      EducationLevel.PROFESSIONAL
+      'BACHELOR',
+      'MASTER',
+      'DOCTORATE',
+      'PROFESSIONAL'
     ]
     const familyTypes: FamilyType[] = [
-      FamilyType.NUCLEAR,
-      FamilyType.JOINT
+      'NUCLEAR',
+      'JOINT'
     ]
     const incomeRanges: IncomeRange[] = [
-      IncomeRange.THREE_TO_FIVE_LAKHS,
-      IncomeRange.FIVE_TO_SEVEN_LAKHS,
-      IncomeRange.SEVEN_TO_TEN_LAKHS,
-      IncomeRange.TEN_TO_FIFTEEN_LAKHS,
-      IncomeRange.FIFTEEN_TO_TWENTY_LAKHS
+      'THREE_TO_FIVE_LAKHS',
+      'FIVE_TO_SEVEN_LAKHS',
+      'SEVEN_TO_TEN_LAKHS',
+      'TEN_TO_FIFTEEN_LAKHS',
+      'FIFTEEN_TO_TWENTY_LAKHS'
     ]
     const involvements: ChurchInvolvement[] = [
-      ChurchInvolvement.REGULAR_ATTENDER,
-      ChurchInvolvement.VOLUNTEER,
-      ChurchInvolvement.MINISTRY_LEADER
+      'REGULAR_ATTENDER',
+      'VOLUNTEER',
+      'MINISTRY_LEADER'
     ]
 
     const hashedPassword = await bcrypt.hash('Test@123', 10)
@@ -158,14 +158,14 @@ export async function GET(request: Request) {
       age: number
     }> = [
       {
-        gender: Gender.MALE,
+        gender: 'MALE' as Gender,
         firstName: 'John',
         lastName: 'Test',
         email: 'john.test@demo.com',
         age: 28
       },
       {
-        gender: Gender.FEMALE,
+        gender: 'FEMALE' as Gender,
         firstName: 'Sarah',
         lastName: 'Test',
         email: 'sarah.test@demo.com',
@@ -196,41 +196,41 @@ export async function GET(request: Request) {
                 state,
                 country: 'India',
                 openToRelocate: true,
-                denomination: Denomination.BAPTIST,
+                denomination: 'BAPTIST',
                 churchName: 'Grace Community Church',
                 yearsAsBeliever: 15,
                 isBaptized: true,
-                churchInvolvementLevel: ChurchInvolvement.VOLUNTEER,
+                churchInvolvementLevel: 'VOLUNTEER',
                 faithTestimony: 'I accepted Christ as my Savior at a young age and have been growing in faith ever since. I am actively involved in my local church and seek a partner who shares my commitment to faith.',
-                height: testAccount.gender === Gender.MALE ? 175 : 162,
+                height: testAccount.gender === 'MALE' ? 175 : 162,
                 languages: ['English', 'Hindi', 'Kannada'],
-                educationLevel: EducationLevel.BACHELOR,
-                fieldOfStudy: testAccount.gender === Gender.MALE ? 'Computer Science' : 'Business Administration',
-                occupation: testAccount.gender === Gender.MALE ? 'Software Engineer' : 'Marketing Manager',
-                incomeRange: IncomeRange.TEN_TO_FIFTEEN_LAKHS,
+                educationLevel: 'BACHELOR',
+                fieldOfStudy: testAccount.gender === 'MALE' ? 'Computer Science' : 'Business Administration',
+                occupation: testAccount.gender === 'MALE' ? 'Software Engineer' : 'Marketing Manager',
+                incomeRange: 'TEN_TO_FIFTEEN_LAKHS',
                 parentsOccupation: 'Father: Business, Mother: Teacher',
                 siblingsCount: 1,
                 birthOrder: 'Eldest',
-                familyType: FamilyType.NUCLEAR,
+                familyType: 'NUCLEAR',
                 familyValues: 'Traditional Christian values',
                 drinking: 'Never',
                 smoking: 'Never',
                 dietPreference: 'Non-vegetarian',
                 hobbies: 'Reading, Music, Prayer groups, Traveling',
-                aboutMe: `I am a ${testAccount.age}-year-old ${testAccount.gender === Gender.MALE ? 'man' : 'woman'} seeking a life partner who shares my faith and values. I enjoy serving in church, spending time with family, and pursuing personal growth. I believe in building a Christ-centered home and partnership.`,
+                aboutMe: `I am a ${testAccount.age}-year-old ${testAccount.gender === 'MALE' ? 'man' : 'woman'} seeking a life partner who shares my faith and values. I enjoy serving in church, spending time with family, and pursuing personal growth. I believe in building a Christ-centered home and partnership.`,
                 completionPercentage: 100,
               }
             },
             partnerPreferences: {
               create: {
-                ageMin: testAccount.gender === Gender.MALE ? 24 : 26,
-                ageMax: testAccount.gender === Gender.MALE ? 32 : 35,
-                heightMin: testAccount.gender === Gender.MALE ? 155 : 170,
-                heightMax: testAccount.gender === Gender.MALE ? 170 : 185,
-                educationLevels: [EducationLevel.BACHELOR, EducationLevel.MASTER],
-                denominations: [Denomination.BAPTIST, Denomination.PENTECOSTAL, Denomination.NON_DENOMINATIONAL],
+                ageMin: testAccount.gender === 'MALE' ? 24 : 26,
+                ageMax: testAccount.gender === 'MALE' ? 32 : 35,
+                heightMin: testAccount.gender === 'MALE' ? 155 : 170,
+                heightMax: testAccount.gender === 'MALE' ? 170 : 185,
+                educationLevels: ['BACHELOR', 'MASTER'],
+                denominations: ['BAPTIST', 'PENTECOSTAL', 'NON_DENOMINATIONAL'],
                 locations: ['Bangalore', 'Mumbai', 'Delhi'],
-                incomeRange: IncomeRange.FIVE_TO_SEVEN_LAKHS,
+                incomeRange: 'FIVE_TO_SEVEN_LAKHS',
               }
             },
             photos: {
@@ -257,8 +257,8 @@ export async function GET(request: Request) {
 
     // Create 48 more profiles (24 of each gender)
     for (let i = 0; i < 48; i++) {
-      const gender: Gender = i % 2 === 0 ? Gender.MALE : Gender.FEMALE
-      const firstName = gender === Gender.MALE ? randomElement(FIRST_NAMES_MALE) : randomElement(FIRST_NAMES_FEMALE)
+      const gender: Gender = i % 2 === 0 ? 'MALE' : 'FEMALE'
+      const firstName = gender === 'MALE' ? randomElement(FIRST_NAMES_MALE) : randomElement(FIRST_NAMES_FEMALE)
       const lastName = randomElement(LAST_NAMES)
       const fullName = `${firstName} ${lastName}`
       const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}${i + 100}@example.com`
@@ -267,7 +267,7 @@ export async function GET(request: Request) {
       const district = randomElement(CITIES)
       const state = randomElement(STATES)
       const denomination = randomElement(denominations)
-      const height = gender === Gender.MALE ? randomNumber(165, 185) : randomNumber(152, 170)
+      const height = gender === 'MALE' ? randomNumber(165, 185) : randomNumber(152, 170)
 
       try {
         await prisma.user.create({
@@ -308,7 +308,7 @@ export async function GET(request: Request) {
                 smoking: 'Never',
                 dietPreference: randomElement(['Vegetarian', 'Eggetarian', 'Non-vegetarian']),
                 hobbies: randomElement(HOBBIES),
-                aboutMe: `I am a ${gender === Gender.MALE ? 'man' : 'woman'} of faith seeking a life partner who shares my values and beliefs. I enjoy serving in church and am looking forward to building a Christ-centered home.`,
+                aboutMe: `I am a ${gender === 'MALE' ? 'man' : 'woman'} of faith seeking a life partner who shares my values and beliefs. I enjoy serving in church and am looking forward to building a Christ-centered home.`,
                 completionPercentage: 100,
               }
             },
@@ -316,8 +316,8 @@ export async function GET(request: Request) {
               create: {
                 ageMin: Math.max(22, new Date().getFullYear() - dob.getFullYear() - 5),
                 ageMax: new Date().getFullYear() - dob.getFullYear() + 8,
-                heightMin: gender === Gender.MALE ? 152 : 165,
-                heightMax: gender === Gender.MALE ? 170 : 185,
+                heightMin: gender === 'MALE' ? 152 : 165,
+                heightMax: gender === 'MALE' ? 170 : 185,
                 educationLevels: [randomElement(educationLevels), randomElement(educationLevels)],
                 denominations: [denomination, randomElement(denominations)],
                 locations: [district, randomElement(CITIES)],
