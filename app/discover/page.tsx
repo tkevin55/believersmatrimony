@@ -16,15 +16,15 @@ interface Profile {
   age: number
   gender: string
   location: string
-  denomination: string
+  interestTags?: string[]
+  politicalLeaning?: string | null
+  homeDistrict?: string | null
   educationLevel?: string | null
   occupation?: string | null
   height?: string | null
   aboutMe?: string | null
   primaryPhoto?: string | null
   matchPercentage: number
-  churchName?: string | null
-  yearsAsBeliever?: number | null
 }
 
 interface Match {
@@ -243,7 +243,7 @@ export default function DiscoverPage() {
             </h1>
           </motion.div>
           <p className="text-muted-foreground">
-            Find your perfect partner in faith
+            Find your perfect match with shared interests
           </p>
         </div>
 
