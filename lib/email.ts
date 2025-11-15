@@ -16,7 +16,7 @@ interface EmailParams {
 export async function sendEmail({ to, subject, html, text }: EmailParams) {
   const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY
   const FROM_EMAIL = process.env.FROM_EMAIL || 'noreply@believersmatrimony.com'
-  const FROM_NAME = process.env.FROM_NAME || 'Believers Matrimony'
+  const FROM_NAME = process.env.FROM_NAME || 'Kaapi Connect'
 
   if (!SENDGRID_API_KEY) {
     console.warn('SendGrid API key not configured. Email not sent.')
@@ -64,7 +64,7 @@ function getEmailTemplate(content: string): string {
     <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Believers Matrimony</title>
+      <title>Kaapi Connect</title>
       <style>
         body {
           font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -120,14 +120,14 @@ function getEmailTemplate(content: string): string {
     <body>
       <div class="container">
         <div class="header">
-          <h1>Believers Matrimony</h1>
-          <p style="margin: 5px 0 0 0; font-size: 14px;">Where Faith Meets Love</p>
+          <h1>Kaapi Connect</h1>
+          <p style="margin: 5px 0 0 0; font-size: 14px;">Connect Through Shared Interests & Kerala Roots</p>
         </div>
         <div class="content">
           ${content}
         </div>
         <div class="footer">
-          <p>© ${new Date().getFullYear()} Believers Matrimony. All rights reserved.</p>
+          <p>© ${new Date().getFullYear()} Kaapi Connect. All rights reserved.</p>
           <p>You're receiving this email because you have an account with us.</p>
           <p>
             <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://believersmatrimony.com'}/settings/notifications" style="color: #667eea;">Manage Email Preferences</a>
@@ -144,8 +144,8 @@ function getEmailTemplate(content: string): string {
  */
 export async function sendWelcomeEmail(to: string, name: string) {
   const content = `
-    <h2>Welcome to Believers Matrimony, ${name}!</h2>
-    <p>We're thrilled to have you join our community of faith-centered individuals seeking meaningful relationships.</p>
+    <h2>Welcome to Kaapi Connect, ${name}!</h2>
+    <p>We're thrilled to have you join our community of Kerala singles seeking meaningful connections.</p>
     <p>Here's how to get started:</p>
     <ol>
       <li><strong>Complete Your Profile</strong> - Add photos and details about yourself</li>
@@ -160,7 +160,7 @@ export async function sendWelcomeEmail(to: string, name: string) {
 
   return sendEmail({
     to,
-    subject: 'Welcome to Believers Matrimony - Let\'s Get Started!',
+    subject: 'Welcome to Kaapi Connect - Let\'s Get Started!',
     html: getEmailTemplate(content)
   })
 }
@@ -269,7 +269,7 @@ export async function sendVerificationEmail(to: string, name: string, verificati
   const content = `
     <h2>Verify Your Email Address</h2>
     <p>Hi ${name},</p>
-    <p>Thank you for joining Believers Matrimony! Please verify your email address to complete your registration and start connecting with other members.</p>
+    <p>Thank you for joining Kaapi Connect! Please verify your email address to complete your registration and start connecting with other members.</p>
     <a href="${verificationUrl}" class="button">Verify Email Address</a>
     <div class="divider"></div>
     <p>If you didn't create an account with us, you can safely ignore this email.</p>
@@ -290,7 +290,7 @@ export async function sendPasswordResetEmail(to: string, name: string, resetUrl:
   const content = `
     <h2>Reset Your Password</h2>
     <p>Hi ${name},</p>
-    <p>We received a request to reset your password for your Believers Matrimony account.</p>
+    <p>We received a request to reset your password for your Kaapi Connect account.</p>
     <a href="${resetUrl}" class="button">Reset Password</a>
     <div class="divider"></div>
     <p>If you didn't request a password reset, please ignore this email or contact support if you have concerns.</p>

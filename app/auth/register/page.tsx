@@ -134,7 +134,7 @@ export default function RegisterPage() {
             Create an Account
           </CardTitle>
           <CardDescription className="text-center">
-            Join Believers Matrimony to find your life partner in faith
+            Join Kaapi Connect to find your match through shared interests and Kerala roots
           </CardDescription>
         </CardHeader>
         <CardContent>

@@ -255,10 +255,6 @@ export default function UserDetailsPage() {
                       </p>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">Denomination:</span>
-                      <p className="font-medium">{user.profile.denomination}</p>
-                    </div>
-                    <div>
                       <span className="text-muted-foreground">Location:</span>
                       <p className="font-medium">
                         {user.profile.city}, {user.profile.state}, {user.profile.country}
@@ -272,7 +268,59 @@ export default function UserDetailsPage() {
                       <span className="text-muted-foreground">Education:</span>
                       <p className="font-medium">{user.profile.educationLevel || 'Not provided'}</p>
                     </div>
+                    {user.profile.homeDistrict && (
+                      <div>
+                        <span className="text-muted-foreground">Kerala District:</span>
+                        <p className="font-medium">{user.profile.homeDistrict}</p>
+                      </div>
+                    )}
+                    {user.profile.politicalLeaning && (
+                      <div>
+                        <span className="text-muted-foreground">Political Leaning:</span>
+                        <p className="font-medium">{user.profile.politicalLeaning}</p>
+                      </div>
+                    )}
+                    {user.profile.diasporaLocation && (
+                      <div>
+                        <span className="text-muted-foreground">Diaspora Location:</span>
+                        <p className="font-medium">{user.profile.diasporaLocation}</p>
+                      </div>
+                    )}
+                    {user.profile.keralaConnection && (
+                      <div>
+                        <span className="text-muted-foreground">Kerala Connection:</span>
+                        <p className="font-medium">{user.profile.keralaConnection}</p>
+                      </div>
+                    )}
                   </div>
+
+                  {/* Interests Section */}
+                  {user.profile.interestTags && user.profile.interestTags.length > 0 && (
+                    <div className="mt-4 pt-4 border-t">
+                      <span className="text-sm text-muted-foreground mb-2 block">Interests & Hobbies:</span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {user.profile.interestTags.map((tag: string, index: number) => (
+                          <Badge key={index} variant="secondary" className="text-xs">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Social Values Section */}
+                  {user.profile.socialValues && user.profile.socialValues.length > 0 && (
+                    <div className="mt-4 pt-4 border-t">
+                      <span className="text-sm text-muted-foreground mb-2 block">Social Values:</span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {user.profile.socialValues.map((value: string, index: number) => (
+                          <Badge key={index} variant="outline" className="text-xs">
+                            {value}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             )}

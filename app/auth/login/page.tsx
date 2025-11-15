@@ -84,7 +84,7 @@ export default function LoginPage() {
             Welcome Back
           </CardTitle>
           <CardDescription className="text-center">
-            Sign in to your Believers Matrimony account
+            Sign in to your Kaapi Connect account
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

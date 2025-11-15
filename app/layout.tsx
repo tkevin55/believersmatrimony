@@ -9,8 +9,8 @@ import { MobileNav } from '@/components/mobile-nav'
 // const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Believers Matrimony - Christian Matrimonial Platform',
-  description: 'Find your life partner in faith. A matrimonial platform for Protestant Christians.',
+  title: 'Kaapi Connect - Kerala Matrimony',
+  description: 'Find your perfect match with shared interests, values, and Kerala roots. Connect with Malayalam singles worldwide.',
 }
 
 export default function RootLayout({

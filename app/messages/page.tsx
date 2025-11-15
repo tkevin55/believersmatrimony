@@ -7,7 +7,7 @@ import { Card } from '@/components/ui/card'
 import { MessageSquare } from 'lucide-react'
 
 export const metadata = {
-  title: 'Messages | Believers Matrimony',
+  title: 'Messages | Kaapi Connect',
   description: 'Your conversations',
 }
 

@@ -36,7 +36,7 @@ export function Header() {
         <div className="container flex h-16 items-center">
           <Link href="/" className="flex items-center space-x-2">
             <Heart className="h-6 w-6 text-primary fill-primary" />
-            <span className="font-bold text-xl">Believers Matrimony</span>
+            <span className="font-bold text-xl">Kaapi Connect</span>
           </Link>
           <div className="flex flex-1 items-center justify-end space-x-4">
             <Link href="/auth/login">
@@ -59,8 +59,8 @@ export function Header() {
         {/* Logo */}
         <Link href="/discover" className="flex items-center space-x-2">
           <Heart className="h-6 w-6 text-primary fill-primary" />
-          <span className="font-bold text-xl hidden sm:inline-block">Believers Matrimony</span>
-          <span className="font-bold text-xl sm:hidden">BM</span>
+          <span className="font-bold text-xl hidden sm:inline-block">Kaapi Connect</span>
+          <span className="font-bold text-xl sm:hidden">KC</span>
         </Link>
 
         {/* Desktop Navigation */}

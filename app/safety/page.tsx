@@ -16,8 +16,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 export const metadata: Metadata = {
-  title: 'Safety Tips - Believers Matrimony',
-  description: 'Learn how to stay safe while finding your life partner on Believers Matrimony',
+  title: 'Safety Tips - Kaapi Connect',
+  description: 'Learn how to stay safe while finding your life partner on Kaapi Connect',
 }
 
 export default function SafetyPage() {

@@ -14,8 +14,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 export const metadata: Metadata = {
-  title: 'Community Guidelines - Believers Matrimony',
-  description: 'Community guidelines and code of conduct for Believers Matrimony members',
+  title: 'Community Guidelines - Kaapi Connect',
+  description: 'Community guidelines and code of conduct for Kaapi Connect members',
 }
 
 export default function GuidelinesPage() {
@@ -39,8 +39,8 @@ export default function GuidelinesPage() {
             Community Guidelines
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Our guidelines help create a respectful, faith-centered community where members can
-            safely search for their life partner. By using Believers Matrimony, you agree to
+            Our guidelines help create a respectful, inclusive community where members can
+            safely search for their life partner. By using Kaapi Connect, you agree to
             follow these guidelines.
           </p>
         </div>
@@ -59,9 +59,9 @@ export default function GuidelinesPage() {
                 <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
                   <Heart className="h-6 w-6 text-purple-600" />
                 </div>
-                <h3 className="font-semibold mb-2">Faith First</h3>
+                <h3 className="font-semibold mb-2">Authenticity</h3>
                 <p className="text-sm text-gray-600">
-                  A Christ-centered approach to finding your life partner
+                  Being genuine and honest in your search for a life partner
                 </p>
               </div>
               <div className="text-center">
@@ -116,8 +116,8 @@ export default function GuidelinesPage() {
               <li className="flex gap-3">
                 <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
                 <div>
-                  <strong>Be Appropriate:</strong> Keep conversations and content suitable for a faith-based
-                  platform. Maintain godly boundaries.
+                  <strong>Be Appropriate:</strong> Keep conversations and content suitable for a
+                  respectful matchmaking platform. Maintain appropriate boundaries.
                 </div>
               </li>
               <li className="flex gap-3">
@@ -203,7 +203,7 @@ export default function GuidelinesPage() {
                   </li>
                   <li className="flex gap-2">
                     <span className="text-red-600">✕</span>
-                    <span>Hate speech or discrimination based on race, gender, religion, etc.</span>
+                    <span>Hate speech or discrimination based on race, gender, religion, political views, etc.</span>
                   </li>
                   <li className="flex gap-2">
                     <span className="text-red-600">✕</span>
@@ -341,38 +341,38 @@ export default function GuidelinesPage() {
           </CardContent>
         </Card>
 
-        {/* Faith-Centered Expectations */}
+        {/* Community Expectations */}
         <Card className="mb-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Heart className="h-5 w-5 text-purple-600" />
-              Faith-Centered Expectations
+              Community Expectations
             </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-gray-700 mb-4">
-              As a faith-based platform, we ask that all members:
+              We ask that all members:
             </p>
             <ul className="space-y-3 text-gray-700">
               <li className="flex gap-3">
                 <span className="text-purple-600">•</span>
-                <span>Demonstrate Christian values in all interactions</span>
+                <span>Show respect for diverse backgrounds, values, and perspectives</span>
               </li>
               <li className="flex gap-3">
                 <span className="text-purple-600">•</span>
-                <span>Respect different denominational backgrounds and worship styles</span>
+                <span>Appreciate the Kerala cultural heritage that connects our community</span>
               </li>
               <li className="flex gap-3">
                 <span className="text-purple-600">•</span>
-                <span>Keep conversations and intentions honorable and God-honoring</span>
+                <span>Keep conversations and intentions honorable and respectful</span>
               </li>
               <li className="flex gap-3">
                 <span className="text-purple-600">•</span>
-                <span>Approach the search for a life partner with prayer and discernment</span>
+                <span>Approach the search for a life partner with sincerity and thoughtfulness</span>
               </li>
               <li className="flex gap-3">
                 <span className="text-purple-600">•</span>
-                <span>Be understanding that everyone is at different stages in their faith journey</span>
+                <span>Be understanding that everyone is at different stages in their life journey</span>
               </li>
             </ul>
           </CardContent>
@@ -386,11 +386,11 @@ export default function GuidelinesPage() {
           <CardContent>
             <p className="text-gray-700 mb-4">
               We may update these guidelines from time to time to reflect changes in our community
-              or platform features. Continued use of Believers Matrimony constitutes acceptance of
+              or platform features. Continued use of Kaapi Connect constitutes acceptance of
               the current guidelines.
             </p>
             <p className="text-sm text-gray-600">
-              Last updated: November 10, 2025
+              Last updated: November 15, 2025
             </p>
             <div className="mt-6 flex flex-wrap gap-4">
               <Link href="/safety">
@@ -410,10 +410,10 @@ export default function GuidelinesPage() {
         {/* Closing Note */}
         <div className="text-center mt-12 text-gray-600">
           <p className="mb-2">
-            Thank you for helping us maintain a safe, respectful, and faith-centered community.
+            Thank you for helping us maintain a safe, respectful, and inclusive community.
           </p>
           <p className="text-sm italic">
-            "Love one another as I have loved you." - John 13:34
+            "Together we build meaningful connections."
           </p>
         </div>
       </div>
