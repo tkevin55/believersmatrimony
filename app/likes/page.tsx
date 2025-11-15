@@ -320,3 +320,5 @@ export default function WhoLikedMePage() {
     </div>
   )
 }
+
+export const dynamic = 'force-dynamic'

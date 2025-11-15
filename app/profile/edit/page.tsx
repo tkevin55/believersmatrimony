@@ -1027,3 +1027,5 @@ export default function EditProfilePage() {
     </div>
   )
 }
+
+export const dynamic = 'force-dynamic'

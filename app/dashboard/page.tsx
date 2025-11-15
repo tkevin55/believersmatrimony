@@ -1,7 +1,5 @@
 'use client'
 
-export const dynamic = 'force-dynamic'
-
 import { useSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState, Suspense } from 'react'
@@ -113,3 +111,5 @@ export default function DashboardPage() {
     </Suspense>
   )
 }
+
+export const dynamic = 'force-dynamic'

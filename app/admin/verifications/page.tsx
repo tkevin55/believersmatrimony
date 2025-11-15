@@ -417,3 +417,5 @@ export default function AdminVerificationsPage() {
     </div>
   )
 }
+
+export const dynamic = 'force-dynamic'

@@ -201,3 +201,5 @@ export default async function AdminDashboard() {
     </div>
   )
 }
+
+export const dynamic = 'force-dynamic'

@@ -376,3 +376,5 @@ export default function DiscoverPage() {
     </div>
   )
 }
+
+export const dynamic = 'force-dynamic'

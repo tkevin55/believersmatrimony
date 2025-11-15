@@ -810,3 +810,5 @@ export default function ProfileViewPage({ params }: ProfileViewProps) {
     </div>
   )
 }
+
+export const dynamic = 'force-dynamic'

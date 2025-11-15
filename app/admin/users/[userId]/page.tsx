@@ -333,3 +333,5 @@ export default function UserDetailsPage() {
     </div>
   )
 }
+
+export const dynamic = 'force-dynamic'

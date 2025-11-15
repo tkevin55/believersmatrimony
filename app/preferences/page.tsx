@@ -530,3 +530,5 @@ export default function PreferencesPage() {
     </div>
   )
 }
+
+export const dynamic = 'force-dynamic'

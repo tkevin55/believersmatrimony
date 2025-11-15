@@ -466,3 +466,5 @@ export default function PremiumPage() {
     </div>
   )
 }
+
+export const dynamic = 'force-dynamic'

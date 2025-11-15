@@ -1,7 +1,5 @@
 'use client'
 
-export const dynamic = 'force-dynamic'
-
 import { useState, useEffect, useCallback, Suspense } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -359,3 +357,5 @@ export default function SearchPage() {
     </Suspense>
   )
 }
+
+export const dynamic = 'force-dynamic'
