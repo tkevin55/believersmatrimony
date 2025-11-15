@@ -55,7 +55,8 @@ export async function GET(request: NextRequest) {
                 gender: true,
                 city: true,
                 state: true,
-                denomination: true,
+                interestTags: true,
+                homeDistrict: true,
               }
             },
             photos: {
@@ -75,7 +76,8 @@ export async function GET(request: NextRequest) {
                 gender: true,
                 city: true,
                 state: true,
-                denomination: true,
+                interestTags: true,
+                homeDistrict: true,
               }
             },
             photos: {
@@ -91,7 +93,7 @@ export async function GET(request: NextRequest) {
       skip: offset,
     })
 
-    // Format activities
+    // Format activities (Kaapi Connect - secular)
     const formattedActivities = activities.map((activity: any) => ({
       id: activity.id,
       type: activity.type,
@@ -101,7 +103,8 @@ export async function GET(request: NextRequest) {
         photo: activity.user.photos[0]?.url || activity.user.image,
         city: activity.user.profile?.city,
         state: activity.user.profile?.state,
-        denomination: activity.user.profile?.denomination,
+        interestTags: activity.user.profile?.interestTags || [],
+        homeDistrict: activity.user.profile?.homeDistrict,
       },
       targetUser: activity.targetUser ? {
         id: activity.targetUser.id,
@@ -109,7 +112,8 @@ export async function GET(request: NextRequest) {
         photo: activity.targetUser.photos[0]?.url || activity.targetUser.image,
         city: activity.targetUser.profile?.city,
         state: activity.targetUser.profile?.state,
-        denomination: activity.targetUser.profile?.denomination,
+        interestTags: activity.targetUser.profile?.interestTags || [],
+        homeDistrict: activity.targetUser.profile?.homeDistrict,
       } : null,
       metadata: activity.metadata,
       createdAt: activity.createdAt,

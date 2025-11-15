@@ -33,9 +33,17 @@ export async function GET(request: NextRequest) {
     const heightMin = searchParams.get('heightMin') ? parseInt(searchParams.get('heightMin')!) : null
     const heightMax = searchParams.get('heightMax') ? parseInt(searchParams.get('heightMax')!) : null
 
-    // Denomination filter
-    const denominationsParam = searchParams.get('denominations')
-    const denominations = denominationsParam ? denominationsParam.split(',') : []
+    // Interest tags filter (Kaapi Connect)
+    const interestTagsParam = searchParams.get('interestTags')
+    const interestTags = interestTagsParam ? interestTagsParam.split(',') : []
+
+    // Political leaning filter (Kaapi Connect)
+    const politicalLeaningsParam = searchParams.get('politicalLeanings')
+    const politicalLeanings = politicalLeaningsParam ? politicalLeaningsParam.split(',') : []
+
+    // Kerala district filter (Kaapi Connect)
+    const keralaDistrictsParam = searchParams.get('keralaDistricts')
+    const keralaDistricts = keralaDistrictsParam ? keralaDistrictsParam.split(',') : []
 
     // Location filter
     const locationsParam = searchParams.get('locations')
@@ -143,10 +151,24 @@ export async function GET(request: NextRequest) {
       whereClause.height = { ...whereClause.height, lte: heightMax }
     }
 
-    // Denomination filter
-    if (denominations.length > 0) {
-      whereClause.denomination = {
-        in: denominations,
+    // Interest tags filter (Kaapi Connect)
+    if (interestTags.length > 0) {
+      whereClause.interestTags = {
+        hasSome: interestTags,
+      }
+    }
+
+    // Political leaning filter (Kaapi Connect)
+    if (politicalLeanings.length > 0) {
+      whereClause.politicalLeaning = {
+        in: politicalLeanings,
+      }
+    }
+
+    // Kerala district filter (Kaapi Connect)
+    if (keralaDistricts.length > 0) {
+      whereClause.homeDistrict = {
+        in: keralaDistricts,
       }
     }
 
@@ -288,7 +310,9 @@ export async function GET(request: NextRequest) {
           age,
           gender: profile.gender,
           location: [profile.city, profile.state].filter(Boolean).join(', '),
-          denomination: profile.denomination,
+          interestTags: profile.interestTags || [],
+          politicalLeaning: profile.politicalLeaning,
+          homeDistrict: profile.homeDistrict,
           educationLevel: profile.educationLevel,
           occupation: profile.occupation,
           height: profile.height ? formatHeight(profile.height) : null,
