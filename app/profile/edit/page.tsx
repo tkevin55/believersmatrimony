@@ -18,11 +18,22 @@ import { Loader2, Save, ArrowLeft } from 'lucide-react'
 
 const profileSchema = z.object({
   aboutMe: z.string().min(50, 'About me should be at least 50 characters').max(1000).optional(),
-  denomination: z.string().optional(),
-  churchName: z.string().optional(),
-  yearsAsBeliever: z.number().min(0).optional(),
-  isBaptized: z.boolean().optional(),
-  churchInvolvementLevel: z.string().optional(),
+  // Kaapi Connect - Interests & Values
+  interestTags: z.array(z.string()).optional(),
+  politicalLeaning: z.string().optional(),
+  socialValues: z.array(z.string()).optional(),
+  relationshipTimeline: z.string().optional(),
+  wantChildren: z.string().optional(),
+  livingArrangementPreference: z.string().optional(),
+  weekendPreference: z.array(z.string()).optional(),
+  communicationStyle: z.string().optional(),
+  // Kaapi Connect - Kerala Connection
+  homeDistrict: z.string().optional(),
+  diasporaLocation: z.string().optional(),
+  keralaConnection: z.string().optional(),
+  languagePreference: z.string().optional(),
+  relocationFlexibility: z.string().optional(),
+  // Physical & Profile
   height: z.number().min(100).max(250).optional(),
   bodyType: z.string().optional(),
   complexion: z.string().optional(),
@@ -53,6 +64,105 @@ const INDIAN_LANGUAGES = [
   'Gujarati', 'Punjabi', 'Odia', 'Urdu', 'Assamese', 'Konkani'
 ]
 
+// Kaapi Connect - Interest Categories
+const INTEREST_CATEGORIES = [
+  {
+    category: 'Arts & Culture',
+    interests: [
+      { value: 'music', label: 'Music' },
+      { value: 'movies', label: 'Movies' },
+      { value: 'indie_films', label: 'Indie Films' },
+      { value: 'reading', label: 'Reading' },
+      { value: 'painting', label: 'Painting' },
+      { value: 'photography', label: 'Photography' },
+      { value: 'theatre', label: 'Theatre' },
+      { value: 'classical_dance', label: 'Classical Dance' },
+    ]
+  },
+  {
+    category: 'Sports & Fitness',
+    interests: [
+      { value: 'cricket', label: 'Cricket' },
+      { value: 'football', label: 'Football' },
+      { value: 'badminton', label: 'Badminton' },
+      { value: 'gym', label: 'Gym' },
+      { value: 'yoga', label: 'Yoga' },
+      { value: 'running', label: 'Running' },
+      { value: 'trekking', label: 'Trekking' },
+      { value: 'cycling', label: 'Cycling' },
+    ]
+  },
+  {
+    category: 'Food & Travel',
+    interests: [
+      { value: 'cooking', label: 'Cooking' },
+      { value: 'baking', label: 'Baking' },
+      { value: 'street_food', label: 'Street Food' },
+      { value: 'coffee_hunting', label: 'Coffee Hunting' },
+      { value: 'road_trips', label: 'Road Trips' },
+      { value: 'backpacking', label: 'Backpacking' },
+      { value: 'solo_travel', label: 'Solo Travel' },
+    ]
+  },
+  {
+    category: 'Tech & Creativity',
+    interests: [
+      { value: 'coding', label: 'Coding' },
+      { value: 'gaming', label: 'Gaming' },
+      { value: 'startups', label: 'Startups' },
+      { value: 'design', label: 'Design' },
+      { value: 'content_creation', label: 'Content Creation' },
+      { value: 'podcasts', label: 'Podcasts' },
+    ]
+  },
+  {
+    category: 'Social & Lifestyle',
+    interests: [
+      { value: 'pets', label: 'Pets' },
+      { value: 'gardening', label: 'Gardening' },
+      { value: 'home_decor', label: 'Home Decor' },
+      { value: 'standup_comedy', label: 'Stand-up Comedy' },
+      { value: 'board_games', label: 'Board Games' },
+      { value: 'family_time', label: 'Family Time' },
+    ]
+  },
+]
+
+const KERALA_DISTRICTS = [
+  { value: 'THIRUVANANTHAPURAM', label: 'Thiruvananthapuram' },
+  { value: 'KOLLAM', label: 'Kollam' },
+  { value: 'PATHANAMTHITTA', label: 'Pathanamthitta' },
+  { value: 'ALAPPUZHA', label: 'Alappuzha' },
+  { value: 'KOTTAYAM', label: 'Kottayam' },
+  { value: 'IDUKKI', label: 'Idukki' },
+  { value: 'ERNAKULAM', label: 'Ernakulam' },
+  { value: 'THRISSUR', label: 'Thrissur' },
+  { value: 'PALAKKAD', label: 'Palakkad' },
+  { value: 'MALAPPURAM', label: 'Malappuram' },
+  { value: 'KOZHIKODE', label: 'Kozhikode' },
+  { value: 'WAYANAD', label: 'Wayanad' },
+  { value: 'KANNUR', label: 'Kannur' },
+  { value: 'KASARAGOD', label: 'Kasaragod' },
+]
+
+const DIASPORA_LOCATIONS = [
+  { value: 'NONE', label: 'Not in diaspora' },
+  { value: 'GULF_UAE', label: 'UAE' },
+  { value: 'GULF_SAUDI', label: 'Saudi Arabia' },
+  { value: 'GULF_QATAR', label: 'Qatar' },
+  { value: 'GULF_KUWAIT', label: 'Kuwait' },
+  { value: 'GULF_OMAN', label: 'Oman' },
+  { value: 'GULF_BAHRAIN', label: 'Bahrain' },
+  { value: 'USA', label: 'United States' },
+  { value: 'UK', label: 'United Kingdom' },
+  { value: 'CANADA', label: 'Canada' },
+  { value: 'AUSTRALIA', label: 'Australia' },
+  { value: 'SINGAPORE', label: 'Singapore' },
+  { value: 'MALAYSIA', label: 'Malaysia' },
+  { value: 'EUROPE_OTHER', label: 'Europe (Other)' },
+  { value: 'OTHER', label: 'Other' },
+]
+
 export default function EditProfilePage() {
   const router = useRouter()
   const { data: session, status } = useSession()
@@ -71,9 +181,11 @@ export default function EditProfilePage() {
   })
 
   const height = watch('height')
-  const isBaptized = watch('isBaptized')
   const openToRelocate = watch('openToRelocate')
   const selectedLanguages = watch('languages') || []
+  const selectedInterestTags = watch('interestTags') || []
+  const selectedSocialValues = watch('socialValues') || []
+  const selectedWeekendPreference = watch('weekendPreference') || []
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -100,11 +212,22 @@ export default function EditProfilePage() {
         const profile = data.profile
         reset({
           aboutMe: profile.aboutMe || '',
-          denomination: profile.denomination || '',
-          churchName: profile.churchName || '',
-          yearsAsBeliever: profile.yearsAsBeliever || 0,
-          isBaptized: profile.isBaptized || false,
-          churchInvolvementLevel: profile.churchInvolvementLevel || '',
+          // Kaapi Connect - Interests & Values
+          interestTags: profile.interestTags || [],
+          politicalLeaning: profile.politicalLeaning || '',
+          socialValues: profile.socialValues || [],
+          relationshipTimeline: profile.relationshipTimeline || '',
+          wantChildren: profile.wantChildren || '',
+          livingArrangementPreference: profile.livingArrangementPreference || '',
+          weekendPreference: profile.weekendPreference || [],
+          communicationStyle: profile.communicationStyle || '',
+          // Kaapi Connect - Kerala Connection
+          homeDistrict: profile.homeDistrict || '',
+          diasporaLocation: profile.diasporaLocation || '',
+          keralaConnection: profile.keralaConnection || '',
+          languagePreference: profile.languagePreference || '',
+          relocationFlexibility: profile.relocationFlexibility || '',
+          // Physical & Profile
           height: profile.height || 165,
           bodyType: profile.bodyType || '',
           complexion: profile.complexion || '',
@@ -178,6 +301,30 @@ export default function EditProfilePage() {
     setValue('languages', updated)
   }
 
+  const toggleInterestTag = (interest: string) => {
+    const current = selectedInterestTags || []
+    const updated = current.includes(interest)
+      ? current.filter(i => i !== interest)
+      : [...current, interest]
+    setValue('interestTags', updated)
+  }
+
+  const toggleSocialValue = (value: string) => {
+    const current = selectedSocialValues || []
+    const updated = current.includes(value)
+      ? current.filter(v => v !== value)
+      : [...current, value]
+    setValue('socialValues', updated)
+  }
+
+  const toggleWeekendPreference = (pref: string) => {
+    const current = selectedWeekendPreference || []
+    const updated = current.includes(pref)
+      ? current.filter(p => p !== pref)
+      : [...current, pref]
+    setValue('weekendPreference', updated)
+  }
+
   if (status === 'loading' || isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -222,88 +369,282 @@ export default function EditProfilePage() {
           </CardContent>
         </Card>
 
-        {/* Faith Background */}
+        {/* Interests & Values */}
         <Card>
           <CardHeader>
-            <CardTitle>Faith Background</CardTitle>
+            <CardTitle>Interests & Values</CardTitle>
+            <CardDescription>Share your interests and values to help find compatible matches</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
+            {/* Interest Tags */}
+            <div className="space-y-3">
+              <Label>Your Interests (Select as many as you like)</Label>
+              {INTEREST_CATEGORIES.map((category) => (
+                <div key={category.category} className="space-y-2">
+                  <p className="text-sm font-medium text-muted-foreground">{category.category}</p>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                    {category.interests.map((interest) => (
+                      <div key={interest.value} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`interest-${interest.value}`}
+                          checked={selectedInterestTags.includes(interest.value)}
+                          onCheckedChange={() => toggleInterestTag(interest.value)}
+                        />
+                        <Label htmlFor={`interest-${interest.value}`} className="cursor-pointer text-sm">
+                          {interest.label}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Political Leaning */}
+            <div className="space-y-2">
+              <Label htmlFor="politicalLeaning">Political Leaning</Label>
+              <Select
+                value={watch('politicalLeaning') || ''}
+                onValueChange={(value) => setValue('politicalLeaning', value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select political leaning" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="PROGRESSIVE">Progressive</SelectItem>
+                  <SelectItem value="LIBERAL">Liberal</SelectItem>
+                  <SelectItem value="MODERATE">Moderate</SelectItem>
+                  <SelectItem value="CONSERVATIVE">Conservative</SelectItem>
+                  <SelectItem value="APOLITICAL">Apolitical</SelectItem>
+                  <SelectItem value="PREFER_NOT_TO_SAY">Prefer not to say</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             <div className="grid md:grid-cols-2 gap-4">
+              {/* Relationship Timeline */}
               <div className="space-y-2">
-                <Label htmlFor="denomination">Denomination</Label>
+                <Label htmlFor="relationshipTimeline">Relationship Timeline</Label>
                 <Select
-                  value={watch('denomination') || ''}
-                  onValueChange={(value) => setValue('denomination', value)}
+                  value={watch('relationshipTimeline') || ''}
+                  onValueChange={(value) => setValue('relationshipTimeline', value)}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select denomination" />
+                    <SelectValue placeholder="Select timeline" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="CSI">CSI (Church of South India)</SelectItem>
-                    <SelectItem value="CNI">CNI (Church of North India)</SelectItem>
-                    <SelectItem value="BAPTIST">Baptist</SelectItem>
-                    <SelectItem value="METHODIST">Methodist</SelectItem>
-                    <SelectItem value="PENTECOSTAL">Pentecostal</SelectItem>
-                    <SelectItem value="AG">AG (Assemblies of God)</SelectItem>
-                    <SelectItem value="IPC">IPC (Indian Pentecostal Church)</SelectItem>
-                    <SelectItem value="MAR_THOMA">Mar Thoma</SelectItem>
-                    <SelectItem value="SEVENTH_DAY_ADVENTIST">SDA</SelectItem>
-                    <SelectItem value="BRETHREN">Brethren</SelectItem>
-                    <SelectItem value="NON_DENOMINATIONAL">Non-Denominational</SelectItem>
-                    <SelectItem value="EVANGELICAL">Evangelical</SelectItem>
-                    <SelectItem value="OTHER">Other</SelectItem>
+                    <SelectItem value="ASAP">As soon as possible</SelectItem>
+                    <SelectItem value="3_6_MONTHS">3-6 months</SelectItem>
+                    <SelectItem value="6_12_MONTHS">6-12 months</SelectItem>
+                    <SelectItem value="1_2_YEARS">1-2 years</SelectItem>
+                    <SelectItem value="TAKE_TIME">Taking my time</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
+              {/* Want Children */}
               <div className="space-y-2">
-                <Label htmlFor="churchName">Church Name</Label>
-                <Input
-                  id="churchName"
-                  {...register('churchName')}
-                  placeholder="Your church name"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="yearsAsBeliever">Years as Believer</Label>
-                <Input
-                  id="yearsAsBeliever"
-                  type="number"
-                  {...register('yearsAsBeliever', { valueAsNumber: true })}
-                  placeholder="0"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="churchInvolvementLevel">Church Involvement</Label>
+                <Label htmlFor="wantChildren">Want Children?</Label>
                 <Select
-                  value={watch('churchInvolvementLevel') || ''}
-                  onValueChange={(value) => setValue('churchInvolvementLevel', value)}
+                  value={watch('wantChildren') || ''}
+                  onValueChange={(value) => setValue('wantChildren', value)}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select involvement" />
+                    <SelectValue placeholder="Select preference" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="REGULAR_ATTENDER">Regular Attender</SelectItem>
-                    <SelectItem value="VOLUNTEER">Volunteer</SelectItem>
-                    <SelectItem value="MINISTRY_LEADER">Ministry Leader</SelectItem>
-                    <SelectItem value="ELDER_DEACON">Elder/Deacon</SelectItem>
-                    <SelectItem value="OCCASIONAL_ATTENDER">Occasional Attender</SelectItem>
+                    <SelectItem value="YES">Yes</SelectItem>
+                    <SelectItem value="NO">No</SelectItem>
+                    <SelectItem value="OPEN">Open to discussion</SelectItem>
+                    <SelectItem value="ALREADY_HAVE">Already have children</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Living Arrangement */}
+              <div className="space-y-2">
+                <Label htmlFor="livingArrangementPreference">Living Arrangement Preference</Label>
+                <Select
+                  value={watch('livingArrangementPreference') || ''}
+                  onValueChange={(value) => setValue('livingArrangementPreference', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select preference" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="NUCLEAR">Nuclear family</SelectItem>
+                    <SelectItem value="WITH_PARENTS">With parents</SelectItem>
+                    <SelectItem value="FLEXIBLE">Flexible</SelectItem>
+                    <SelectItem value="PARENTS_NEARBY">Parents nearby</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Communication Style */}
+              <div className="space-y-2">
+                <Label htmlFor="communicationStyle">Communication Style</Label>
+                <Select
+                  value={watch('communicationStyle') || ''}
+                  onValueChange={(value) => setValue('communicationStyle', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select style" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="DIRECT">Direct & straightforward</SelectItem>
+                    <SelectItem value="THOUGHTFUL">Thoughtful & reflective</SelectItem>
+                    <SelectItem value="EXPRESSIVE">Expressive & emotive</SelectItem>
+                    <SelectItem value="RESERVED">Reserved & private</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
 
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="isBaptized"
-                checked={isBaptized}
-                onCheckedChange={(checked) => setValue('isBaptized', checked as boolean)}
-              />
-              <Label htmlFor="isBaptized" className="cursor-pointer">
-                I am baptized
-              </Label>
+            {/* Social Values (multi-select) */}
+            <div className="space-y-2">
+              <Label>Social Values (Optional)</Label>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {['FAMILY_FIRST', 'CAREER_DRIVEN', 'ADVENTURE_SEEKER', 'HOMEBODY', 'SOCIAL_BUTTERFLY', 'SPIRITUALLY_INCLINED'].map((value) => (
+                  <div key={value} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`social-${value}`}
+                      checked={selectedSocialValues.includes(value)}
+                      onCheckedChange={() => toggleSocialValue(value)}
+                    />
+                    <Label htmlFor={`social-${value}`} className="cursor-pointer text-sm">
+                      {value.split('_').map(w => w.charAt(0) + w.slice(1).toLowerCase()).join(' ')}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Weekend Preference (multi-select) */}
+            <div className="space-y-2">
+              <Label>Weekend Preference (Optional)</Label>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {['OUTDOOR_ACTIVITIES', 'QUIET_RELAXATION', 'SOCIAL_EVENTS', 'CULTURAL_OUTINGS', 'SPORTS', 'FAMILY_TIME'].map((pref) => (
+                  <div key={pref} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`weekend-${pref}`}
+                      checked={selectedWeekendPreference.includes(pref)}
+                      onCheckedChange={() => toggleWeekendPreference(pref)}
+                    />
+                    <Label htmlFor={`weekend-${pref}`} className="cursor-pointer text-sm">
+                      {pref.split('_').map(w => w.charAt(0) + w.slice(1).toLowerCase()).join(' ')}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Kerala Connection */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Kerala Connection</CardTitle>
+            <CardDescription>Your connection to Kerala and Malayalam culture</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid md:grid-cols-2 gap-4">
+              {/* Home District */}
+              <div className="space-y-2">
+                <Label htmlFor="homeDistrict">Home District in Kerala</Label>
+                <Select
+                  value={watch('homeDistrict') || ''}
+                  onValueChange={(value) => setValue('homeDistrict', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select district" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {KERALA_DISTRICTS.map((district) => (
+                      <SelectItem key={district.value} value={district.value}>
+                        {district.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Diaspora Location */}
+              <div className="space-y-2">
+                <Label htmlFor="diasporaLocation">Diaspora Location (if applicable)</Label>
+                <Select
+                  value={watch('diasporaLocation') || ''}
+                  onValueChange={(value) => setValue('diasporaLocation', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select location" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {DIASPORA_LOCATIONS.map((location) => (
+                      <SelectItem key={location.value} value={location.value}>
+                        {location.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Kerala Connection */}
+              <div className="space-y-2">
+                <Label htmlFor="keralaConnection">Kerala Connection Strength</Label>
+                <Select
+                  value={watch('keralaConnection') || ''}
+                  onValueChange={(value) => setValue('keralaConnection', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select connection" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="VERY_STRONG">Very Strong - Visit regularly, deeply connected</SelectItem>
+                    <SelectItem value="MODERATE">Moderate - Visit occasionally, stay connected</SelectItem>
+                    <SelectItem value="WEAK">Weak - Rarely visit, minimal connection</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Language Preference */}
+              <div className="space-y-2">
+                <Label htmlFor="languagePreference">Malayalam Language Preference</Label>
+                <Select
+                  value={watch('languagePreference') || ''}
+                  onValueChange={(value) => setValue('languagePreference', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select preference" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="FLUENT">Fluent speaker</SelectItem>
+                    <SelectItem value="CONVERSATIONAL">Conversational</SelectItem>
+                    <SelectItem value="BASIC">Basic understanding</SelectItem>
+                    <SelectItem value="LEARNING">Currently learning</SelectItem>
+                    <SelectItem value="NONE">Don&apos;t speak Malayalam</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Relocation Flexibility */}
+              <div className="space-y-2">
+                <Label htmlFor="relocationFlexibility">Relocation Flexibility</Label>
+                <Select
+                  value={watch('relocationFlexibility') || ''}
+                  onValueChange={(value) => setValue('relocationFlexibility', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select flexibility" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="PREFER_KERALA">Prefer to stay in Kerala</SelectItem>
+                    <SelectItem value="OPEN_INDIA">Open to anywhere in India</SelectItem>
+                    <SelectItem value="OPEN_GULF">Open to Gulf countries</SelectItem>
+                    <SelectItem value="OPEN_WEST">Open to Western countries</SelectItem>
+                    <SelectItem value="FULLY_FLEXIBLE">Fully flexible</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -531,7 +872,7 @@ export default function EditProfilePage() {
                     <SelectItem value="Traditional">Traditional</SelectItem>
                     <SelectItem value="Moderate">Moderate</SelectItem>
                     <SelectItem value="Liberal">Liberal</SelectItem>
-                    <SelectItem value="Orthodox Christian">Orthodox Christian</SelectItem>
+                    <SelectItem value="Progressive">Progressive</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

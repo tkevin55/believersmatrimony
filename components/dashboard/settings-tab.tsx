@@ -11,7 +11,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast'
 import { User, Lock, Bell, Eye, Heart, AlertTriangle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import ChurchVerificationCard from './church-verification-card'
 
 export default function SettingsTab() {
   const { data: session } = useSession()
@@ -344,9 +343,6 @@ export default function SettingsTab() {
           </Button>
         </CardContent>
       </Card>
-
-      {/* Church Verification */}
-      <ChurchVerificationCard />
 
       {/* Security */}
       <Card>

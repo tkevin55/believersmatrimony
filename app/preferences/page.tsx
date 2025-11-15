@@ -13,21 +13,95 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from '@/hooks/use-toast'
 import { Loader2, Save, ArrowLeft, Heart } from 'lucide-react'
 
-const DENOMINATIONS = [
-  { value: 'CSI', label: 'CSI (Church of South India)' },
-  { value: 'CNI', label: 'CNI (Church of North India)' },
-  { value: 'BAPTIST', label: 'Baptist' },
-  { value: 'METHODIST', label: 'Methodist' },
-  { value: 'PRESBYTERIAN', label: 'Presbyterian' },
-  { value: 'PENTECOSTAL', label: 'Pentecostal' },
-  { value: 'AG', label: 'AG (Assemblies of God)' },
-  { value: 'IPC', label: 'IPC (Indian Pentecostal Church)' },
-  { value: 'NON_DENOMINATIONAL', label: 'Non-Denominational' },
-  { value: 'EVANGELICAL', label: 'Evangelical' },
-  { value: 'MAR_THOMA', label: 'Mar Thoma' },
-  { value: 'SEVENTH_DAY_ADVENTIST', label: 'SDA (Seventh-day Adventist)' },
-  { value: 'BRETHREN', label: 'Brethren' },
-  { value: 'OTHER', label: 'Other' },
+// Kaapi Connect - Interest Categories
+const INTEREST_CATEGORIES = [
+  {
+    category: 'Arts & Culture',
+    interests: [
+      { value: 'music', label: 'Music' },
+      { value: 'movies', label: 'Movies' },
+      { value: 'indie_films', label: 'Indie Films' },
+      { value: 'reading', label: 'Reading' },
+      { value: 'painting', label: 'Painting' },
+      { value: 'photography', label: 'Photography' },
+      { value: 'theatre', label: 'Theatre' },
+      { value: 'classical_dance', label: 'Classical Dance' },
+    ]
+  },
+  {
+    category: 'Sports & Fitness',
+    interests: [
+      { value: 'cricket', label: 'Cricket' },
+      { value: 'football', label: 'Football' },
+      { value: 'badminton', label: 'Badminton' },
+      { value: 'gym', label: 'Gym' },
+      { value: 'yoga', label: 'Yoga' },
+      { value: 'running', label: 'Running' },
+      { value: 'trekking', label: 'Trekking' },
+      { value: 'cycling', label: 'Cycling' },
+    ]
+  },
+  {
+    category: 'Food & Travel',
+    interests: [
+      { value: 'cooking', label: 'Cooking' },
+      { value: 'baking', label: 'Baking' },
+      { value: 'street_food', label: 'Street Food' },
+      { value: 'coffee_hunting', label: 'Coffee Hunting' },
+      { value: 'road_trips', label: 'Road Trips' },
+      { value: 'backpacking', label: 'Backpacking' },
+      { value: 'solo_travel', label: 'Solo Travel' },
+    ]
+  },
+  {
+    category: 'Tech & Creativity',
+    interests: [
+      { value: 'coding', label: 'Coding' },
+      { value: 'gaming', label: 'Gaming' },
+      { value: 'startups', label: 'Startups' },
+      { value: 'design', label: 'Design' },
+      { value: 'content_creation', label: 'Content Creation' },
+      { value: 'podcasts', label: 'Podcasts' },
+    ]
+  },
+  {
+    category: 'Social & Lifestyle',
+    interests: [
+      { value: 'pets', label: 'Pets' },
+      { value: 'gardening', label: 'Gardening' },
+      { value: 'home_decor', label: 'Home Decor' },
+      { value: 'standup_comedy', label: 'Stand-up Comedy' },
+      { value: 'board_games', label: 'Board Games' },
+      { value: 'family_time', label: 'Family Time' },
+    ]
+  },
+]
+
+const ALL_INTERESTS = INTEREST_CATEGORIES.flatMap(cat => cat.interests)
+
+const POLITICAL_LEANINGS = [
+  { value: 'PROGRESSIVE', label: 'Progressive' },
+  { value: 'LIBERAL', label: 'Liberal' },
+  { value: 'MODERATE', label: 'Moderate' },
+  { value: 'CONSERVATIVE', label: 'Conservative' },
+  { value: 'APOLITICAL', label: 'Apolitical' },
+]
+
+const KERALA_DISTRICTS = [
+  { value: 'THIRUVANANTHAPURAM', label: 'Thiruvananthapuram' },
+  { value: 'KOLLAM', label: 'Kollam' },
+  { value: 'PATHANAMTHITTA', label: 'Pathanamthitta' },
+  { value: 'ALAPPUZHA', label: 'Alappuzha' },
+  { value: 'KOTTAYAM', label: 'Kottayam' },
+  { value: 'IDUKKI', label: 'Idukki' },
+  { value: 'ERNAKULAM', label: 'Ernakulam' },
+  { value: 'THRISSUR', label: 'Thrissur' },
+  { value: 'PALAKKAD', label: 'Palakkad' },
+  { value: 'MALAPPURAM', label: 'Malappuram' },
+  { value: 'KOZHIKODE', label: 'Kozhikode' },
+  { value: 'WAYANAD', label: 'Wayanad' },
+  { value: 'KANNUR', label: 'Kannur' },
+  { value: 'KASARAGOD', label: 'Kasaragod' },
 ]
 
 const EDUCATION_LEVELS = [
@@ -50,7 +124,10 @@ export default function PreferencesPage() {
   const [heightMin, setHeightMin] = useState(152)
   const [heightMax, setHeightMax] = useState(183)
   const [educationLevels, setEducationLevels] = useState<string[]>([])
-  const [denominations, setDenominations] = useState<string[]>([])
+  const [preferredInterests, setPreferredInterests] = useState<string[]>([])
+  const [preferredPoliticalLeanings, setPreferredPoliticalLeanings] = useState<string[]>([])
+  const [preferredKeralaDistricts, setPreferredKeralaDistricts] = useState<string[]>([])
+  const [okayWithDiaspora, setOkayWithDiaspora] = useState<string>('either')
   const [locations, setLocations] = useState<string[]>([])
   const [locationsInput, setLocationsInput] = useState('')
   const [incomeRange, setIncomeRange] = useState('')
@@ -80,7 +157,10 @@ export default function PreferencesPage() {
       setHeightMin(data.heightMin || 152)
       setHeightMax(data.heightMax || 183)
       setEducationLevels(data.educationLevels || [])
-      setDenominations(data.denominations || [])
+      setPreferredInterests(data.preferredInterests || [])
+      setPreferredPoliticalLeanings(data.preferredPoliticalLeanings || [])
+      setPreferredKeralaDistricts(data.preferredKeralaDistricts || [])
+      setOkayWithDiaspora(data.okayWithDiaspora || 'either')
       setLocations(data.locations || [])
       setLocationsInput((data.locations || []).join(', '))
       setIncomeRange(data.incomeRange || '')
@@ -107,7 +187,10 @@ export default function PreferencesPage() {
           heightMin,
           heightMax,
           educationLevels,
-          denominations,
+          preferredInterests,
+          preferredPoliticalLeanings,
+          preferredKeralaDistricts,
+          okayWithDiaspora,
           locations,
           incomeRange,
         }),
@@ -141,9 +224,21 @@ export default function PreferencesPage() {
     )
   }
 
-  const toggleDenomination = (denom: string) => {
-    setDenominations((prev) =>
-      prev.includes(denom) ? prev.filter((d) => d !== denom) : [...prev, denom]
+  const toggleInterest = (interest: string) => {
+    setPreferredInterests((prev) =>
+      prev.includes(interest) ? prev.filter((i) => i !== interest) : [...prev, interest]
+    )
+  }
+
+  const togglePoliticalLeaning = (leaning: string) => {
+    setPreferredPoliticalLeanings((prev) =>
+      prev.includes(leaning) ? prev.filter((l) => l !== leaning) : [...prev, leaning]
+    )
+  }
+
+  const toggleKeralaDistrict = (district: string) => {
+    setPreferredKeralaDistricts((prev) =>
+      prev.includes(district) ? prev.filter((d) => d !== district) : [...prev, district]
     )
   }
 
@@ -262,27 +357,100 @@ export default function PreferencesPage() {
           </CardContent>
         </Card>
 
-        {/* Denominations */}
+        {/* Preferred Interests */}
         <Card>
           <CardHeader>
-            <CardTitle>Denominations</CardTitle>
-            <CardDescription>Preferred Christian denominations (select multiple)</CardDescription>
+            <CardTitle>Preferred Interests</CardTitle>
+            <CardDescription>Select interests you'd like your partner to have (min 3 recommended)</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4 max-h-96 overflow-y-auto">
+            {INTEREST_CATEGORIES.map((category) => (
+              <div key={category.category} className="space-y-2">
+                <p className="text-sm font-medium text-muted-foreground">{category.category}</p>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                  {category.interests.map((interest) => (
+                    <div key={interest.value} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`pref-interest-${interest.value}`}
+                        checked={preferredInterests.includes(interest.value)}
+                        onCheckedChange={() => toggleInterest(interest.value)}
+                      />
+                      <Label htmlFor={`pref-interest-${interest.value}`} className="cursor-pointer text-sm">
+                        {interest.label}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        {/* Preferred Political Leanings */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Political Leaning Preferences</CardTitle>
+            <CardDescription>Select political leanings you're comfortable with (optional)</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-64 overflow-y-auto">
-              {DENOMINATIONS.map((denom) => (
-                <div key={denom.value} className="flex items-center space-x-2">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              {POLITICAL_LEANINGS.map((leaning) => (
+                <div key={leaning.value} className="flex items-center space-x-2">
                   <Checkbox
-                    id={`denom-${denom.value}`}
-                    checked={denominations.includes(denom.value)}
-                    onCheckedChange={() => toggleDenomination(denom.value)}
+                    id={`pol-${leaning.value}`}
+                    checked={preferredPoliticalLeanings.includes(leaning.value)}
+                    onCheckedChange={() => togglePoliticalLeaning(leaning.value)}
                   />
-                  <Label htmlFor={`denom-${denom.value}`} className="cursor-pointer text-sm">
-                    {denom.label}
+                  <Label htmlFor={`pol-${leaning.value}`} className="cursor-pointer">
+                    {leaning.label}
                   </Label>
                 </div>
               ))}
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Kerala Connection Preferences */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Kerala District Preferences</CardTitle>
+            <CardDescription>Preferred home districts in Kerala (optional)</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              {KERALA_DISTRICTS.map((district) => (
+                <div key={district.value} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`dist-${district.value}`}
+                    checked={preferredKeralaDistricts.includes(district.value)}
+                    onCheckedChange={() => toggleKeralaDistrict(district.value)}
+                  />
+                  <Label htmlFor={`dist-${district.value}`} className="cursor-pointer text-sm">
+                    {district.label}
+                  </Label>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Diaspora Preference */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Diaspora Preference</CardTitle>
+            <CardDescription>Are you open to partners living outside Kerala?</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Select value={okayWithDiaspora} onValueChange={setOkayWithDiaspora}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select preference" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="no">Only Kerala residents</SelectItem>
+                <SelectItem value="yes">Only diaspora (Gulf, US, etc.)</SelectItem>
+                <SelectItem value="either">Open to both Kerala and diaspora</SelectItem>
+              </SelectContent>
+            </Select>
           </CardContent>
         </Card>
 
