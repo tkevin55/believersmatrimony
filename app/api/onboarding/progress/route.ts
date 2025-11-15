@@ -52,7 +52,9 @@ export async function PATCH(request: Request) {
               city: '',
               state: '',
               country: '',
-              denomination: 'OTHER',
+              interestTags: [],
+              socialValues: [],
+              weekendPreference: [],
             }
           })
         } else {
@@ -67,7 +69,7 @@ export async function PATCH(request: Request) {
         break
 
       case 2:
-        // Update location details
+        // Update location details & Kerala connection (Kaapi Connect)
         await prisma.profile.update({
           where: { userId },
           data: {
@@ -75,26 +77,29 @@ export async function PATCH(request: Request) {
             state: data.state,
             country: data.country,
             openToRelocate: data.openToRelocate === 'yes',
+            homeDistrict: data.homeDistrict || null,
+            diasporaLocation: data.diasporaLocation || null,
+            keralaConnection: data.keralaConnection || null,
+            languagePreference: data.languagePreference || null,
+            relocationFlexibility: data.relocationFlexibility || null,
           }
         })
         break
 
       case 3:
-        // Update faith background
-        // Store church name with location
-        const churchFullName = data.churchLocation
-          ? `${data.churchName}, ${data.churchLocation}`
-          : data.churchName
-
+        // Update interests & values (Kaapi Connect - replaces faith background)
         await prisma.profile.update({
           where: { userId },
           data: {
-            denomination: data.denomination,
-            churchName: churchFullName,
-            yearsAsBeliever: parseInt(data.yearsAsBeliever?.replace('+', '').split('-')[0] || '0'),
-            isBaptized: data.isBaptized === 'yes',
-            churchInvolvementLevel: data.churchInvolvement,
-            faithTestimony: data.faithTestimony,
+            interestTags: data.interestTags || [],
+            politicalLeaning: data.politicalLeaning || null,
+            socialValues: data.socialValues || [],
+            socialStyle: data.socialStyle || null,
+            relationshipTimeline: data.relationshipTimeline || null,
+            wantChildren: data.wantChildren || null,
+            livingArrangementPreference: data.livingArrangementPreference || null,
+            weekendPreference: data.weekendPreference || [],
+            communicationStyle: data.communicationStyle || null,
           }
         })
         break

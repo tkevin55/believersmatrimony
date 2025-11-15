@@ -12,7 +12,7 @@ interface MatchScore {
   userId: string
   score: number
   breakdown: {
-    denomination: number
+    interests: number
     location: number
     age: number
     education: number
@@ -47,49 +47,37 @@ function calculateLocationScore(
 }
 
 /**
- * Calculate denomination compatibility score
+ * Calculate interest overlap score (Kaapi Connect)
+ * Measures how many interests two users have in common
  */
-function calculateDenominationScore(
-  userDenomination: string,
-  matchDenomination: string,
-  preferredDenominations?: string[]
+function calculateInterestOverlap(
+  userInterests: string[] = [],
+  matchInterests: string[] = [],
+  preferredInterests?: string[]
 ): number {
-  // Exact match
-  if (userDenomination === matchDenomination) {
-    return 100
+  if (userInterests.length === 0 || matchInterests.length === 0) {
+    return 50 // Neutral score if no interests specified
   }
 
-  // Check if in preferred denominations
-  if (preferredDenominations && preferredDenominations.includes(matchDenomination)) {
-    return 80
-  }
+  // Calculate overlap
+  const commonInterests = userInterests.filter(interest =>
+    matchInterests.includes(interest)
+  )
 
-  // Compatible denominations (groups that are similar in theology/practice)
-  const compatibleGroups = [
-    ['BAPTIST', 'EVANGELICAL'],
-    ['PENTECOSTAL', 'NON_DENOMINATIONAL'],
-    ['PRESBYTERIAN', 'REFORMED'],
-    ['ANGLICAN', 'EPISCOPAL'],
-    ['METHODIST', 'NON_DENOMINATIONAL'],
-  ]
+  const overlapPercentage = (commonInterests.length / Math.max(userInterests.length, matchInterests.length)) * 100
 
-  for (const group of compatibleGroups) {
-    if (group.includes(userDenomination) && group.includes(matchDenomination)) {
-      return 70
+  // Bonus if match has preferred interests
+  let score = overlapPercentage
+  if (preferredInterests && preferredInterests.length > 0) {
+    const hasPreferredInterests = preferredInterests.some(interest =>
+      matchInterests.includes(interest)
+    )
+    if (hasPreferredInterests) {
+      score = Math.min(100, score + 20) // Bonus for having preferred interests
     }
   }
 
-  // Evangelical compatibility
-  if (
-    userDenomination === 'EVANGELICAL' ||
-    matchDenomination === 'EVANGELICAL' ||
-    userDenomination === 'NON_DENOMINATIONAL' ||
-    matchDenomination === 'NON_DENOMINATIONAL'
-  ) {
-    return 60
-  }
-
-  return 40
+  return Math.max(0, Math.min(100, score))
 }
 
 /**
@@ -253,11 +241,11 @@ export async function calculateMatchPercentage(
     const userAge = calculateAge(userProfile.dateOfBirth)
     const matchAge = calculateAge(matchProfile.dateOfBirth)
 
-    // Calculate individual scores
-    const denominationScore = calculateDenominationScore(
-      userProfile.denomination,
-      matchProfile.denomination,
-      userPreferences?.denominations
+    // Calculate individual scores (Kaapi Connect - secular)
+    const interestScore = calculateInterestOverlap(
+      userProfile.interestTags || [],
+      matchProfile.interestTags || [],
+      userPreferences?.preferredInterests
     )
 
     const locationScore = calculateLocationScore(
@@ -282,20 +270,19 @@ export async function calculateMatchPercentage(
 
     const lifestyleScore = calculateLifestyleScore(userProfile, matchProfile)
 
-    // Calculate weighted total score
+    // Calculate weighted total score (Kaapi Connect weights)
     const totalScore = Math.round(
-      denominationScore * 0.5 + // 50%
-      locationScore * 0.2 +      // 20%
-      ageScore * 0.15 +          // 15%
-      educationScore * 0.1 +     // 10%
-      lifestyleScore * 0.05      // 5%
+      interestScore * 0.40 +   // 40% - interests are most important
+      ageScore * 0.30 +         // 30% - age compatibility
+      locationScore * 0.20 +    // 20% - location proximity
+      educationScore * 0.10     // 10% - education level
     )
 
     return {
       userId: matchUserId,
       score: totalScore,
       breakdown: {
-        denomination: Math.round(denominationScore),
+        interests: Math.round(interestScore),
         location: Math.round(locationScore),
         age: Math.round(ageScore),
         education: Math.round(educationScore),

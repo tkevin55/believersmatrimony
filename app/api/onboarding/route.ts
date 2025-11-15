@@ -40,17 +40,29 @@ export async function POST(request: Request) {
 
     // Create profile and partner preferences in a transaction
     const result = await prisma.$transaction(async (tx: any) => {
-      // Create profile
+      // Create profile (Kaapi Connect - secular)
       const newProfile = await tx.profile.create({
         data: {
           userId,
           dateOfBirth: new Date(profile.dateOfBirth),
           gender: profile.gender,
           aboutMe: profile.aboutMe,
-          denomination: profile.denomination,
-          churchName: profile.churchName,
-          yearsAsBelievertrue: profile.yearsAsBelievertrue || 0,
-          isBaptized: profile.isBaptized,
+          // Kaapi Connect fields
+          interestTags: profile.interestTags || [],
+          politicalLeaning: profile.politicalLeaning || null,
+          socialValues: profile.socialValues || [],
+          socialStyle: profile.socialStyle || null,
+          relationshipTimeline: profile.relationshipTimeline || null,
+          wantChildren: profile.wantChildren || null,
+          livingArrangementPreference: profile.livingArrangementPreference || null,
+          relocationFlexibility: profile.relocationFlexibility || null,
+          weekendPreference: profile.weekendPreference || [],
+          communicationStyle: profile.communicationStyle || null,
+          homeDistrict: profile.homeDistrict || null,
+          diasporaLocation: profile.diasporaLocation || null,
+          keralaConnection: profile.keralaConnection || null,
+          languagePreference: profile.languagePreference || null,
+          // Physical & other attributes
           height: profile.height,
           bodyType: profile.bodyType,
           educationLevel: profile.educationLevel,
@@ -81,7 +93,7 @@ export async function POST(request: Request) {
         data: { completionPercentage: completion }
       })
 
-      // Create partner preferences
+      // Create partner preferences (Kaapi Connect - secular)
       const preferences = await tx.partnerPreferences.create({
         data: {
           userId,
@@ -89,8 +101,14 @@ export async function POST(request: Request) {
           ageMax: partnerPreferences.ageMax,
           heightMin: partnerPreferences.heightMin,
           heightMax: partnerPreferences.heightMax,
-          denominations: partnerPreferences.denominations || [],
           locations: partnerPreferences.locations || [],
+          educationLevels: partnerPreferences.educationLevels || [],
+          // Kaapi Connect preferences
+          preferredInterests: partnerPreferences.preferredInterests || [],
+          preferredPoliticalLeanings: partnerPreferences.preferredPoliticalLeanings || [],
+          preferredSocialValues: partnerPreferences.preferredSocialValues || [],
+          preferredKeralaDistricts: partnerPreferences.preferredKeralaDistricts || [],
+          okayWithDiaspora: partnerPreferences.okayWithDiaspora ?? null,
         }
       })
 

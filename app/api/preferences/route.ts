@@ -17,16 +17,20 @@ export async function GET() {
     })
 
     if (!preferences) {
-      // Return default preferences
+      // Return default preferences (Kaapi Connect)
       return NextResponse.json({
         ageMin: 21,
         ageMax: 35,
         heightMin: 152,
         heightMax: 183,
         educationLevels: [],
-        denominations: [],
         locations: [],
         incomeRange: null,
+        preferredInterests: [],
+        preferredPoliticalLeanings: [],
+        preferredSocialValues: [],
+        preferredKeralaDistricts: [],
+        okayWithDiaspora: null,
       })
     }
 
@@ -50,7 +54,21 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { ageMin, ageMax, heightMin, heightMax, educationLevels, denominations, locations, incomeRange } = body
+    const {
+      ageMin,
+      ageMax,
+      heightMin,
+      heightMax,
+      educationLevels,
+      locations,
+      incomeRange,
+      // Kaapi Connect preferences
+      preferredInterests,
+      preferredPoliticalLeanings,
+      preferredSocialValues,
+      preferredKeralaDistricts,
+      okayWithDiaspora,
+    } = body
 
     // Validate ranges
     if (ageMin && ageMax && ageMin > ageMax) {
@@ -67,7 +85,7 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    // Upsert preferences
+    // Upsert preferences (Kaapi Connect - secular)
     const preferences = await prisma.partnerPreferences.upsert({
       where: { userId: session.user.id },
       update: {
@@ -76,9 +94,13 @@ export async function PUT(request: NextRequest) {
         heightMin: heightMin || null,
         heightMax: heightMax || null,
         educationLevels: educationLevels || [],
-        denominations: denominations || [],
         locations: locations || [],
         incomeRange: incomeRange || null,
+        preferredInterests: preferredInterests || [],
+        preferredPoliticalLeanings: preferredPoliticalLeanings || [],
+        preferredSocialValues: preferredSocialValues || [],
+        preferredKeralaDistricts: preferredKeralaDistricts || [],
+        okayWithDiaspora: okayWithDiaspora ?? null,
       },
       create: {
         userId: session.user.id,
@@ -87,9 +109,13 @@ export async function PUT(request: NextRequest) {
         heightMin: heightMin || null,
         heightMax: heightMax || null,
         educationLevels: educationLevels || [],
-        denominations: denominations || [],
         locations: locations || [],
         incomeRange: incomeRange || null,
+        preferredInterests: preferredInterests || [],
+        preferredPoliticalLeanings: preferredPoliticalLeanings || [],
+        preferredSocialValues: preferredSocialValues || [],
+        preferredKeralaDistricts: preferredKeralaDistricts || [],
+        okayWithDiaspora: okayWithDiaspora ?? null,
       },
     })
 

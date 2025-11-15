@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
     // Get curated matches
     const matches = await getCuratedMatches(session.user.id, limit, offset)
 
-    // Format matches for response
+    // Format matches for response (Kaapi Connect - secular)
     const formattedMatches = matches.map((match: any) => {
       const age = calculateAge(match.dateOfBirth)
       const primaryPhoto = match.user.photos.find((p: any) => p.isPrimary) || match.user.photos[0]
@@ -60,7 +60,11 @@ export async function GET(request: NextRequest) {
         age,
         gender: match.gender,
         location: [match.city, match.state].filter(Boolean).join(', '),
-        denomination: match.denomination,
+        // Kaapi Connect fields
+        interestTags: match.interestTags || [],
+        politicalLeaning: match.politicalLeaning,
+        homeDistrict: match.homeDistrict,
+        // Other fields
         educationLevel: match.educationLevel,
         occupation: match.occupation,
         height: match.height ? formatHeight(match.height) : null,
@@ -68,8 +72,6 @@ export async function GET(request: NextRequest) {
         primaryPhoto: primaryPhoto?.url || null,
         matchPercentage: match.matchScore,
         profileViews: match.profileViews,
-        churchName: match.churchName,
-        yearsAsBeliever: match.yearsAsBeliever,
       }
     })
 

@@ -4,20 +4,27 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 
-// Profile update schema
+// Profile update schema (Kaapi Connect - secular)
 const profileUpdateSchema = z.object({
   dateOfBirth: z.string().optional(),
   gender: z.enum(['MALE', 'FEMALE']).optional(),
   aboutMe: z.string().optional(),
-  denomination: z.enum([
-    'BAPTIST', 'METHODIST', 'PRESBYTERIAN', 'PENTECOSTAL',
-    'NON_DENOMINATIONAL', 'LUTHERAN', 'ANGLICAN', 'EPISCOPAL',
-    'REFORMED', 'EVANGELICAL', 'OTHER'
-  ]).optional(),
-  churchName: z.string().optional(),
-  yearsAsBeliever: z.number().optional(),
-  isBaptized: z.boolean().optional(),
-  churchInvolvementLevel: z.string().optional(),
+  // Kaapi Connect fields
+  interestTags: z.array(z.string()).optional(),
+  politicalLeaning: z.string().optional(),
+  socialValues: z.array(z.string()).optional(),
+  socialStyle: z.string().optional(),
+  relationshipTimeline: z.string().optional(),
+  wantChildren: z.string().optional(),
+  livingArrangementPreference: z.string().optional(),
+  relocationFlexibility: z.string().optional(),
+  weekendPreference: z.array(z.string()).optional(),
+  communicationStyle: z.string().optional(),
+  homeDistrict: z.string().optional(),
+  diasporaLocation: z.string().optional(),
+  keralaConnection: z.string().optional(),
+  languagePreference: z.string().optional(),
+  // Physical & other attributes
   height: z.number().optional(),
   bodyType: z.enum(['SLIM', 'AVERAGE', 'ATHLETIC', 'CURVY', 'PLUS_SIZE']).optional(),
   educationLevel: z.enum(['HIGH_SCHOOL', 'ASSOCIATE', 'BACHELOR', 'MASTER', 'DOCTORATE', 'PROFESSIONAL']).optional(),
@@ -41,18 +48,20 @@ const profileUpdateSchema = z.object({
   visibilityMode: z.string().optional(),
 })
 
-// Calculate profile completion percentage
+// Calculate profile completion percentage (Kaapi Connect)
 function calculateProfileCompletion(profile: any): number {
   const fields = [
-    'dateOfBirth', 'gender', 'aboutMe', 'denomination', 'churchName',
-    'yearsAsBeliever', 'isBaptized', 'churchInvolvementLevel',
-    'height', 'bodyType', 'educationLevel', 'fieldOfStudy',
+    'dateOfBirth', 'gender', 'aboutMe', 'interestTags', 'politicalLeaning',
+    'homeDistrict', 'height', 'bodyType', 'educationLevel', 'fieldOfStudy',
     'occupation', 'incomeRange', 'parentsOccupation', 'siblingsCount',
     'familyType', 'familyValues', 'hobbies', 'city', 'state', 'country'
   ]
 
   const filledFields = fields.filter(field => {
     const value = profile[field]
+    if (Array.isArray(value)) {
+      return value.length > 0
+    }
     return value !== null && value !== undefined && value !== ''
   }).length
 

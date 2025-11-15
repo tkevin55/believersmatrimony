@@ -27,7 +27,6 @@ export async function POST(request: Request) {
         dateOfBirth: !!formData.dateOfBirth,
         gender: !!formData.gender,
         city: !!formData.city,
-        denomination: !!formData.denomination,
         height: !!formData.height,
         educationLevel: !!formData.educationLevel,
         occupation: !!formData.occupation,
@@ -43,7 +42,7 @@ export async function POST(request: Request) {
     }
 
     // Validate required fields
-    const requiredFields = ['name', 'dateOfBirth', 'gender', 'city', 'state', 'country', 'denomination', 'height', 'educationLevel', 'occupation']
+    const requiredFields = ['name', 'dateOfBirth', 'gender', 'city', 'state', 'country', 'height', 'educationLevel', 'occupation']
     const missingFields = requiredFields.filter(field => !formData[field])
 
     if (missingFields.length > 0) {
@@ -71,23 +70,12 @@ export async function POST(request: Request) {
 
     // Validate enum values
     const validGenders = ['MALE', 'FEMALE']
-    const validDenominations = ['BAPTIST', 'METHODIST', 'PRESBYTERIAN', 'PENTECOSTAL', 'NON_DENOMINATIONAL',
-      'LUTHERAN', 'ANGLICAN', 'EPISCOPAL', 'REFORMED', 'EVANGELICAL', 'CSI', 'CNI', 'AG', 'IPC',
-      'MAR_THOMA', 'SEVENTH_DAY_ADVENTIST', 'BRETHREN', 'OTHER']
 
     if (!validGenders.includes(formData.gender)) {
       console.error('❌ Invalid gender value:', formData.gender)
       return NextResponse.json({
         error: 'Invalid gender value',
         received: formData.gender
-      }, { status: 400 })
-    }
-
-    if (!validDenominations.includes(formData.denomination)) {
-      console.error('❌ Invalid denomination value:', formData.denomination)
-      return NextResponse.json({
-        error: 'Invalid denomination value',
-        received: formData.denomination
       }, { status: 400 })
     }
 
@@ -127,28 +115,16 @@ export async function POST(request: Request) {
         }
       })
 
-      // Store church name with location
-      const churchFullName = formData.churchLocation
-        ? `${formData.churchName}, ${formData.churchLocation}`
-        : formData.churchName
-
       // Parse height - ensure it's an integer
       const heightValue = parseInt(String(formData.height), 10)
       if (isNaN(heightValue)) {
         throw new Error(`Invalid height value: ${formData.height}`)
       }
 
-      // Parse years as believer safely
-      let yearsValue = 0
-      if (formData.yearsAsBeliever) {
-        const yearString = String(formData.yearsAsBeliever).replace('+', '').split('-')[0]
-        yearsValue = parseInt(yearString, 10) || 0
-      }
-
       // Parse siblings count
       const siblingsValue = parseInt(String(formData.siblingsCount || 0), 10)
 
-      // Profile data object
+      // Profile data object (Kaapi Connect - secular)
       const profileData = {
         dateOfBirth: new Date(formData.dateOfBirth),
         gender: formData.gender,
@@ -156,25 +132,38 @@ export async function POST(request: Request) {
         state: formData.state,
         country: formData.country,
         openToRelocate: formData.openToRelocate === 'yes',
-        denomination: formData.denomination,
-        churchName: churchFullName,
-        yearsAsBeliever: yearsValue,
-        isBaptized: formData.isBaptized === 'yes',
-        churchInvolvementLevel: formData.churchInvolvement || null,
-        faithTestimony: formData.faithTestimony || null,
+        // Kaapi Connect fields
+        interestTags: formData.interestTags || [],
+        politicalLeaning: formData.politicalLeaning || null,
+        socialValues: formData.socialValues || [],
+        socialStyle: formData.socialStyle || null,
+        relationshipTimeline: formData.relationshipTimeline || null,
+        wantChildren: formData.wantChildren || null,
+        livingArrangementPreference: formData.livingArrangementPreference || null,
+        relocationFlexibility: formData.relocationFlexibility || null,
+        weekendPreference: formData.weekendPreference || [],
+        communicationStyle: formData.communicationStyle || null,
+        homeDistrict: formData.homeDistrict || null,
+        diasporaLocation: formData.diasporaLocation || null,
+        keralaConnection: formData.keralaConnection || null,
+        languagePreference: formData.languagePreference || null,
+        // Physical attributes
         height: heightValue,
         bodyType: formData.bodyType || null,
         complexion: formData.complexion || null,
         languages: formData.languages || [],
+        // Education & Career
         educationLevel: formData.educationLevel || null,
         fieldOfStudy: formData.fieldOfStudy || null,
         occupation: formData.occupation || null,
         incomeRange: formData.incomeRange || null,
+        // Family
         parentsOccupation: `Father: ${formData.fatherOccupation || 'N/A'}, Mother: ${formData.motherOccupation || 'N/A'}`,
         siblingsCount: siblingsValue,
         birthOrder: formData.birthOrder || null,
         familyType: formData.familyType || null,
         familyValues: formData.familyValues || null,
+        // Lifestyle
         drinking: formData.drinking || null,
         smoking: formData.smoking || null,
         dietPreference: formData.diet || null,
@@ -183,10 +172,10 @@ export async function POST(request: Request) {
 
       console.log('📊 Profile data prepared:', {
         height: heightValue,
-        yearsAsBeliever: yearsValue,
         siblingsCount: siblingsValue,
-        denomination: formData.denomination,
-        churchInvolvement: formData.churchInvolvement,
+        interestTags: formData.interestTags?.length || 0,
+        politicalLeaning: formData.politicalLeaning,
+        homeDistrict: formData.homeDistrict,
       })
 
       // Upsert profile
@@ -228,7 +217,7 @@ export async function POST(request: Request) {
         console.log(`✅ Photos saved successfully in ${photoEndTime - photoStartTime}ms`)
       }
 
-      // Parse partner preferences
+      // Parse partner preferences (Kaapi Connect - secular)
       const partnerAgeMin = parseInt(String(formData.partnerAgeMin || 18), 10)
       const partnerAgeMax = parseInt(String(formData.partnerAgeMax || 60), 10)
       const partnerHeightMin = parseInt(String(formData.partnerHeightMin || 122), 10)
@@ -240,9 +229,14 @@ export async function POST(request: Request) {
         heightMin: partnerHeightMin,
         heightMax: partnerHeightMax,
         educationLevels: formData.partnerMinEducation ? [formData.partnerMinEducation] : [],
-        denominations: formData.partnerDenominations || [],
         locations: formData.partnerLocations || [],
         incomeRange: formData.partnerIncomeExpectation || null,
+        // Kaapi Connect preferences
+        preferredInterests: formData.preferredInterests || [],
+        preferredPoliticalLeanings: formData.preferredPoliticalLeanings || [],
+        preferredSocialValues: formData.preferredSocialValues || [],
+        preferredKeralaDistricts: formData.preferredKeralaDistricts || [],
+        okayWithDiaspora: formData.okayWithDiaspora ?? null,
       }
 
       console.log('💑 Partner preferences:', partnerPrefsData)
@@ -283,7 +277,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         success: true,
-        message: 'Profile created successfully! Welcome to Believers Matrimony.',
+        message: 'Profile created successfully! Welcome to Kaapi Connect.',
         data: result
       },
       { status: 201 }
