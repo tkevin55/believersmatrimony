@@ -4,6 +4,8 @@ import { authOptions } from '@/lib/auth'
 import { getCuratedMatches } from '@/lib/matching'
 import { calculateAge, formatHeight } from '@/lib/utils'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(request: NextRequest) {
   try {
     // Check authentication

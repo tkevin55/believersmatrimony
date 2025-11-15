@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic'
 
 import { useSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import OverviewTab from '@/components/dashboard/overview-tab'
@@ -14,7 +14,7 @@ import InterestsTab from '@/components/dashboard/interests-tab'
 import SettingsTab from '@/components/dashboard/settings-tab'
 import { Activity, Heart, Settings, Users, LayoutDashboard } from 'lucide-react'
 
-export default function DashboardPage() {
+function DashboardContent() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -99,5 +99,17 @@ export default function DashboardPage() {
         </TabsContent>
       </Tabs>
     </div>
+  )
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
+      </div>
+    }>
+      <DashboardContent />
+    </Suspense>
   )
 }
