@@ -11,7 +11,9 @@ interface ProfileResult {
   age: number
   gender: string
   location: string
-  denomination: string
+  interestTags?: string[]
+  politicalLeaning?: string | null
+  homeDistrict?: string | null
   educationLevel?: string | null
   occupation?: string | null
   primaryPhoto: string | null
@@ -74,7 +76,7 @@ export function SearchResults({
           <li>Expand your age or height range</li>
           <li>Remove some filters to see more profiles</li>
           <li>Try searching in nearby locations</li>
-          <li>Select more denominations</li>
+          <li>Select more interests or Kerala districts</li>
         </ul>
       </div>
     </div>
