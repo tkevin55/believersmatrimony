@@ -302,9 +302,9 @@ model Profile {
   aboutMe     String?  @db.Text
 
   // Interests & Values (KAAPI CONNECT - replaces faith fields)
-  interestTags              String[]  // Array of interest tag slugs
+  interestTags              String[]  @default([])  // Array of interest tag slugs
   politicalLeaning          PoliticalLeaning?
-  socialValues              String[]  // feminist, egalitarian, traditional, modern_flexible
+  socialValues              String[]  @default([])  // feminist, egalitarian, traditional, modern_flexible
   socialStyle               SocialStyle?
 
   // Relationship Goals
@@ -314,14 +314,14 @@ model Profile {
   relocationFlexibility     String?  // anywhere, prefer_kerala, prefer_current_city, international_ok
 
   // Communication & Personality
-  weekendPreference         String[]  // outdoor_activities, staying_home, socializing, family_time
+  weekendPreference         String[]  @default([])  // outdoor_activities, staying_home, socializing, family_time
   communicationStyle        String?   // very_expressive, moderate, reserved
 
   // Physical Attributes
   height          Int? // in cm
   bodyType        BodyType?
   complexion      String?
-  languages       String[]
+  languages       String[]  @default([])
 
   // Education & Career
   educationLevel  EducationLevel?
@@ -396,15 +396,15 @@ model PartnerPreferences {
   ageMax         Int?
   heightMin      Int?     // in cm
   heightMax      Int?     // in cm
-  educationLevels String[] // Array of EducationLevel
-  locations      String[] // Array of cities/states
+  educationLevels String[] @default([]) // Array of EducationLevel
+  locations      String[] @default([]) // Array of cities/states
   incomeRange    String?
 
   // Interest & Values Preferences (KAAPI CONNECT - replaces denominations)
-  preferredInterests        String[]  // Array of interest tag slugs
-  preferredPoliticalLeanings String[] // Array of PoliticalLeaning values
-  preferredSocialValues     String[]  // Array of social values
-  preferredKeralaDistricts  String[]  // Array of KeralaDistrict values
+  preferredInterests        String[]  @default([])  // Array of interest tag slugs
+  preferredPoliticalLeanings String[] @default([]) // Array of PoliticalLeaning values
+  preferredSocialValues     String[]  @default([])  // Array of social values
+  preferredKeralaDistricts  String[]  @default([])  // Array of KeralaDistrict values
   okayWithDiaspora          Boolean?  // Whether open to diaspora partners
 
   createdAt      DateTime @default(now())
