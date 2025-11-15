@@ -1,5 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// Kaapi Connect - Prisma Schema
+// A Kerala-first, secular matrimony platform
+// Matches based on interests, values, and compatibility
 
 generator client {
   provider = "prisma-client-js"
@@ -9,6 +10,10 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+// ============================================
+// CORE ENUMS
+// ============================================
 
 enum UserStatus {
   ACTIVE
@@ -65,13 +70,6 @@ enum VerificationStatus {
   REJECTED
 }
 
-enum ChurchVerificationStatus {
-  PENDING
-  VERIFIED
-  REJECTED
-  EXPIRED
-}
-
 enum NotificationType {
   NEW_MATCH
   INTEREST_RECEIVED
@@ -81,27 +79,6 @@ enum NotificationType {
   PROFILE_LIKE
   SUPER_LIKE
   DAILY_MATCHES
-}
-
-enum Denomination {
-  BAPTIST
-  METHODIST
-  PRESBYTERIAN
-  PENTECOSTAL
-  NON_DENOMINATIONAL
-  LUTHERAN
-  ANGLICAN
-  EPISCOPAL
-  REFORMED
-  EVANGELICAL
-  CSI
-  CNI
-  AG
-  IPC
-  MAR_THOMA
-  SEVENTH_DAY_ADVENTIST
-  BRETHREN
-  OTHER
 }
 
 enum EducationLevel {
@@ -139,14 +116,6 @@ enum IncomeRange {
   PREFER_NOT_TO_SAY
 }
 
-enum ChurchInvolvement {
-  REGULAR_ATTENDER
-  VOLUNTEER
-  MINISTRY_LEADER
-  ELDER_DEACON
-  OCCASIONAL_ATTENDER
-}
-
 enum ActivityType {
   PROFILE_VIEW
   LIKE_SENT
@@ -174,6 +143,70 @@ enum SubscriptionStatus {
   CANCELLED
   TRIAL
 }
+
+// ============================================
+// KAAPI CONNECT ENUMS (Values & Kerala Context)
+// ============================================
+
+enum PoliticalLeaning {
+  PROGRESSIVE
+  LIBERAL
+  MODERATE
+  CONSERVATIVE
+  APOLITICAL
+  PREFER_NOT_TO_SAY
+}
+
+enum KeralaDistrict {
+  THIRUVANANTHAPURAM
+  KOLLAM
+  PATHANAMTHITTA
+  ALAPPUZHA
+  KOTTAYAM
+  IDUKKI
+  ERNAKULAM
+  THRISSUR
+  PALAKKAD
+  MALAPPURAM
+  KOZHIKODE
+  WAYANAD
+  KANNUR
+  KASARAGOD
+}
+
+enum DiasporaLocation {
+  NONE
+  GULF_UAE
+  GULF_SAUDI
+  GULF_QATAR
+  GULF_KUWAIT
+  GULF_OMAN
+  GULF_BAHRAIN
+  USA
+  UK
+  AUSTRALIA
+  CANADA
+  EUROPE
+  SINGAPORE
+  OTHER
+}
+
+enum KeralaConnection {
+  VERY_STRONG
+  MODERATE
+  WEAK
+}
+
+enum SocialStyle {
+  INTROVERTED
+  EXTROVERTED
+  AMBIVERT
+  PREFER_NOT_TO_SAY
+}
+
+// ============================================
+// MODELS
+// ============================================
 
 model User {
   id            String     @id @default(cuid())
@@ -217,7 +250,6 @@ model User {
   activityTargets    Activity[]          @relation("ActivityTargets")
   subscription       Subscription?
   dailyQuotas        DailyQuota[]
-  churchVerification ChurchVerification?
 
   @@index([email])
   @@index([status])
@@ -269,13 +301,21 @@ model Profile {
   gender      Gender
   aboutMe     String?  @db.Text
 
-  // Faith Background
-  denomination          Denomination
-  churchName            String?
-  yearsAsBeliever       Int?
-  isBaptized            Boolean      @default(false)
-  churchInvolvementLevel ChurchInvolvement?
-  faithTestimony        String?      @db.Text
+  // Interests & Values (KAAPI CONNECT - replaces faith fields)
+  interestTags              String[]  // Array of interest tag slugs
+  politicalLeaning          PoliticalLeaning?
+  socialValues              String[]  // feminist, egalitarian, traditional, modern_flexible
+  socialStyle               SocialStyle?
+
+  // Relationship Goals
+  relationshipTimeline      String?  // casual_to_serious, life_partner_soon, open, no_rush
+  wantChildren              String?  // yes, no, undecided
+  livingArrangementPreference String? // nuclear, open_to_extended, doesnt_matter
+  relocationFlexibility     String?  // anywhere, prefer_kerala, prefer_current_city, international_ok
+
+  // Communication & Personality
+  weekendPreference         String[]  // outdoor_activities, staying_home, socializing, family_time
+  communicationStyle        String?   // very_expressive, moderate, reserved
 
   // Physical Attributes
   height          Int? // in cm
@@ -302,11 +342,15 @@ model Profile {
   dietPreference String?
   hobbies        String? @db.Text
 
-  // Location
-  city            String?
-  state           String?
-  country         String?
-  openToRelocate  Boolean @default(false)
+  // Location & Kerala Connection (KAAPI CONNECT)
+  city                String?
+  state               String?
+  country             String?
+  homeDistrict        KeralaDistrict?
+  diasporaLocation    DiasporaLocation?
+  keralaConnection    KeralaConnection?
+  languagePreference  String? // malayalam_primary, malayalam_english, english_primary
+  openToRelocate      Boolean @default(false)
 
   // Privacy
   isVisible       Boolean @default(true)
@@ -319,10 +363,11 @@ model Profile {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([denomination])
   @@index([city])
   @@index([gender])
   @@index([isVisible])
+  @@index([homeDistrict])
+  @@index([politicalLeaning])
 }
 
 model Photo {
@@ -346,14 +391,21 @@ model PartnerPreferences {
   userId         String   @unique
   user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  // Basic Preferences
   ageMin         Int?
   ageMax         Int?
   heightMin      Int?     // in cm
   heightMax      Int?     // in cm
   educationLevels String[] // Array of EducationLevel
-  denominations  String[] // Array of Denomination
   locations      String[] // Array of cities/states
   incomeRange    String?
+
+  // Interest & Values Preferences (KAAPI CONNECT - replaces denominations)
+  preferredInterests        String[]  // Array of interest tag slugs
+  preferredPoliticalLeanings String[] // Array of PoliticalLeaning values
+  preferredSocialValues     String[]  // Array of social values
+  preferredKeralaDistricts  String[]  // Array of KeralaDistrict values
+  okayWithDiaspora          Boolean?  // Whether open to diaspora partners
 
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -547,34 +599,4 @@ model DailyQuota {
 
   @@unique([userId, date])
   @@index([userId, date])
-}
-
-model ChurchVerification {
-  id                  String                    @id @default(cuid())
-  userId              String                    @unique
-  user                User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  // Church Leader Details
-  pastorName          String
-  pastorPhone         String
-  churchName          String
-  churchAddress       String?
-
-  // Verification Details
-  status              ChurchVerificationStatus  @default(PENDING)
-  verificationToken   String                    @unique @default(cuid())
-  verificationMessage String?                   @db.Text
-  verifiedAt          DateTime?
-
-  // Tracking
-  requestedAt         DateTime                  @default(now())
-  expiresAt           DateTime                  // 7 days from request
-  reminderSentAt      DateTime?
-
-  createdAt           DateTime                  @default(now())
-  updatedAt           DateTime                  @updatedAt
-
-  @@index([status])
-  @@index([verificationToken])
-  @@index([expiresAt])
 }
