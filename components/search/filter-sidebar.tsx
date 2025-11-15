@@ -22,7 +22,9 @@ export interface SearchFilters {
   ageMax: number
   heightMin: number
   heightMax: number
-  denominations: string[]
+  interestTags: string[]
+  politicalLeanings: string[]
+  keralaDistricts: string[]
   locations: string[]
   educationLevels: string[]
   occupation: string
@@ -40,25 +42,54 @@ interface FilterSidebarProps {
   onReset: () => void
 }
 
-const DENOMINATIONS = [
-  { value: 'CSI', label: 'CSI (Church of South India)' },
-  { value: 'CNI', label: 'CNI (Church of North India)' },
-  { value: 'BAPTIST', label: 'Baptist' },
-  { value: 'METHODIST', label: 'Methodist' },
-  { value: 'PRESBYTERIAN', label: 'Presbyterian' },
-  { value: 'PENTECOSTAL', label: 'Pentecostal' },
-  { value: 'AG', label: 'AG (Assemblies of God)' },
-  { value: 'IPC', label: 'IPC (Indian Pentecostal Church)' },
-  { value: 'NON_DENOMINATIONAL', label: 'Non-Denominational' },
-  { value: 'LUTHERAN', label: 'Lutheran' },
-  { value: 'ANGLICAN', label: 'Anglican' },
-  { value: 'EPISCOPAL', label: 'Episcopal' },
-  { value: 'REFORMED', label: 'Reformed' },
-  { value: 'EVANGELICAL', label: 'Evangelical' },
-  { value: 'MAR_THOMA', label: 'Mar Thoma' },
-  { value: 'SEVENTH_DAY_ADVENTIST', label: 'SDA (Seventh-day Adventist)' },
-  { value: 'BRETHREN', label: 'Brethren' },
-  { value: 'OTHER', label: 'Other' },
+// Kaapi Connect Interest Tags
+const INTEREST_TAGS = [
+  { value: 'music', label: 'Music' },
+  { value: 'movies', label: 'Movies' },
+  { value: 'reading', label: 'Reading' },
+  { value: 'cooking', label: 'Cooking' },
+  { value: 'travel', label: 'Travel' },
+  { value: 'photography', label: 'Photography' },
+  { value: 'sports', label: 'Sports' },
+  { value: 'fitness', label: 'Fitness' },
+  { value: 'yoga', label: 'Yoga' },
+  { value: 'art', label: 'Art' },
+  { value: 'gaming', label: 'Gaming' },
+  { value: 'dancing', label: 'Dancing' },
+  { value: 'hiking', label: 'Hiking' },
+  { value: 'cycling', label: 'Cycling' },
+  { value: 'writing', label: 'Writing' },
+  { value: 'volunteering', label: 'Volunteering' },
+  { value: 'gardening', label: 'Gardening' },
+  { value: 'tech', label: 'Technology' },
+]
+
+// Political Leaning Options (Kaapi Connect)
+const POLITICAL_LEANINGS = [
+  { value: 'PROGRESSIVE', label: 'Progressive' },
+  { value: 'LIBERAL', label: 'Liberal' },
+  { value: 'MODERATE', label: 'Moderate' },
+  { value: 'CONSERVATIVE', label: 'Conservative' },
+  { value: 'APOLITICAL', label: 'Apolitical' },
+  { value: 'PREFER_NOT_TO_SAY', label: 'Prefer not to say' },
+]
+
+// Kerala Districts (Kaapi Connect)
+const KERALA_DISTRICTS = [
+  { value: 'THIRUVANANTHAPURAM', label: 'Thiruvananthapuram' },
+  { value: 'KOLLAM', label: 'Kollam' },
+  { value: 'PATHANAMTHITTA', label: 'Pathanamthitta' },
+  { value: 'ALAPPUZHA', label: 'Alappuzha' },
+  { value: 'KOTTAYAM', label: 'Kottayam' },
+  { value: 'IDUKKI', label: 'Idukki' },
+  { value: 'ERNAKULAM', label: 'Ernakulam' },
+  { value: 'THRISSUR', label: 'Thrissur' },
+  { value: 'PALAKKAD', label: 'Palakkad' },
+  { value: 'MALAPPURAM', label: 'Malappuram' },
+  { value: 'KOZHIKODE', label: 'Kozhikode' },
+  { value: 'WAYANAD', label: 'Wayanad' },
+  { value: 'KANNUR', label: 'Kannur' },
+  { value: 'KASARAGOD', label: 'Kasaragod' },
 ]
 
 const EDUCATION_LEVELS = [
@@ -91,7 +122,9 @@ export function FilterSidebar({ filters, onFiltersChange, onReset }: FilterSideb
   const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({
     age: true,
     height: true,
-    denomination: true,
+    interests: true,
+    politics: false,
+    kerala: false,
     location: false,
     education: false,
     occupation: false,
@@ -111,11 +144,25 @@ export function FilterSidebar({ filters, onFiltersChange, onReset }: FilterSideb
     onFiltersChange({ ...filters, ...updates })
   }
 
-  const toggleDenomination = (denomination: string) => {
-    const newDenominations = filters.denominations.includes(denomination)
-      ? filters.denominations.filter((d) => d !== denomination)
-      : [...filters.denominations, denomination]
-    updateFilters({ denominations: newDenominations })
+  const toggleInterestTag = (tag: string) => {
+    const newTags = filters.interestTags.includes(tag)
+      ? filters.interestTags.filter((t) => t !== tag)
+      : [...filters.interestTags, tag]
+    updateFilters({ interestTags: newTags })
+  }
+
+  const togglePoliticalLeaning = (leaning: string) => {
+    const newLeanings = filters.politicalLeanings.includes(leaning)
+      ? filters.politicalLeanings.filter((l) => l !== leaning)
+      : [...filters.politicalLeanings, leaning]
+    updateFilters({ politicalLeanings: newLeanings })
+  }
+
+  const toggleKeralaDistrict = (district: string) => {
+    const newDistricts = filters.keralaDistricts.includes(district)
+      ? filters.keralaDistricts.filter((d) => d !== district)
+      : [...filters.keralaDistricts, district]
+    updateFilters({ keralaDistricts: newDistricts })
   }
 
   const toggleEducationLevel = (level: string) => {
@@ -196,21 +243,63 @@ export function FilterSidebar({ filters, onFiltersChange, onReset }: FilterSideb
           </div>
         </FilterSection>
 
-        {/* Denomination */}
-        <FilterSection title="Denomination" sectionKey="denomination">
+        {/* Interests & Hobbies (Kaapi Connect) */}
+        <FilterSection title="Interests & Hobbies" sectionKey="interests">
           <div className="space-y-2 max-h-64 overflow-y-auto">
-            {DENOMINATIONS.map((denom) => (
-              <div key={denom.value} className="flex items-center space-x-2">
+            {INTEREST_TAGS.map((interest) => (
+              <div key={interest.value} className="flex items-center space-x-2">
                 <Checkbox
-                  id={`denom-${denom.value}`}
-                  checked={filters.denominations.includes(denom.value)}
-                  onCheckedChange={() => toggleDenomination(denom.value)}
+                  id={`interest-${interest.value}`}
+                  checked={filters.interestTags.includes(interest.value)}
+                  onCheckedChange={() => toggleInterestTag(interest.value)}
                 />
                 <Label
-                  htmlFor={`denom-${denom.value}`}
+                  htmlFor={`interest-${interest.value}`}
                   className="text-sm font-normal cursor-pointer"
                 >
-                  {denom.label}
+                  {interest.label}
+                </Label>
+              </div>
+            ))}
+          </div>
+        </FilterSection>
+
+        {/* Political Leaning (Kaapi Connect) */}
+        <FilterSection title="Political Leaning" sectionKey="politics">
+          <div className="space-y-2">
+            {POLITICAL_LEANINGS.map((leaning) => (
+              <div key={leaning.value} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`politics-${leaning.value}`}
+                  checked={filters.politicalLeanings.includes(leaning.value)}
+                  onCheckedChange={() => togglePoliticalLeaning(leaning.value)}
+                />
+                <Label
+                  htmlFor={`politics-${leaning.value}`}
+                  className="text-sm font-normal cursor-pointer"
+                >
+                  {leaning.label}
+                </Label>
+              </div>
+            ))}
+          </div>
+        </FilterSection>
+
+        {/* Kerala District (Kaapi Connect) */}
+        <FilterSection title="Kerala District" sectionKey="kerala">
+          <div className="space-y-2 max-h-64 overflow-y-auto">
+            {KERALA_DISTRICTS.map((district) => (
+              <div key={district.value} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`district-${district.value}`}
+                  checked={filters.keralaDistricts.includes(district.value)}
+                  onCheckedChange={() => toggleKeralaDistrict(district.value)}
+                />
+                <Label
+                  htmlFor={`district-${district.value}`}
+                  className="text-sm font-normal cursor-pointer"
+                >
+                  {district.label}
                 </Label>
               </div>
             ))}

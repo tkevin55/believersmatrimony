@@ -28,7 +28,9 @@ const DEFAULT_FILTERS: SearchFilters = {
   ageMax: 80,
   heightMin: 140,
   heightMax: 220,
-  denominations: [],
+  interestTags: [],
+  politicalLeanings: [],
+  keralaDistricts: [],
   locations: [],
   educationLevels: [],
   occupation: '',
@@ -46,7 +48,9 @@ interface SearchResult {
   age: number
   gender: string
   location: string
-  denomination: string
+  interestTags?: string[]
+  politicalLeaning?: string | null
+  homeDistrict?: string | null
   educationLevel?: string | null
   occupation?: string | null
   primaryPhoto: string | null
@@ -99,7 +103,9 @@ function SearchContent() {
       ageMax: params.ageMax ? parseInt(params.ageMax) : DEFAULT_FILTERS.ageMax,
       heightMin: params.heightMin ? parseInt(params.heightMin) : DEFAULT_FILTERS.heightMin,
       heightMax: params.heightMax ? parseInt(params.heightMax) : DEFAULT_FILTERS.heightMax,
-      denominations: params.denominations ? params.denominations.split(',') : [],
+      interestTags: params.interestTags ? params.interestTags.split(',') : [],
+      politicalLeanings: params.politicalLeanings ? params.politicalLeanings.split(',') : [],
+      keralaDistricts: params.keralaDistricts ? params.keralaDistricts.split(',') : [],
       locations: params.locations ? params.locations.split(',') : [],
       educationLevels: params.educationLevels ? params.educationLevels.split(',') : [],
       occupation: params.occupation || '',
@@ -150,8 +156,14 @@ function SearchContent() {
         if (filters.heightMax !== DEFAULT_FILTERS.heightMax) {
           params.append('heightMax', filters.heightMax.toString())
         }
-        if (filters.denominations.length > 0) {
-          params.append('denominations', filters.denominations.join(','))
+        if (filters.interestTags.length > 0) {
+          params.append('interestTags', filters.interestTags.join(','))
+        }
+        if (filters.politicalLeanings.length > 0) {
+          params.append('politicalLeanings', filters.politicalLeanings.join(','))
+        }
+        if (filters.keralaDistricts.length > 0) {
+          params.append('keralaDistricts', filters.keralaDistricts.join(','))
         }
         if (filters.locations.length > 0) {
           params.append('locations', filters.locations.join(','))

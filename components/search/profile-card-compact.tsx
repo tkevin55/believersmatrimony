@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Heart, MapPin, Briefcase, GraduationCap, CheckCircle2 } from 'lucide-react'
+import { Heart, MapPin, Briefcase, GraduationCap, CheckCircle2, Tag } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -16,7 +16,9 @@ interface ProfileCardCompactProps {
   age: number
   gender: string
   location: string
-  denomination: string
+  interestTags?: string[]
+  politicalLeaning?: string | null
+  homeDistrict?: string | null
   educationLevel?: string | null
   occupation?: string | null
   primaryPhoto: string | null
@@ -30,7 +32,9 @@ export function ProfileCardCompact({
   name,
   age,
   location,
-  denomination,
+  interestTags,
+  politicalLeaning,
+  homeDistrict,
   educationLevel,
   occupation,
   primaryPhoto,
@@ -92,18 +96,22 @@ export function ProfileCardCompact({
     router.push(`/profile/${id}`)
   }
 
-  const formatDenomination = (denom: string) => {
-    return denom
-      .split('_')
-      .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
-      .join(' ')
-  }
-
   const formatEducation = (edu: string) => {
     return edu
       .split('_')
       .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
       .join(' ')
+  }
+
+  const formatDistrict = (district: string) => {
+    return district
+      .split('_')
+      .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
+      .join(' ')
+  }
+
+  const capitalizeFirst = (str: string) => {
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
   }
 
   return (
@@ -191,12 +199,33 @@ export function ProfileCardCompact({
             </div>
           )}
 
-          {/* Denomination */}
-          <div className="flex items-center gap-2 text-sm">
-            <Badge variant="secondary" className="text-xs">
-              {formatDenomination(denomination)}
-            </Badge>
-          </div>
+          {/* Interests (Kaapi Connect) */}
+          {interestTags && interestTags.length > 0 && (
+            <div className="flex items-start gap-2 text-sm">
+              <Tag className="h-4 w-4 flex-shrink-0 mt-0.5" />
+              <div className="flex flex-wrap gap-1">
+                {interestTags.slice(0, 3).map((tag, index) => (
+                  <Badge key={index} variant="secondary" className="text-xs">
+                    {capitalizeFirst(tag)}
+                  </Badge>
+                ))}
+                {interestTags.length > 3 && (
+                  <Badge variant="outline" className="text-xs">
+                    +{interestTags.length - 3}
+                  </Badge>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Kerala District (Kaapi Connect) */}
+          {homeDistrict && (
+            <div className="flex items-center gap-2 text-sm">
+              <Badge variant="outline" className="text-xs">
+                {formatDistrict(homeDistrict)}
+              </Badge>
+            </div>
+          )}
 
           {/* Education */}
           {educationLevel && (
