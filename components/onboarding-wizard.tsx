@@ -28,7 +28,9 @@ const INDIAN_CITIES = [
   'Aurangabad', 'Dhanbad', 'Amritsar', 'Navi Mumbai', 'Allahabad', 'Ranchi', 'Howrah',
   'Coimbatore', 'Jabalpur', 'Gwalior', 'Vijayawada', 'Jodhpur', 'Madurai', 'Raipur',
   'Kota', 'Chandigarh', 'Guwahati', 'Solapur', 'Hubli-Dharwad', 'Mysore', 'Tiruchirappalli',
-  'Bareilly', 'Tiruppur', 'Moradabad', 'Thiruvananthapuram', 'Bhubaneswar', 'Dehradun'
+  'Bareilly', 'Tiruppur', 'Moradabad', 'Thiruvananthapuram', 'Bhubaneswar', 'Dehradun',
+  'Kochi', 'Kozhikode', 'Thrissur', 'Kannur', 'Kollam', 'Palakkad', 'Alappuzha', 'Kottayam',
+  'Malappuram', 'Kasaragod', 'Pathanamthitta', 'Idukki', 'Wayanad', 'Ernakulam'
 ]
 
 const INDIAN_STATES = [
@@ -45,11 +47,107 @@ const INDIAN_LANGUAGES = [
   'Sanskrit', 'Kashmiri', 'Sindhi', 'Dogri', 'Maithili', 'Santali', 'Bodo'
 ]
 
-const HOBBIES = [
-  'Reading', 'Music', 'Sports', 'Traveling', 'Cooking', 'Photography', 'Ministry work',
-  'Bible study', 'Prayer groups', 'Art', 'Fitness', 'Dancing', 'Gardening', 'Writing',
-  'Volunteering', 'Singing', 'Playing instruments', 'Hiking', 'Swimming', 'Cycling'
+// Kaapi Connect - Kerala Districts
+const KERALA_DISTRICTS = [
+  { value: 'THIRUVANANTHAPURAM', label: 'Thiruvananthapuram' },
+  { value: 'KOLLAM', label: 'Kollam' },
+  { value: 'PATHANAMTHITTA', label: 'Pathanamthitta' },
+  { value: 'ALAPPUZHA', label: 'Alappuzha' },
+  { value: 'KOTTAYAM', label: 'Kottayam' },
+  { value: 'IDUKKI', label: 'Idukki' },
+  { value: 'ERNAKULAM', label: 'Ernakulam' },
+  { value: 'THRISSUR', label: 'Thrissur' },
+  { value: 'PALAKKAD', label: 'Palakkad' },
+  { value: 'MALAPPURAM', label: 'Malappuram' },
+  { value: 'KOZHIKODE', label: 'Kozhikode' },
+  { value: 'WAYANAD', label: 'Wayanad' },
+  { value: 'KANNUR', label: 'Kannur' },
+  { value: 'KASARAGOD', label: 'Kasaragod' },
 ]
+
+const DIASPORA_LOCATIONS = [
+  { value: 'NONE', label: 'Not in diaspora' },
+  { value: 'GULF_UAE', label: 'UAE' },
+  { value: 'GULF_SAUDI', label: 'Saudi Arabia' },
+  { value: 'GULF_QATAR', label: 'Qatar' },
+  { value: 'GULF_KUWAIT', label: 'Kuwait' },
+  { value: 'GULF_OMAN', label: 'Oman' },
+  { value: 'GULF_BAHRAIN', label: 'Bahrain' },
+  { value: 'USA', label: 'United States' },
+  { value: 'UK', label: 'United Kingdom' },
+  { value: 'CANADA', label: 'Canada' },
+  { value: 'AUSTRALIA', label: 'Australia' },
+  { value: 'SINGAPORE', label: 'Singapore' },
+  { value: 'MALAYSIA', label: 'Malaysia' },
+  { value: 'EUROPE_OTHER', label: 'Europe (Other)' },
+  { value: 'OTHER', label: 'Other' },
+]
+
+// Kaapi Connect - Interest Tags (categorized)
+const INTEREST_CATEGORIES = [
+  {
+    category: 'Arts & Culture',
+    interests: [
+      { value: 'music', label: 'Music' },
+      { value: 'movies', label: 'Movies' },
+      { value: 'indie_films', label: 'Indie Films' },
+      { value: 'reading', label: 'Reading' },
+      { value: 'painting', label: 'Painting' },
+      { value: 'photography', label: 'Photography' },
+      { value: 'theatre', label: 'Theatre' },
+      { value: 'classical_dance', label: 'Classical Dance' },
+    ]
+  },
+  {
+    category: 'Sports & Fitness',
+    interests: [
+      { value: 'cricket', label: 'Cricket' },
+      { value: 'football', label: 'Football' },
+      { value: 'badminton', label: 'Badminton' },
+      { value: 'gym', label: 'Gym' },
+      { value: 'yoga', label: 'Yoga' },
+      { value: 'running', label: 'Running' },
+      { value: 'trekking', label: 'Trekking' },
+      { value: 'cycling', label: 'Cycling' },
+    ]
+  },
+  {
+    category: 'Food & Travel',
+    interests: [
+      { value: 'cooking', label: 'Cooking' },
+      { value: 'baking', label: 'Baking' },
+      { value: 'street_food', label: 'Street Food' },
+      { value: 'coffee_hunting', label: 'Coffee Hunting' },
+      { value: 'road_trips', label: 'Road Trips' },
+      { value: 'backpacking', label: 'Backpacking' },
+      { value: 'solo_travel', label: 'Solo Travel' },
+    ]
+  },
+  {
+    category: 'Tech & Creativity',
+    interests: [
+      { value: 'coding', label: 'Coding' },
+      { value: 'gaming', label: 'Gaming' },
+      { value: 'startups', label: 'Startups' },
+      { value: 'design', label: 'Design' },
+      { value: 'content_creation', label: 'Content Creation' },
+      { value: 'podcasts', label: 'Podcasts' },
+    ]
+  },
+  {
+    category: 'Social & Lifestyle',
+    interests: [
+      { value: 'pets', label: 'Pets' },
+      { value: 'gardening', label: 'Gardening' },
+      { value: 'home_decor', label: 'Home Decor' },
+      { value: 'standup_comedy', label: 'Stand-up Comedy' },
+      { value: 'board_games', label: 'Board Games' },
+      { value: 'family_time', label: 'Family Time' },
+    ]
+  },
+]
+
+const ALL_INTERESTS = INTEREST_CATEGORIES.flatMap(cat => cat.interests)
 
 // Validation schemas for each step
 const step1Schema = z.object({
@@ -65,18 +163,15 @@ const step2Schema = z.object({
   state: z.string().min(1, 'State is required'),
   country: z.string().min(1, 'Country is required'),
   openToRelocate: z.enum(['yes', 'no'], { required_error: 'Please select an option' }),
-  preferredCities: z.array(z.string()).optional(),
+  homeDistrict: z.string().optional(),
+  diasporaLocation: z.string().optional(),
+  keralaConnection: z.string().optional(),
+  languagePreference: z.string().optional(),
+  relocationFlexibility: z.string().optional(),
 })
 
 const step3Schema = z.object({
-  denomination: z.string().min(1, 'Denomination is required'),
-  churchName: z.string().min(1, 'Church name is required'),
-  churchLocation: z.string().min(1, 'Church location is required'),
-  yearsAsBeliever: z.string().min(1, 'Years as believer is required'),
-  isBaptized: z.enum(['yes', 'no'], { required_error: 'Baptism status is required' }),
-  baptismYear: z.string().optional(),
-  churchInvolvement: z.string().min(1, 'Church involvement is required'),
-  faithTestimony: z.string().optional(),
+  interestTags: z.array(z.string()).min(5, 'Select at least 5 interests'),
 })
 
 const step4Schema = z.object({
@@ -112,20 +207,30 @@ const step7Schema = z.object({
 })
 
 const step8Schema = z.object({
+  // Lifestyle
   drinking: z.string().min(1, 'Drinking habit is required'),
   smoking: z.string().min(1, 'Smoking habit is required'),
   diet: z.string().min(1, 'Diet preference is required'),
-  hobbies: z.array(z.string()).optional(),
+  // Values & lifestyle
+  politicalLeaning: z.string().min(1, 'Political leaning is required'),
+  socialValues: z.array(z.string()).optional(),
+  relationshipTimeline: z.string().optional(),
+  wantChildren: z.string().optional(),
+  livingArrangementPreference: z.string().optional(),
+  weekendPreference: z.array(z.string()).optional(),
+  communicationStyle: z.string().optional(),
+  // Partner preferences
   partnerAgeMin: z.number().min(18).max(60),
   partnerAgeMax: z.number().min(18).max(60),
   partnerHeightMin: z.number().min(122).max(213),
   partnerHeightMax: z.number().min(122).max(213),
   partnerMinEducation: z.string().min(1, 'Partner education preference is required'),
-  partnerDenominations: z.array(z.string()).min(1, 'Select at least one denomination'),
+  preferredInterests: z.array(z.string()).min(3, 'Select at least 3 preferred interests'),
+  preferredPoliticalLeanings: z.array(z.string()).optional(),
+  preferredKeralaDistricts: z.array(z.string()).optional(),
+  okayWithDiaspora: z.enum(['yes', 'no', 'either']).optional(),
   partnerLocations: z.array(z.string()).optional(),
   partnerIncomeExpectation: z.string().optional(),
-  mustBeBeliever: z.enum(['yes', 'no'], { required_error: 'This field is required' }),
-  openToChildren: z.string().min(1, 'This field is required'),
 })
 
 // Combined schema for all steps
@@ -177,7 +282,6 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
       countryCode: '+91',
       country: 'India',
       openToRelocate: 'no',
-      isBaptized: 'yes',
       height: 165, // Default height (5'5" / 165cm)
       bodyType: 'AVERAGE',
       siblingsCount: 0,
@@ -186,12 +290,14 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
       partnerAgeMax: 35,
       partnerHeightMin: 152,
       partnerHeightMax: 183,
-      mustBeBeliever: 'yes',
-      openToChildren: 'open',
       photos: [],
       languages: [],
-      hobbies: [],
-      partnerDenominations: [],
+      interestTags: [],
+      socialValues: [],
+      weekendPreference: [],
+      preferredInterests: [],
+      preferredPoliticalLeanings: [],
+      preferredKeralaDistricts: [],
       partnerLocations: [],
     },
   })
@@ -357,22 +463,19 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
             state: watch('state'),
             country: watch('country'),
             openToRelocate: watch('openToRelocate'),
-            preferredCities: watch('preferredCities'),
+            homeDistrict: watch('homeDistrict'),
+            diasporaLocation: watch('diasporaLocation'),
+            keralaConnection: watch('keralaConnection'),
+            languagePreference: watch('languagePreference'),
+            relocationFlexibility: watch('relocationFlexibility'),
           }
         }
         break
       case 3:
-        isValid = await trigger(['denomination', 'churchName', 'churchLocation', 'yearsAsBeliever', 'isBaptized', 'churchInvolvement'])
+        isValid = await trigger(['interestTags'])
         if (isValid) {
           stepData = {
-            denomination: watch('denomination'),
-            churchName: watch('churchName'),
-            churchLocation: watch('churchLocation'),
-            yearsAsBeliever: watch('yearsAsBeliever'),
-            isBaptized: watch('isBaptized'),
-            baptismYear: watch('baptismYear'),
-            churchInvolvement: watch('churchInvolvement'),
-            faithTestimony: watch('faithTestimony'),
+            interestTags: watch('interestTags'),
           }
         }
         break
@@ -455,9 +558,8 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
   const onSubmit = async (data: FormData) => {
     // Validate step 8 fields
     const isValid = await trigger([
-      'drinking', 'smoking', 'diet', 'partnerAgeMin', 'partnerAgeMax',
-      'partnerHeightMin', 'partnerHeightMax', 'partnerMinEducation',
-      'partnerDenominations', 'mustBeBeliever', 'openToChildren'
+      'drinking', 'smoking', 'diet', 'politicalLeaning', 'partnerAgeMin', 'partnerAgeMax',
+      'partnerHeightMin', 'partnerHeightMax', 'partnerMinEducation', 'preferredInterests'
     ])
 
     if (!isValid) {
@@ -618,7 +720,6 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
                       <SelectItem value="+971">🇦🇪 +971</SelectItem>
                       <SelectItem value="+65">🇸🇬 +65</SelectItem>
                       <SelectItem value="+61">🇦🇺 +61</SelectItem>
-                      <SelectItem value="+971">🇦🇪 +971</SelectItem>
                     </SelectContent>
                   </Select>
                   <Input
@@ -640,8 +741,8 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
         return (
           <div className="space-y-6">
             <div>
-              <h2 className="text-2xl font-semibold mb-2">Location Details</h2>
-              <p className="text-muted-foreground">Where are you currently located?</p>
+              <h2 className="text-2xl font-semibold mb-2">Location & Kerala Connection</h2>
+              <p className="text-muted-foreground">Tell us where you are and your connection to Kerala</p>
             </div>
 
             <div className="space-y-4">
@@ -708,6 +809,86 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
                 )}
               </div>
 
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg space-y-4">
+                <h3 className="font-semibold text-blue-900">Kerala Connection (Optional)</h3>
+
+                <div className="space-y-2">
+                  <Label htmlFor="homeDistrict">Home District</Label>
+                  <Select
+                    value={watch('homeDistrict') || ''}
+                    onValueChange={(value) => setValue('homeDistrict', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select home district" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {KERALA_DISTRICTS.map((district) => (
+                        <SelectItem key={district.value} value={district.value}>
+                          {district.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">Which Kerala district do you identify with?</p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="diasporaLocation">Diaspora Location</Label>
+                  <Select
+                    value={watch('diasporaLocation') || 'NONE'}
+                    onValueChange={(value) => setValue('diasporaLocation', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select diaspora location" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {DIASPORA_LOCATIONS.map((loc) => (
+                        <SelectItem key={loc.value} value={loc.value}>
+                          {loc.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">Are you part of the Kerala diaspora?</p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="keralaConnection">Kerala Connection Strength</Label>
+                  <Select
+                    value={watch('keralaConnection') || ''}
+                    onValueChange={(value) => setValue('keralaConnection', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select connection strength" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="VERY_STRONG">Very Strong</SelectItem>
+                      <SelectItem value="MODERATE">Moderate</SelectItem>
+                      <SelectItem value="WEAK">Weak</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">How connected do you feel to Kerala culture?</p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="languagePreference">Language Preference</Label>
+                  <Select
+                    value={watch('languagePreference') || ''}
+                    onValueChange={(value) => setValue('languagePreference', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select language preference" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="MALAYALAM_ONLY">Malayalam only</SelectItem>
+                      <SelectItem value="MALAYALAM_PREFERRED">Malayalam preferred</SelectItem>
+                      <SelectItem value="BILINGUAL">Bilingual (Malayalam & English)</SelectItem>
+                      <SelectItem value="ENGLISH_PREFERRED">English preferred</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
               <div className="space-y-2">
                 <Label>Open to Relocate? *</Label>
                 <div className="flex gap-4">
@@ -737,16 +918,21 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
 
               {watch('openToRelocate') === 'yes' && (
                 <div className="space-y-2">
-                  <Label htmlFor="preferredCities">Preferred Cities/Regions (Optional)</Label>
-                  <Input
-                    id="preferredCities"
-                    placeholder="e.g., Mumbai, Bangalore, Delhi (comma separated)"
-                    onChange={(e) => {
-                      const cities = e.target.value.split(',').map(c => c.trim()).filter(Boolean)
-                      setValue('preferredCities', cities)
-                    }}
-                  />
-                  <p className="text-sm text-muted-foreground">Enter cities separated by commas</p>
+                  <Label htmlFor="relocationFlexibility">Relocation Flexibility</Label>
+                  <Select
+                    value={watch('relocationFlexibility') || ''}
+                    onValueChange={(value) => setValue('relocationFlexibility', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select flexibility" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="READY_TO_MOVE">Ready to move anywhere</SelectItem>
+                      <SelectItem value="PREFER_CURRENT_CITY">Prefer current city</SelectItem>
+                      <SelectItem value="KERALA_ONLY">Kerala only</SelectItem>
+                      <SelectItem value="INTERNATIONAL_OK">International OK</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               )}
             </div>
@@ -757,166 +943,61 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
         return (
           <div className="space-y-6">
             <div>
-              <h2 className="text-2xl font-semibold mb-2">Faith Background</h2>
-              <p className="text-muted-foreground">Tell us about your Christian faith</p>
+              <h2 className="text-2xl font-semibold mb-2">Interests & Hobbies</h2>
+              <p className="text-muted-foreground">Select at least 5 interests that describe you</p>
             </div>
 
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="denomination">Denomination *</Label>
-                <Select
-                  value={watch('denomination') || ''}
-                  onValueChange={(value) => setValue('denomination', value, { shouldValidate: true })}
-                >
-                  <SelectTrigger className={cn(errors.denomination && 'border-red-500')}>
-                    <SelectValue placeholder="Select denomination" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="CSI">CSI (Church of South India)</SelectItem>
-                    <SelectItem value="CNI">CNI (Church of North India)</SelectItem>
-                    <SelectItem value="BAPTIST">Baptist</SelectItem>
-                    <SelectItem value="METHODIST">Methodist</SelectItem>
-                    <SelectItem value="PRESBYTERIAN">Presbyterian</SelectItem>
-                    <SelectItem value="PENTECOSTAL">Pentecostal</SelectItem>
-                    <SelectItem value="AG">AG (Assemblies of God)</SelectItem>
-                    <SelectItem value="IPC">IPC (Indian Pentecostal Church)</SelectItem>
-                    <SelectItem value="NON_DENOMINATIONAL">Non-denominational</SelectItem>
-                    <SelectItem value="EVANGELICAL">Evangelical</SelectItem>
-                    <SelectItem value="MAR_THOMA">Mar Thoma</SelectItem>
-                    <SelectItem value="SEVENTH_DAY_ADVENTIST">SDA (Seventh-day Adventist)</SelectItem>
-                    <SelectItem value="BRETHREN">Brethren</SelectItem>
-                    <SelectItem value="OTHER">Other</SelectItem>
-                  </SelectContent>
-                </Select>
-                {errors.denomination && (
-                  <p className="text-sm text-red-500">{errors.denomination.message}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="churchName">Church Name *</Label>
-                <Input
-                  id="churchName"
-                  {...register('churchName')}
-                  placeholder="Enter your church name"
-                  className={cn(errors.churchName && 'border-red-500')}
-                />
-                {errors.churchName && (
-                  <p className="text-sm text-red-500">{errors.churchName.message}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="churchLocation">Church Location/City *</Label>
-                <Input
-                  id="churchLocation"
-                  {...register('churchLocation')}
-                  placeholder="Enter church location"
-                  className={cn(errors.churchLocation && 'border-red-500')}
-                />
-                {errors.churchLocation && (
-                  <p className="text-sm text-red-500">{errors.churchLocation.message}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="yearsAsBeliever">Years as Believer *</Label>
-                <Select
-                  value={watch('yearsAsBeliever') || ''}
-                  onValueChange={(value) => setValue('yearsAsBeliever', value, { shouldValidate: true })}
-                >
-                  <SelectTrigger className={cn(errors.yearsAsBeliever && 'border-red-500')}>
-                    <SelectValue placeholder="Select years" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="<1">Less than 1 year</SelectItem>
-                    <SelectItem value="1-5">1-5 years</SelectItem>
-                    <SelectItem value="5-10">5-10 years</SelectItem>
-                    <SelectItem value="10-20">10-20 years</SelectItem>
-                    <SelectItem value="20+">20+ years</SelectItem>
-                  </SelectContent>
-                </Select>
-                {errors.yearsAsBeliever && (
-                  <p className="text-sm text-red-500">{errors.yearsAsBeliever.message}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label>Baptism Status *</Label>
-                <div className="flex gap-4">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      value="yes"
-                      {...register('isBaptized')}
-                      className="w-4 h-4"
-                    />
-                    <span>Yes</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      value="no"
-                      {...register('isBaptized')}
-                      className="w-4 h-4"
-                    />
-                    <span>No</span>
-                  </label>
+            <div className="space-y-6">
+              {INTEREST_CATEGORIES.map((category) => (
+                <div key={category.category} className="space-y-3">
+                  <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">
+                    {category.category}
+                  </h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                    {category.interests.map((interest) => (
+                      <label
+                        key={interest.value}
+                        className={cn(
+                          "flex items-center gap-2 p-3 border rounded-lg cursor-pointer transition-colors",
+                          watch('interestTags')?.includes(interest.value)
+                            ? 'border-primary bg-primary/10'
+                            : 'border-muted hover:border-primary/50'
+                        )}
+                      >
+                        <Checkbox
+                          checked={watch('interestTags')?.includes(interest.value)}
+                          onCheckedChange={(checked) => {
+                            const currentTags = watch('interestTags') || []
+                            if (checked) {
+                              setValue('interestTags', [...currentTags, interest.value], { shouldValidate: true })
+                            } else {
+                              setValue('interestTags', currentTags.filter(t => t !== interest.value), { shouldValidate: true })
+                            }
+                          }}
+                        />
+                        <span className="text-sm">{interest.label}</span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
-                {errors.isBaptized && (
-                  <p className="text-sm text-red-500">{errors.isBaptized.message}</p>
+              ))}
+
+              <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
+                <div>
+                  <span className="font-medium">
+                    {watch('interestTags')?.length || 0} interests selected
+                  </span>
+                </div>
+                {(watch('interestTags')?.length || 0) < 5 && (
+                  <span className="text-sm text-red-500">
+                    Select at least 5
+                  </span>
                 )}
               </div>
 
-              {watch('isBaptized') === 'yes' && (
-                <div className="space-y-2">
-                  <Label htmlFor="baptismYear">Year of Baptism (Optional)</Label>
-                  <Input
-                    id="baptismYear"
-                    {...register('baptismYear')}
-                    type="number"
-                    min="1950"
-                    max={new Date().getFullYear()}
-                    placeholder="e.g., 2010"
-                  />
-                </div>
+              {errors.interestTags && (
+                <p className="text-sm text-red-500">{errors.interestTags.message}</p>
               )}
-
-              <div className="space-y-2">
-                <Label htmlFor="churchInvolvement">Church Involvement *</Label>
-                <Select
-                  value={watch('churchInvolvement') || ''}
-                  onValueChange={(value) => setValue('churchInvolvement', value, { shouldValidate: true })}
-                >
-                  <SelectTrigger className={cn(errors.churchInvolvement && 'border-red-500')}>
-                    <SelectValue placeholder="Select involvement level" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="REGULAR_ATTENDER">Regular Attender</SelectItem>
-                    <SelectItem value="VOLUNTEER">Volunteer</SelectItem>
-                    <SelectItem value="MINISTRY_LEADER">Ministry Leader</SelectItem>
-                    <SelectItem value="ELDER_DEACON">Elder/Deacon</SelectItem>
-                    <SelectItem value="OCCASIONAL_ATTENDER">Occasional Attender</SelectItem>
-                  </SelectContent>
-                </Select>
-                {errors.churchInvolvement && (
-                  <p className="text-sm text-red-500">{errors.churchInvolvement.message}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="faithTestimony">Faith Testimony (Optional, but encouraged)</Label>
-                <Textarea
-                  id="faithTestimony"
-                  {...register('faithTestimony')}
-                  placeholder="Share your faith journey (200-500 characters)"
-                  className="min-h-[120px]"
-                  maxLength={500}
-                />
-                <p className="text-sm text-muted-foreground text-right">
-                  {watch('faithTestimony')?.length || 0}/500 characters
-                </p>
-              </div>
             </div>
           </div>
         )
@@ -1350,7 +1431,7 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
                     <SelectItem value="Traditional">Traditional</SelectItem>
                     <SelectItem value="Moderate">Moderate</SelectItem>
                     <SelectItem value="Liberal">Liberal</SelectItem>
-                    <SelectItem value="Orthodox Christian">Orthodox Christian</SelectItem>
+                    <SelectItem value="Progressive">Progressive</SelectItem>
                   </SelectContent>
                 </Select>
                 {errors.familyValues && (
@@ -1365,8 +1446,8 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
         return (
           <div className="space-y-6">
             <div>
-              <h2 className="text-2xl font-semibold mb-2">Lifestyle & Partner Preferences</h2>
-              <p className="text-muted-foreground">Final step - tell us about your lifestyle and partner preferences</p>
+              <h2 className="text-2xl font-semibold mb-2">Values, Lifestyle & Partner Preferences</h2>
+              <p className="text-muted-foreground">Final step - tell us about your values and partner preferences</p>
             </div>
 
             <div className="space-y-6">
@@ -1436,27 +1517,163 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
                     <p className="text-sm text-red-500">{errors.diet.message}</p>
                   )}
                 </div>
+              </div>
+
+              {/* Values & Personality */}
+              <div className="space-y-4 pt-4 border-t">
+                <h3 className="text-lg font-semibold">Your Values & Personality</h3>
 
                 <div className="space-y-2">
-                  <Label>Hobbies & Interests (Optional)</Label>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 max-h-64 overflow-y-auto p-4 border rounded-lg">
-                    {HOBBIES.map((hobby) => (
-                      <label key={hobby} className="flex items-center gap-2 cursor-pointer">
+                  <Label htmlFor="politicalLeaning">Political Leaning *</Label>
+                  <Select
+                    value={watch('politicalLeaning') || ''}
+                    onValueChange={(value) => setValue('politicalLeaning', value, { shouldValidate: true })}
+                  >
+                    <SelectTrigger className={cn(errors.politicalLeaning && 'border-red-500')}>
+                      <SelectValue placeholder="Select political leaning" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="PROGRESSIVE">Progressive</SelectItem>
+                      <SelectItem value="LIBERAL">Liberal</SelectItem>
+                      <SelectItem value="MODERATE">Moderate</SelectItem>
+                      <SelectItem value="CONSERVATIVE">Conservative</SelectItem>
+                      <SelectItem value="APOLITICAL">Apolitical</SelectItem>
+                      <SelectItem value="PREFER_NOT_TO_SAY">Prefer not to say</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {errors.politicalLeaning && (
+                    <p className="text-sm text-red-500">{errors.politicalLeaning.message}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Social Values (Optional)</Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {['Feminist', 'Egalitarian', 'Family-oriented', 'Career-focused', 'Spiritual', 'Environmentalist'].map((value) => (
+                      <label
+                        key={value}
+                        className={cn(
+                          "flex items-center gap-2 p-2 border rounded cursor-pointer",
+                          watch('socialValues')?.includes(value.toLowerCase())
+                            ? 'border-primary bg-primary/10'
+                            : 'border-muted'
+                        )}
+                      >
                         <Checkbox
-                          checked={watch('hobbies')?.includes(hobby)}
+                          checked={watch('socialValues')?.includes(value.toLowerCase())}
                           onCheckedChange={(checked) => {
-                            const currentHobbies = watch('hobbies') || []
+                            const current = watch('socialValues') || []
                             if (checked) {
-                              setValue('hobbies', [...currentHobbies, hobby])
+                              setValue('socialValues', [...current, value.toLowerCase()])
                             } else {
-                              setValue('hobbies', currentHobbies.filter(h => h !== hobby))
+                              setValue('socialValues', current.filter(v => v !== value.toLowerCase()))
                             }
                           }}
                         />
-                        <span className="text-sm">{hobby}</span>
+                        <span className="text-sm">{value}</span>
                       </label>
                     ))}
                   </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="relationshipTimeline">Relationship Timeline (Optional)</Label>
+                  <Select
+                    value={watch('relationshipTimeline') || ''}
+                    onValueChange={(value) => setValue('relationshipTimeline', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select timeline" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="CASUAL_TO_SERIOUS">Casual to serious</SelectItem>
+                      <SelectItem value="LIFE_PARTNER_SOON">Life partner soon</SelectItem>
+                      <SelectItem value="OPEN_TO_FLOW">Open to flow</SelectItem>
+                      <SelectItem value="NO_RUSH">No rush</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="wantChildren">Want Children? (Optional)</Label>
+                  <Select
+                    value={watch('wantChildren') || ''}
+                    onValueChange={(value) => setValue('wantChildren', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select option" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="YES">Yes</SelectItem>
+                      <SelectItem value="NO">No</SelectItem>
+                      <SelectItem value="UNDECIDED">Undecided</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="livingArrangementPreference">Living Arrangement Preference (Optional)</Label>
+                  <Select
+                    value={watch('livingArrangementPreference') || ''}
+                    onValueChange={(value) => setValue('livingArrangementPreference', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select preference" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="NUCLEAR">Nuclear family</SelectItem>
+                      <SelectItem value="EXTENDED_OK">Extended family OK</SelectItem>
+                      <SelectItem value="EITHER">Either works</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Weekend Preferences (Optional)</Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {['Outdoors', 'Stay in', 'Friends', 'Family time'].map((pref) => (
+                      <label
+                        key={pref}
+                        className={cn(
+                          "flex items-center gap-2 p-2 border rounded cursor-pointer",
+                          watch('weekendPreference')?.includes(pref.toUpperCase().replace(' ', '_'))
+                            ? 'border-primary bg-primary/10'
+                            : 'border-muted'
+                        )}
+                      >
+                        <Checkbox
+                          checked={watch('weekendPreference')?.includes(pref.toUpperCase().replace(' ', '_'))}
+                          onCheckedChange={(checked) => {
+                            const current = watch('weekendPreference') || []
+                            const value = pref.toUpperCase().replace(' ', '_')
+                            if (checked) {
+                              setValue('weekendPreference', [...current, value])
+                            } else {
+                              setValue('weekendPreference', current.filter(p => p !== value))
+                            }
+                          }}
+                        />
+                        <span className="text-sm">{pref}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="communicationStyle">Communication Style (Optional)</Label>
+                  <Select
+                    value={watch('communicationStyle') || ''}
+                    onValueChange={(value) => setValue('communicationStyle', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select style" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="VERY_EXPRESSIVE">Very expressive</SelectItem>
+                      <SelectItem value="BALANCED">Balanced</SelectItem>
+                      <SelectItem value="QUIET">Quiet & reserved</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
@@ -1518,36 +1735,128 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Preferred Denominations * (Select at least one)</Label>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-64 overflow-y-auto p-4 border rounded-lg">
-                    {['CSI', 'CNI', 'BAPTIST', 'METHODIST', 'PRESBYTERIAN', 'PENTECOSTAL', 'AG', 'IPC',
-                      'NON_DENOMINATIONAL', 'EVANGELICAL', 'MAR_THOMA', 'SEVENTH_DAY_ADVENTIST', 'BRETHREN', 'OTHER'].map((denom) => (
-                      <label key={denom} className="flex items-center gap-2 cursor-pointer">
+                  <Label>Preferred Interests * (Select at least 3)</Label>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-64 overflow-y-auto p-4 border rounded-lg">
+                    {ALL_INTERESTS.map((interest) => (
+                      <label
+                        key={interest.value}
+                        className={cn(
+                          "flex items-center gap-2 p-2 border rounded cursor-pointer",
+                          watch('preferredInterests')?.includes(interest.value)
+                            ? 'border-primary bg-primary/10'
+                            : 'border-muted'
+                        )}
+                      >
                         <Checkbox
-                          checked={watch('partnerDenominations')?.includes(denom)}
+                          checked={watch('preferredInterests')?.includes(interest.value)}
                           onCheckedChange={(checked) => {
-                            const currentDenoms = watch('partnerDenominations') || []
+                            const current = watch('preferredInterests') || []
                             if (checked) {
-                              setValue('partnerDenominations', [...currentDenoms, denom], { shouldValidate: true })
+                              setValue('preferredInterests', [...current, interest.value], { shouldValidate: true })
                             } else {
-                              setValue('partnerDenominations', currentDenoms.filter(d => d !== denom), { shouldValidate: true })
+                              setValue('preferredInterests', current.filter(i => i !== interest.value), { shouldValidate: true })
                             }
                           }}
                         />
-                        <span className="text-sm">{denom.replace(/_/g, ' ')}</span>
+                        <span className="text-sm">{interest.label}</span>
                       </label>
                     ))}
                   </div>
-                  {errors.partnerDenominations && (
-                    <p className="text-sm text-red-500">{errors.partnerDenominations.message}</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">
+                      {watch('preferredInterests')?.length || 0} interests selected
+                    </span>
+                    {(watch('preferredInterests')?.length || 0) < 3 && (
+                      <span className="text-sm text-red-500">Select at least 3</span>
+                    )}
+                  </div>
+                  {errors.preferredInterests && (
+                    <p className="text-sm text-red-500">{errors.preferredInterests.message}</p>
                   )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Preferred Political Leanings (Optional)</Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {['PROGRESSIVE', 'LIBERAL', 'MODERATE', 'CONSERVATIVE'].map((lean) => (
+                      <label
+                        key={lean}
+                        className={cn(
+                          "flex items-center gap-2 p-2 border rounded cursor-pointer",
+                          watch('preferredPoliticalLeanings')?.includes(lean)
+                            ? 'border-primary bg-primary/10'
+                            : 'border-muted'
+                        )}
+                      >
+                        <Checkbox
+                          checked={watch('preferredPoliticalLeanings')?.includes(lean)}
+                          onCheckedChange={(checked) => {
+                            const current = watch('preferredPoliticalLeanings') || []
+                            if (checked) {
+                              setValue('preferredPoliticalLeanings', [...current, lean])
+                            } else {
+                              setValue('preferredPoliticalLeanings', current.filter(l => l !== lean))
+                            }
+                          }}
+                        />
+                        <span className="text-sm capitalize">{lean.toLowerCase()}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Preferred Kerala Districts (Optional)</Label>
+                  <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-3 border rounded-lg">
+                    {KERALA_DISTRICTS.map((district) => (
+                      <label
+                        key={district.value}
+                        className={cn(
+                          "flex items-center gap-2 p-2 border rounded cursor-pointer",
+                          watch('preferredKeralaDistricts')?.includes(district.value)
+                            ? 'border-primary bg-primary/10'
+                            : 'border-muted'
+                        )}
+                      >
+                        <Checkbox
+                          checked={watch('preferredKeralaDistricts')?.includes(district.value)}
+                          onCheckedChange={(checked) => {
+                            const current = watch('preferredKeralaDistricts') || []
+                            if (checked) {
+                              setValue('preferredKeralaDistricts', [...current, district.value])
+                            } else {
+                              setValue('preferredKeralaDistricts', current.filter(d => d !== district.value))
+                            }
+                          }}
+                        />
+                        <span className="text-sm">{district.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="okayWithDiaspora">Okay with Partner in Diaspora? (Optional)</Label>
+                  <Select
+                    value={watch('okayWithDiaspora') || ''}
+                    onValueChange={(value) => setValue('okayWithDiaspora', value as any)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select option" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="yes">Yes</SelectItem>
+                      <SelectItem value="no">No</SelectItem>
+                      <SelectItem value="either">Either is fine</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="partnerLocations">Preferred Locations (Optional)</Label>
                   <Input
                     id="partnerLocations"
-                    placeholder="e.g., Mumbai, Bangalore, Chennai (comma separated)"
+                    placeholder="e.g., Kochi, Bangalore, Chennai (comma separated)"
                     onChange={(e) => {
                       const locations = e.target.value.split(',').map(l => l.trim()).filter(Boolean)
                       setValue('partnerLocations', locations)
@@ -1575,53 +1884,6 @@ export default function OnboardingWizard({ userId, initialName }: OnboardingWiza
                       <SelectItem value="ABOVE_THIRTY_LAKHS">30+ Lakhs</SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Must be a Believer? *</Label>
-                  <div className="flex gap-4">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="radio"
-                        value="yes"
-                        {...register('mustBeBeliever')}
-                        className="w-4 h-4"
-                      />
-                      <span>Yes</span>
-                    </label>
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="radio"
-                        value="no"
-                        {...register('mustBeBeliever')}
-                        className="w-4 h-4"
-                      />
-                      <span>No</span>
-                    </label>
-                  </div>
-                  {errors.mustBeBeliever && (
-                    <p className="text-sm text-red-500">{errors.mustBeBeliever.message}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="openToChildren">Open to Someone with Children? *</Label>
-                  <Select
-                    value={watch('openToChildren') || ''}
-                    onValueChange={(value) => setValue('openToChildren', value, { shouldValidate: true })}
-                  >
-                    <SelectTrigger className={cn(errors.openToChildren && 'border-red-500')}>
-                      <SelectValue placeholder="Select option" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="yes">Yes</SelectItem>
-                      <SelectItem value="no">No</SelectItem>
-                      <SelectItem value="open">Open to discussion</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {errors.openToChildren && (
-                    <p className="text-sm text-red-500">{errors.openToChildren.message}</p>
-                  )}
                 </div>
               </div>
             </div>

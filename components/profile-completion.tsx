@@ -30,13 +30,13 @@ export function ProfileCompletion({ profile, photos }: ProfileCompletionProps) {
       ]
     },
     {
-      name: 'Faith Background',
+      name: 'Interests & Values',
       fields: [
-        { label: 'Denomination', value: profile.denomination, required: true },
-        { label: 'Church Name', value: profile.churchName },
-        { label: 'Years as Believer', value: profile.yearsAsBeliever },
-        { label: 'Baptized', value: profile.isBaptized },
-        { label: 'Church Involvement', value: profile.churchInvolvementLevel },
+        { label: 'Interest Tags', value: profile.interestTags?.length >= 5, required: true },
+        { label: 'Political Leaning', value: profile.politicalLeaning, required: true },
+        { label: 'Social Values', value: profile.socialValues?.length > 0 },
+        { label: 'Home District', value: profile.homeDistrict },
+        { label: 'Kerala Connection', value: profile.keralaConnection },
       ]
     },
     {
