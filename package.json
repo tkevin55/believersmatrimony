@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/apply-migration.js && next build",
     "start": "next start",
     "lint": "next lint",
     "seed:profiles": "npx tsx scripts/seed-profiles.ts",
@@ -37,6 +37,7 @@
     "lucide-react": "^0.303.0",
     "next": "^14.2.0",
     "next-auth": "^4.24.5",
+    "pg": "^8.11.3",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
     "react-dropzone": "^14.2.3",
