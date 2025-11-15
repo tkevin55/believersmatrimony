@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Heart, X, Send, MapPin, Briefcase, GraduationCap, Church, ChevronDown, ChevronUp, Star } from 'lucide-react'
+import { Heart, X, Send, MapPin, Briefcase, GraduationCap, Sparkles, ChevronDown, ChevronUp, Star, Tag } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -18,15 +18,15 @@ interface ProfileCardProps {
     age: number
     gender: string
     location: string
-    denomination: string
+    interestTags?: string[]
+    politicalLeaning?: string | null
+    homeDistrict?: string | null
     educationLevel?: string | null
     occupation?: string | null
     height?: string | null
     aboutMe?: string | null
     primaryPhoto?: string | null
     matchPercentage: number
-    churchName?: string | null
-    yearsAsBeliever?: number | null
   }
   onLike: (userId: string, isSuperLike?: boolean) => Promise<void>
   onPass: (userId: string) => void
@@ -107,17 +107,17 @@ export function ProfileCard({
     return 'bg-gray-500'
   }
 
-  const formatDenomination = (denomination: string) => {
-    return denomination
+  const formatLabel = (text: string) => {
+    return text
       .split('_')
       .map(word => word.charAt(0) + word.slice(1).toLowerCase())
       .join(' ')
   }
 
-  const formatEducation = (education: string) => {
-    return education
+  const formatInterestTag = (tag: string) => {
+    return tag
       .split('_')
-      .map(word => word.charAt(0) + word.slice(1).toLowerCase())
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(' ')
   }
 
@@ -188,19 +188,52 @@ export function ProfileCard({
                 <span>• {profile.height}</span>
               )}
             </div>
+
+            {/* Kerala District Badge */}
+            {profile.homeDistrict && (
+              <div className="mt-2">
+                <Badge variant="secondary" className="text-xs">
+                  <MapPin className="h-3 w-3 mr-1" />
+                  {formatLabel(profile.homeDistrict)}, Kerala
+                </Badge>
+              </div>
+            )}
           </div>
+
+          {/* Interest Tags */}
+          {profile.interestTags && profile.interestTags.length > 0 && (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                <Tag className="h-4 w-4" />
+                <span>Interests</span>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {profile.interestTags.slice(0, 7).map((tag) => (
+                  <Badge
+                    key={tag}
+                    variant="outline"
+                    className="text-xs px-2 py-0.5 bg-primary/5 border-primary/20"
+                  >
+                    {formatInterestTag(tag)}
+                  </Badge>
+                ))}
+                {profile.interestTags.length > 7 && (
+                  <Badge variant="outline" className="text-xs px-2 py-0.5">
+                    +{profile.interestTags.length - 7} more
+                  </Badge>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Quick Info */}
           <div className="space-y-2">
-            <div className="flex items-center gap-2 text-sm">
-              <Church className="h-4 w-4 text-primary" />
-              <span className="font-medium">{formatDenomination(profile.denomination)}</span>
-              {profile.yearsAsBeliever && (
-                <span className="text-muted-foreground">
-                  • {profile.yearsAsBeliever} years as believer
-                </span>
-              )}
-            </div>
+            {profile.politicalLeaning && (
+              <div className="flex items-center gap-2 text-sm">
+                <Sparkles className="h-4 w-4 text-primary" />
+                <span className="font-medium">{formatLabel(profile.politicalLeaning)}</span>
+              </div>
+            )}
 
             {profile.occupation && (
               <div className="flex items-center gap-2 text-sm">
@@ -212,13 +245,7 @@ export function ProfileCard({
             {profile.educationLevel && (
               <div className="flex items-center gap-2 text-sm">
                 <GraduationCap className="h-4 w-4 text-primary" />
-                <span>{formatEducation(profile.educationLevel)}</span>
-              </div>
-            )}
-
-            {profile.churchName && (
-              <div className="text-sm text-muted-foreground">
-                Attends {profile.churchName}
+                <span>{formatLabel(profile.educationLevel)}</span>
               </div>
             )}
           </div>

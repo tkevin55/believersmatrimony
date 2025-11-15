@@ -21,7 +21,7 @@ import {
   Home,
   Calendar,
   Ruler,
-  Church,
+  Sparkles,
   User,
   Users,
   Ban,
@@ -31,7 +31,9 @@ import {
   CheckCircle2,
   Mail,
   Phone,
-  ArrowLeft
+  ArrowLeft,
+  Tag,
+  Globe
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -218,6 +220,13 @@ export default function ProfileViewPage({ params }: ProfileViewProps) {
     const feet = Math.floor(cm / 30.48)
     const inches = Math.round(((cm / 30.48) % 1) * 12)
     return `${cm} cm (${feet}'${inches}")`
+  }
+
+  const formatLabel = (text: string) => {
+    return text
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ')
   }
 
   if (isLoading) {
@@ -470,9 +479,16 @@ export default function ProfileViewPage({ params }: ProfileViewProps) {
                   <CardDescription className="text-lg mt-2">
                     {calculateAge(profile.dateOfBirth)} years old • {profile.gender}
                   </CardDescription>
-                  <div className="flex items-center gap-2 mt-2 text-muted-foreground">
-                    <MapPin className="h-4 w-4" />
-                    <span>{profile.city}, {profile.state}, {profile.country}</span>
+                  <div className="flex flex-wrap items-center gap-2 mt-2">
+                    <div className="flex items-center gap-1 text-muted-foreground">
+                      <MapPin className="h-4 w-4" />
+                      <span>{profile.city}, {profile.state}, {profile.country}</span>
+                    </div>
+                    {profile.homeDistrict && (
+                      <Badge variant="secondary" className="text-xs">
+                        {formatLabel(profile.homeDistrict)}, Kerala
+                      </Badge>
+                    )}
                   </div>
                 </div>
               </div>
@@ -494,45 +510,156 @@ export default function ProfileViewPage({ params }: ProfileViewProps) {
             </Card>
           )}
 
-          {/* Faith Background */}
+          {/* Interests & Hobbies */}
+          {profile.interestTags && profile.interestTags.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Tag className="h-5 w-5" />
+                  Interests & Hobbies
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-wrap gap-2">
+                  {profile.interestTags.map((tag: string) => (
+                    <Badge
+                      key={tag}
+                      variant="outline"
+                      className="px-3 py-1 bg-primary/5 border-primary/20"
+                    >
+                      {formatLabel(tag)}
+                    </Badge>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Values & Lifestyle */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Church className="h-5 w-5" />
-                Faith Background
+                <Sparkles className="h-5 w-5" />
+                Values & Lifestyle
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent>
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-muted-foreground">Denomination</p>
-                  <p className="font-medium">{profile.denomination.replace('_', ' ')}</p>
-                </div>
-                {profile.churchName && (
+                {profile.politicalLeaning && (
                   <div>
-                    <p className="text-sm text-muted-foreground">Church</p>
-                    <p className="font-medium">{profile.churchName}</p>
+                    <p className="text-sm text-muted-foreground">Political Leaning</p>
+                    <p className="font-medium">{formatLabel(profile.politicalLeaning)}</p>
                   </div>
                 )}
-                {profile.yearsAsBeliever !== null && (
-                  <div>
-                    <p className="text-sm text-muted-foreground">Years as Believer</p>
-                    <p className="font-medium">{profile.yearsAsBeliever} years</p>
+                {profile.socialValues && profile.socialValues.length > 0 && (
+                  <div className="col-span-2">
+                    <p className="text-sm text-muted-foreground mb-2">Social Values</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {profile.socialValues.map((value: string) => (
+                        <Badge key={value} variant="secondary" className="text-xs">
+                          {formatLabel(value)}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
                 )}
-                <div>
-                  <p className="text-sm text-muted-foreground">Baptized</p>
-                  <p className="font-medium">{profile.isBaptized ? 'Yes' : 'No'}</p>
-                </div>
-                {profile.churchInvolvementLevel && (
+                {profile.relationshipTimeline && (
                   <div>
-                    <p className="text-sm text-muted-foreground">Church Involvement</p>
-                    <p className="font-medium">{profile.churchInvolvementLevel.replace('_', ' ')}</p>
+                    <p className="text-sm text-muted-foreground">Relationship Timeline</p>
+                    <p className="font-medium">{formatLabel(profile.relationshipTimeline)}</p>
+                  </div>
+                )}
+                {profile.wantChildren && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Want Children</p>
+                    <p className="font-medium">{formatLabel(profile.wantChildren)}</p>
+                  </div>
+                )}
+                {profile.livingArrangementPreference && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Living Arrangement</p>
+                    <p className="font-medium">{formatLabel(profile.livingArrangementPreference)}</p>
+                  </div>
+                )}
+                {profile.weekendPreference && profile.weekendPreference.length > 0 && (
+                  <div className="col-span-2">
+                    <p className="text-sm text-muted-foreground mb-2">Weekend Preferences</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {profile.weekendPreference.map((pref: string) => (
+                        <Badge key={pref} variant="secondary" className="text-xs">
+                          {formatLabel(pref)}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {profile.communicationStyle && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Communication Style</p>
+                    <p className="font-medium">{formatLabel(profile.communicationStyle)}</p>
+                  </div>
+                )}
+                {profile.drinking && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Drinking</p>
+                    <p className="font-medium">{profile.drinking}</p>
+                  </div>
+                )}
+                {profile.smoking && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Smoking</p>
+                    <p className="font-medium">{profile.smoking}</p>
+                  </div>
+                )}
+                {profile.dietPreference && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Diet</p>
+                    <p className="font-medium">{formatLabel(profile.dietPreference)}</p>
                   </div>
                 )}
               </div>
             </CardContent>
           </Card>
+
+          {/* Kerala Connection */}
+          {(profile.homeDistrict || profile.diasporaLocation || profile.keralaConnection) && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Globe className="h-5 w-5" />
+                  Kerala Connection
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-4">
+                  {profile.homeDistrict && (
+                    <div>
+                      <p className="text-sm text-muted-foreground">Home District</p>
+                      <p className="font-medium">{formatLabel(profile.homeDistrict)}</p>
+                    </div>
+                  )}
+                  {profile.diasporaLocation && profile.diasporaLocation !== 'NONE' && (
+                    <div>
+                      <p className="text-sm text-muted-foreground">Diaspora Location</p>
+                      <p className="font-medium">{formatLabel(profile.diasporaLocation)}</p>
+                    </div>
+                  )}
+                  {profile.keralaConnection && (
+                    <div>
+                      <p className="text-sm text-muted-foreground">Kerala Connection</p>
+                      <p className="font-medium">{formatLabel(profile.keralaConnection)}</p>
+                    </div>
+                  )}
+                  {profile.languagePreference && (
+                    <div>
+                      <p className="text-sm text-muted-foreground">Language Preference</p>
+                      <p className="font-medium">{formatLabel(profile.languagePreference)}</p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Physical Attributes */}
           <Card>
@@ -553,7 +680,7 @@ export default function ProfileViewPage({ params }: ProfileViewProps) {
                 {profile.bodyType && (
                   <div>
                     <p className="text-sm text-muted-foreground">Body Type</p>
-                    <p className="font-medium">{profile.bodyType.replace('_', ' ')}</p>
+                    <p className="font-medium">{formatLabel(profile.bodyType)}</p>
                   </div>
                 )}
               </div>
@@ -573,7 +700,7 @@ export default function ProfileViewPage({ params }: ProfileViewProps) {
                 {profile.educationLevel && (
                   <div>
                     <p className="text-sm text-muted-foreground">Education</p>
-                    <p className="font-medium">{profile.educationLevel.replace('_', ' ')}</p>
+                    <p className="font-medium">{formatLabel(profile.educationLevel)}</p>
                   </div>
                 )}
                 {profile.fieldOfStudy && (
@@ -591,7 +718,7 @@ export default function ProfileViewPage({ params }: ProfileViewProps) {
                 {profile.incomeRange && (
                   <div>
                     <p className="text-sm text-muted-foreground">Income Range</p>
-                    <p className="font-medium">{profile.incomeRange.replace('_', ' ')}</p>
+                    <p className="font-medium">{formatLabel(profile.incomeRange)}</p>
                   </div>
                 )}
               </div>
@@ -611,7 +738,7 @@ export default function ProfileViewPage({ params }: ProfileViewProps) {
                 {profile.familyType && (
                   <div>
                     <p className="text-sm text-muted-foreground">Family Type</p>
-                    <p className="font-medium">{profile.familyType.replace('_', ' ')}</p>
+                    <p className="font-medium">{formatLabel(profile.familyType)}</p>
                   </div>
                 )}
                 {profile.siblingsCount !== null && (
@@ -642,47 +769,29 @@ export default function ProfileViewPage({ params }: ProfileViewProps) {
             </CardContent>
           </Card>
 
-          {/* Lifestyle */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Home className="h-5 w-5" />
-                Lifestyle
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="grid grid-cols-3 gap-4">
-                {profile.drinking && (
-                  <div>
-                    <p className="text-sm text-muted-foreground">Drinking</p>
-                    <p className="font-medium">{profile.drinking}</p>
-                  </div>
-                )}
-                {profile.smoking && (
-                  <div>
-                    <p className="text-sm text-muted-foreground">Smoking</p>
-                    <p className="font-medium">{profile.smoking}</p>
-                  </div>
-                )}
-                {profile.dietPreference && (
-                  <div>
-                    <p className="text-sm text-muted-foreground">Diet</p>
-                    <p className="font-medium">{profile.dietPreference.replace('_', ' ')}</p>
-                  </div>
-                )}
-              </div>
-              {profile.hobbies && (
+          {/* Additional Lifestyle */}
+          {profile.openToRelocate !== null && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Home className="h-5 w-5" />
+                  Location Flexibility
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Hobbies & Interests</p>
-                  <p className="text-sm">{profile.hobbies}</p>
+                  <p className="text-sm text-muted-foreground">Open to Relocate</p>
+                  <p className="font-medium">{profile.openToRelocate ? 'Yes' : 'No'}</p>
                 </div>
-              )}
-              <div>
-                <p className="text-sm text-muted-foreground">Open to Relocate</p>
-                <p className="font-medium">{profile.openToRelocate ? 'Yes' : 'No'}</p>
-              </div>
-            </CardContent>
-          </Card>
+                {profile.relocationFlexibility && (
+                  <div className="mt-3">
+                    <p className="text-sm text-muted-foreground">Relocation Flexibility</p>
+                    <p className="font-medium">{formatLabel(profile.relocationFlexibility)}</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
 
