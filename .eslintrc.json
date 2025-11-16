@@ -19,6 +19,8 @@
     "no-empty": "warn",
     "no-constant-condition": "warn",
     "prefer-const": "warn",
-    "no-var": "error"
+    "no-var": "error",
+    "react/no-unescaped-entities": "warn",
+    "jsx-a11y/alt-text": "warn"
   }
 }
