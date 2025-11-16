@@ -74,10 +74,15 @@ export function MotionWrapper({
   const Component = motion[as] as any
   const presetConfig = motionPresets[preset]
 
+  // Handle transition with delay - some presets like staggerChildren don't have root transition
+  const transitionWithDelay = 'transition' in presetConfig
+    ? { ...presetConfig.transition, delay }
+    : { delay }
+
   return (
     <Component
       {...presetConfig}
-      transition={{ ...presetConfig.transition, delay }}
+      transition={transitionWithDelay}
       className={className}
     >
       {children}
