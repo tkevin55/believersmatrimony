@@ -285,6 +285,16 @@ export async function GET(request: NextRequest) {
             },
           },
         },
+        personalityPrompts: {
+          select: {
+            id: true,
+            prompt: true,
+            answer: true,
+            order: true,
+          },
+          orderBy: { order: 'asc' },
+          take: 3,
+        },
       },
       orderBy,
       take: sortBy === 'relevance' ? limit * 2 : limit, // Fetch more for relevance sorting
@@ -322,6 +332,8 @@ export async function GET(request: NextRequest) {
           isVerified,
           isOnline,
           lastActive: profile.user.lastActive,
+          // Personality prompts (max 3)
+          personalityPrompts: profile.personalityPrompts || [],
         }
       })
     )

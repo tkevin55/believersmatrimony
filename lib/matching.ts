@@ -407,6 +407,16 @@ export async function getCuratedMatches(
               photos: true,
             },
           },
+          personalityPrompts: {
+            select: {
+              id: true,
+              prompt: true,
+              answer: true,
+              order: true,
+            },
+            orderBy: { order: 'asc' },
+            take: 3,
+          },
         },
         take: limit * 3,
       })
@@ -422,6 +432,16 @@ export async function getCuratedMatches(
             include: {
               photos: true,
             },
+          },
+          personalityPrompts: {
+            select: {
+              id: true,
+              prompt: true,
+              answer: true,
+              order: true,
+            },
+            orderBy: { order: 'asc' },
+            take: 3,
           },
         },
         take: limit * 3,

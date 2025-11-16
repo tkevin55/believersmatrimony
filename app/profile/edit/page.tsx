@@ -15,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox'
 import { toast } from '@/hooks/use-toast'
 import { Loader2, Save, ArrowLeft } from 'lucide-react'
+import { PromptsManager } from '@/components/prompts/prompts-manager'
 
 const profileSchema = z.object({
   aboutMe: z.string().min(50, 'About me should be at least 50 characters').max(1000).optional(),
@@ -366,6 +367,19 @@ export default function EditProfilePage() {
                 <p className="text-sm text-red-500">{errors.aboutMe.message}</p>
               )}
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Personality Prompts */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Personality Prompts</CardTitle>
+            <CardDescription>
+              Add up to 3 little stories that show who you are. These appear on your profile like Hinge-style cards.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <PromptsManager />
           </CardContent>
         </Card>
 

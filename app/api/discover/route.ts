@@ -74,6 +74,8 @@ export async function GET(request: NextRequest) {
         primaryPhoto: primaryPhoto?.url || null,
         matchPercentage: match.matchScore,
         profileViews: match.profileViews,
+        // Personality prompts (max 3)
+        personalityPrompts: match.personalityPrompts || [],
       }
     })
 
