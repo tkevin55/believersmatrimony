@@ -157,6 +157,22 @@ export default function DiscoverPage() {
 
       if (!response.ok) {
         const errorData = await response.json()
+
+        // Handle quota exceeded - show premium upgrade prompt
+        if (response.status === 429 && errorData.suggestPremium) {
+          toast({
+            title: '✨ Upgrade to Premium',
+            description: errorData.error || 'You\'ve reached your daily like limit. Upgrade to Premium for unlimited likes!',
+            action: {
+              label: 'Upgrade Now',
+              onClick: () => router.push(errorData.upgradeUrl || '/premium'),
+            },
+            duration: 8000, // Show for 8 seconds
+          })
+          setIsActionLoading(false)
+          return
+        }
+
         throw new Error(errorData.error || 'Failed to like profile')
       }
 

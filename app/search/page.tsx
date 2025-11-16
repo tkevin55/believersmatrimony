@@ -34,9 +34,9 @@ const DEFAULT_FILTERS: SearchFilters = {
   locations: [],
   educationLevels: [],
   occupation: '',
-  incomeRange: '',
-  drinking: '',
-  smoking: '',
+  incomeRange: 'ALL',
+  drinking: 'ALL',
+  smoking: 'ALL',
   withPhotoOnly: false,
   verifiedOnly: false,
   onlineOnly: false,
@@ -109,9 +109,9 @@ function SearchContent() {
       locations: params.locations ? params.locations.split(',') : [],
       educationLevels: params.educationLevels ? params.educationLevels.split(',') : [],
       occupation: params.occupation || '',
-      incomeRange: params.incomeRange || '',
-      drinking: params.drinking || '',
-      smoking: params.smoking || '',
+      incomeRange: params.incomeRange || 'ALL',
+      drinking: params.drinking || 'ALL',
+      smoking: params.smoking || 'ALL',
       withPhotoOnly: params.withPhotoOnly === 'true',
       verifiedOnly: params.verifiedOnly === 'true',
       onlineOnly: params.onlineOnly === 'true',
@@ -174,13 +174,13 @@ function SearchContent() {
         if (filters.occupation) {
           params.append('occupation', filters.occupation)
         }
-        if (filters.incomeRange) {
+        if (filters.incomeRange && filters.incomeRange !== 'ALL') {
           params.append('incomeRange', filters.incomeRange)
         }
-        if (filters.drinking) {
+        if (filters.drinking && filters.drinking !== 'ALL') {
           params.append('drinking', filters.drinking)
         }
-        if (filters.smoking) {
+        if (filters.smoking && filters.smoking !== 'ALL') {
           params.append('smoking', filters.smoking)
         }
         if (filters.withPhotoOnly) {

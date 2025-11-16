@@ -111,7 +111,7 @@ const INCOME_RANGES = [
 ]
 
 const LIFESTYLE_OPTIONS = [
-  { value: '', label: 'Any' },
+  { value: 'ALL', label: 'Any' },
   { value: 'never', label: 'Never' },
   { value: 'occasionally', label: 'Occasionally' },
   { value: 'socially', label: 'Socially' },
@@ -366,7 +366,7 @@ export function FilterSidebar({ filters, onFiltersChange, onReset }: FilterSideb
               <SelectValue placeholder="Select income range" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Any</SelectItem>
+              <SelectItem value="ALL">Any</SelectItem>
               {INCOME_RANGES.map((range) => (
                 <SelectItem key={range.value} value={range.value}>
                   {range.label}

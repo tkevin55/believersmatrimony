@@ -47,6 +47,17 @@ export default function PremiumPage() {
   }
 
   const handleUpgrade = async (tier: string) => {
+    // Confirm if changing plans
+    const currentTier = subscription?.tier || 'FREE'
+    const isDowngrade = (currentTier === 'PREMIUM' && tier === 'FREE') ||
+                        (currentTier === 'PREMIUM_PLUS' && (tier === 'FREE' || tier === 'PREMIUM'))
+
+    if (isDowngrade) {
+      if (!confirm(`Are you sure you want to switch to the ${tier} plan? You'll lose access to premium features at the end of your current billing period.`)) {
+        return
+      }
+    }
+
     setLoading(true)
     try {
       const response = await fetch('/api/subscription/upgrade', {
@@ -57,14 +68,15 @@ export default function PremiumPage() {
 
       if (!response.ok) {
         const error = await response.json()
-        throw new Error(error.error || 'Failed to upgrade')
+        throw new Error(error.error || 'Failed to change plan')
       }
 
       const data = await response.json()
 
+      const actionWord = isDowngrade ? 'switched' : 'upgraded'
       toast({
-        title: '🎉 Upgrade Successful!',
-        description: `You are now on the ${tier} plan. Enjoy unlimited features!`,
+        title: `🎉 Plan ${actionWord.charAt(0).toUpperCase() + actionWord.slice(1)} Successfully!`,
+        description: `You are now on the ${tier} plan. ${!isDowngrade ? 'Enjoy unlimited features!' : 'Changes will take effect at the end of your billing period.'}`,
       })
 
       // Refresh subscription data
@@ -76,7 +88,7 @@ export default function PremiumPage() {
       }, 2000)
     } catch (error: any) {
       toast({
-        title: 'Upgrade Failed',
+        title: 'Plan Change Failed',
         description: error.message || 'Something went wrong. Please try again.',
       })
     } finally {
@@ -176,9 +188,10 @@ export default function PremiumPage() {
             <Button
               variant="outline"
               className="w-full"
-              disabled={!isPremium}
+              onClick={() => handleUpgrade('FREE')}
+              disabled={loading || (!isPremium && !subscription?.tier) || subscription?.tier === 'FREE'}
             >
-              {!isPremium ? 'Current Plan' : 'Downgrade'}
+              {loading ? 'Processing...' : (subscription?.tier === 'FREE' || !subscription?.tier) ? 'Current Plan' : 'Switch to Free'}
             </Button>
           </CardFooter>
         </Card>
@@ -273,7 +286,10 @@ export default function PremiumPage() {
               onClick={() => handleUpgrade('PREMIUM')}
               disabled={loading || subscription?.tier === 'PREMIUM'}
             >
-              {loading ? 'Processing...' : subscription?.tier === 'PREMIUM' ? 'Current Plan' : 'Upgrade to Premium'}
+              {loading ? 'Processing...' :
+               subscription?.tier === 'PREMIUM' ? 'Current Plan' :
+               subscription?.tier === 'PREMIUM_PLUS' ? 'Switch to Premium' :
+               'Upgrade to Premium'}
             </Button>
           </CardFooter>
         </Card>

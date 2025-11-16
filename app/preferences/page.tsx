@@ -130,7 +130,7 @@ export default function PreferencesPage() {
   const [okayWithDiaspora, setOkayWithDiaspora] = useState<string>('either')
   const [locations, setLocations] = useState<string[]>([])
   const [locationsInput, setLocationsInput] = useState('')
-  const [incomeRange, setIncomeRange] = useState('')
+  const [incomeRange, setIncomeRange] = useState('NONE')
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -163,7 +163,7 @@ export default function PreferencesPage() {
       setOkayWithDiaspora(data.okayWithDiaspora || 'either')
       setLocations(data.locations || [])
       setLocationsInput((data.locations || []).join(', '))
-      setIncomeRange(data.incomeRange || '')
+      setIncomeRange(data.incomeRange || 'NONE')
     } catch (error) {
       console.error('Error fetching preferences:', error)
       toast({
@@ -192,7 +192,7 @@ export default function PreferencesPage() {
           preferredKeralaDistricts,
           okayWithDiaspora,
           locations,
-          incomeRange,
+          incomeRange: incomeRange === 'NONE' ? '' : incomeRange,
         }),
       })
 
@@ -488,7 +488,7 @@ export default function PreferencesPage() {
                 <SelectValue placeholder="Select income range (optional)" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">No preference</SelectItem>
+                <SelectItem value="NONE">No preference</SelectItem>
                 <SelectItem value="BELOW_3_LAKHS">Below 3 Lakhs</SelectItem>
                 <SelectItem value="THREE_TO_FIVE_LAKHS">3-5 Lakhs</SelectItem>
                 <SelectItem value="FIVE_TO_SEVEN_LAKHS">5-7 Lakhs</SelectItem>
