@@ -252,8 +252,8 @@ export default function ChatPage() {
         {messages.length === 0 ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center text-gray-500">
-              <p className="mb-2">No messages yet</p>
-              <p className="text-sm">Send a message to start the conversation</p>
+              <p className="mb-2 text-lg">Good conversations start with a hello 👋</p>
+              <p className="text-sm">Send your first message to break the ice</p>
             </div>
           </div>
         ) : (

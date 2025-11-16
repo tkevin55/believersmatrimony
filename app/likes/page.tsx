@@ -189,15 +189,17 @@ export default function WhoLikedMePage() {
             <div className="text-center text-muted-foreground">
               <Heart className="h-16 w-16 mx-auto mb-4 opacity-50" />
               <h2 className="text-xl font-semibold mb-2">
-                {filter === 'all' ? 'No likes yet' : 'No super likes yet'}
+                {filter === 'all'
+                  ? 'Your story is just getting brewed 🍵'
+                  : 'No super likes yet — but they\'re worth the wait!'}
               </h2>
               <p className="mb-4">
                 {filter === 'all'
-                  ? 'When someone likes your profile, you\'ll see them here'
-                  : 'When someone super likes your profile, you\'ll see them here'}
+                  ? 'Great connections take time. Keep exploring profiles, and your likes will show up here!'
+                  : 'Super likes are special! When someone sends you one, you\'ll see them here.'}
               </p>
               <Button onClick={() => router.push('/discover')}>
-                Discover Matches
+                Discover Profiles
               </Button>
             </div>
           </CardContent>

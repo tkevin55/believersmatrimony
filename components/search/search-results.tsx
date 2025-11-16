@@ -66,17 +66,17 @@ export function SearchResults({
       <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-6">
         <SearchX className="w-12 h-12 text-gray-400" />
       </div>
-      <h3 className="text-xl font-semibold mb-2">No profiles found</h3>
+      <h3 className="text-xl font-semibold mb-2">No matches brewing with these filters 🍵</h3>
       <p className="text-muted-foreground text-center max-w-md mb-6">
-        We couldn't find any profiles matching your search criteria. Try adjusting your filters to see more results.
+        Great connections are out there! Try widening your search to discover more profiles.
       </p>
-      <div className="space-y-2 text-sm text-muted-foreground">
-        <p>Suggestions:</p>
+      <div className="space-y-2 text-sm text-muted-foreground mb-4">
+        <p className="font-medium">Try these tweaks:</p>
         <ul className="list-disc list-inside space-y-1">
-          <li>Expand your age or height range</li>
-          <li>Remove some filters to see more profiles</li>
-          <li>Try searching in nearby locations</li>
-          <li>Select more interests or Kerala districts</li>
+          <li>Expand your age or height preferences</li>
+          <li>Broaden your location search</li>
+          <li>Add more interests or Kerala districts</li>
+          <li>Adjust education or lifestyle filters</li>
         </ul>
       </div>
     </div>

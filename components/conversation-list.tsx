@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { UserAvatar } from '@/components/user-avatar'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { formatDistanceToNow } from 'date-fns'
@@ -57,10 +57,10 @@ export function ConversationList({
       <div className="flex flex-col items-center justify-center h-full p-8 text-center">
         <MessageSquare className="h-16 w-16 text-gray-300 mb-4" />
         <h3 className="text-lg font-semibold text-gray-700 mb-2">
-          No conversations yet
+          Your story is just getting started 🍵
         </h3>
-        <p className="text-sm text-gray-500">
-          Start matching with people to begin conversations
+        <p className="text-sm text-gray-500 mb-4">
+          Match with someone you like, and your conversations will appear here
         </p>
       </div>
     )
@@ -116,15 +116,11 @@ export function ConversationList({
                   )}
                 >
                   <div className="relative">
-                    <Avatar className="h-12 w-12">
-                      <AvatarImage
-                        src={conversation.user.image || undefined}
-                        alt={conversation.user.name || 'User'}
-                      />
-                      <AvatarFallback>
-                        {conversation.user.name?.charAt(0).toUpperCase() || 'U'}
-                      </AvatarFallback>
-                    </Avatar>
+                    <UserAvatar
+                      name={conversation.user.name}
+                      image={conversation.user.image}
+                      className="h-12 w-12"
+                    />
                     {conversation.user.isOnline && (
                       <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
                     )}

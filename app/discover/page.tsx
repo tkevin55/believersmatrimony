@@ -324,13 +324,13 @@ export default function DiscoverPage() {
                     <Users className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
                     <h2 className="text-2xl font-bold mb-2">
                       {profiles.length === 0 && currentIndex === 0
-                        ? 'No Profiles Available'
-                        : 'No More Profiles'}
+                        ? 'Your perfect match is brewing 🍵'
+                        : 'You\'ve explored all profiles for now!'}
                     </h2>
                     <p className="text-muted-foreground">
                       {profiles.length === 0 && currentIndex === 0
-                        ? 'There are no matching profiles available right now. Try adjusting your preferences or check back later!'
-                        : 'You\'ve seen all available matches for now. Check back later for new profiles!'}
+                        ? 'No matches yet, but great connections take time. Try widening your preferences to discover more profiles!'
+                        : 'You\'ve seen everyone available right now. New profiles join daily — check back soon!'}
                     </p>
                   </div>
                   <div className="space-y-3">
