@@ -9,6 +9,7 @@ import { MatchModal } from '@/components/match-modal'
 import { Button } from '@/components/ui/button'
 import { Loader2, Heart, Users, Sparkles } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
+import { ToastAction } from '@/components/ui/toast'
 
 interface Profile {
   id: string
@@ -163,10 +164,14 @@ export default function DiscoverPage() {
           toast({
             title: '✨ Upgrade to Premium',
             description: errorData.error || 'You\'ve reached your daily like limit. Upgrade to Premium for unlimited likes!',
-            action: {
-              label: 'Upgrade Now',
-              onClick: () => router.push(errorData.upgradeUrl || '/premium'),
-            },
+            action: (
+              <ToastAction
+                altText="Upgrade to Premium"
+                onClick={() => router.push(errorData.upgradeUrl || '/premium')}
+              >
+                Upgrade Now
+              </ToastAction>
+            ),
             duration: 8000, // Show for 8 seconds
           })
           setIsActionLoading(false)
