@@ -46,7 +46,7 @@ export async function DELETE(
 
     // Update order for remaining prompts
     await Promise.all(
-      remainingPrompts.map((p, index) =>
+      remainingPrompts.map((p: { id: string }, index: number) =>
         prisma.personalityPrompt.update({
           where: { id: p.id },
           data: { order: index },

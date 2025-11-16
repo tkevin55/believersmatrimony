@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Heart, MapPin, Briefcase, GraduationCap, CheckCircle2, Tag } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
