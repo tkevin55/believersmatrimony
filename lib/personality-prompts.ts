@@ -17,7 +17,7 @@ export interface PersonalityPrompt {
 export const PERSONALITY_PROMPT_BANK: PersonalityPrompt[] = [
   {
     id: 'obsessed-with',
-    text: 'Two things I'm currently obsessed with',
+    text: "Two things I'm currently obsessed with",
     category: 'interests',
     colorTheme: 'teal',
   },
@@ -35,7 +35,7 @@ export const PERSONALITY_PROMPT_BANK: PersonalityPrompt[] = [
   },
   {
     id: 'bring-to-relationship',
-    text: 'What I'll bring to a relationship',
+    text: "What I'll bring to a relationship",
     category: 'personality',
     colorTheme: 'beige',
   },
