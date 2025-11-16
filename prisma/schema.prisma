@@ -250,6 +250,7 @@ model User {
   activityTargets    Activity[]          @relation("ActivityTargets")
   subscription       Subscription?
   dailyQuotas        DailyQuota[]
+  personalityPrompts PersonalityPrompt[] @relation("UserPersonalityPrompts")
 
   @@index([email])
   @@index([status])
@@ -384,6 +385,22 @@ model Photo {
 
   @@index([userId])
   @@index([isPrimary])
+}
+
+model PersonalityPrompt {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation("UserPersonalityPrompts", fields: [userId], references: [id], onDelete: Cascade)
+
+  prompt    String   // The question/prompt text
+  answer    String   @db.Text // User's answer
+  order     Int      @default(0) // Display order (0, 1, 2 for max 3 prompts)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@unique([userId, order])
 }
 
 model PartnerPreferences {

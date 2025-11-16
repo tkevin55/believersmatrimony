@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { UserAvatar } from '@/components/user-avatar'
+import { PromptCard } from '@/components/prompts/prompt-card'
 import { cn } from '@/lib/utils'
 import SendInterestDialog from '@/components/send-interest-dialog'
 import { useToast } from '@/hooks/use-toast'
@@ -27,6 +28,11 @@ interface ProfileCardProps {
     aboutMe?: string | null
     primaryPhoto?: string | null
     matchPercentage: number
+    personalityPrompts?: Array<{
+      id: string
+      prompt: string
+      answer: string
+    }>
   }
   onLike: (userId: string, isSuperLike?: boolean) => Promise<void>
   onPass: (userId: string) => void
@@ -302,6 +308,20 @@ export function ProfileCard({
                   )}
                 </button>
               )}
+            </div>
+          )}
+
+          {/* Personality Prompts */}
+          {profile.personalityPrompts && profile.personalityPrompts.length > 0 && (
+            <div className="space-y-3">
+              {profile.personalityPrompts.map((prompt, index) => (
+                <PromptCard
+                  key={prompt.id}
+                  promptId={prompt.prompt}
+                  answer={prompt.answer}
+                  delay={0.35 + index * 0.1}
+                />
+              ))}
             </div>
           )}
 
