@@ -11,6 +11,11 @@ const fs = require('fs')
 const path = require('path')
 
 async function applyMigrations() {
+  if (!process.env.DATABASE_URL) {
+    console.log('⚠️  DATABASE_URL not set - skipping migrations (local dev mode)')
+    return
+  }
+
   const client = new Client({
     connectionString: process.env.DATABASE_URL,
     ssl: {
@@ -37,44 +42,64 @@ async function applyMigrations() {
     `)
     console.log('✓ Migration tracking table ready')
 
-    // Check if migration already applied
-    const migrationName = '20241115_kaapi_connect_refactor'
-    const existing = await client.query(
-      'SELECT migration_name FROM "_prisma_migrations" WHERE migration_name = $1',
-      [migrationName]
-    )
+    // Get all migration directories
+    const migrationsDir = path.join(__dirname, '..', 'prisma', 'migrations')
+    const migrationDirs = fs.readdirSync(migrationsDir)
+      .filter(name => {
+        const migrationPath = path.join(migrationsDir, name)
+        return fs.statSync(migrationPath).isDirectory() &&
+               fs.existsSync(path.join(migrationPath, 'migration.sql'))
+      })
+      .sort() // Apply in chronological order
 
-    if (existing.rows.length > 0) {
-      console.log(`✓ Migration ${migrationName} already applied - skipping`)
+    if (migrationDirs.length === 0) {
+      console.log('✓ No migrations to apply')
       return
     }
 
-    // Read migration SQL
-    const migrationPath = path.join(__dirname, '..', 'prisma', 'migrations', migrationName, 'migration.sql')
-    const migrationSQL = fs.readFileSync(migrationPath, 'utf8')
+    console.log(`Found ${migrationDirs.length} migration(s)`)
 
-    console.log(`→ Applying migration: ${migrationName}`)
+    // Apply each migration
+    for (const migrationName of migrationDirs) {
+      // Check if migration already applied
+      const existing = await client.query(
+        'SELECT migration_name FROM "_prisma_migrations" WHERE migration_name = $1',
+        [migrationName]
+      )
 
-    // Execute migration SQL
-    await client.query(migrationSQL)
-    console.log('✓ Migration SQL executed')
+      if (existing.rows.length > 0) {
+        console.log(`✓ Migration ${migrationName} already applied - skipping`)
+        continue
+      }
 
-    // Record migration as applied
-    await client.query(`
-      INSERT INTO "_prisma_migrations" (id, checksum, migration_name, logs, applied_steps_count)
-      VALUES ($1, $2, $3, $4, 1)
-    `, [
-      `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      'manual-application',
-      migrationName,
-      'Applied via custom script (advisory lock workaround)'
-    ])
-    console.log('✓ Migration recorded in tracking table')
+      // Read migration SQL
+      const migrationPath = path.join(migrationsDir, migrationName, 'migration.sql')
+      const migrationSQL = fs.readFileSync(migrationPath, 'utf8')
 
-    console.log('\n✅ Migration completed successfully!')
+      console.log(`→ Applying migration: ${migrationName}`)
+
+      // Execute migration SQL
+      await client.query(migrationSQL)
+      console.log('  ✓ Migration SQL executed')
+
+      // Record migration as applied
+      await client.query(`
+        INSERT INTO "_prisma_migrations" (id, checksum, migration_name, logs, applied_steps_count, finished_at)
+        VALUES ($1, $2, $3, $4, 1, NOW())
+      `, [
+        `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        'manual-application',
+        migrationName,
+        'Applied via custom script (advisory lock workaround)'
+      ])
+      console.log('  ✓ Migration recorded in tracking table')
+    }
+
+    console.log('\n✅ All migrations completed successfully!')
 
   } catch (error) {
     console.error('\n❌ Migration failed:', error.message)
+    console.error('Full error:', error)
     throw error
   } finally {
     await client.end()
