@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { ProfileCard } from '@/components/profile-card'
+import { ProfileCardSkeleton } from '@/components/ui/skeleton'
+import { CoffeeBrewingIllustration } from '@/components/illustrations/empty-state'
 import { MatchModal } from '@/components/match-modal'
 import { Button } from '@/components/ui/button'
 import { Loader2, Heart, Users, Sparkles } from 'lucide-react'
@@ -238,10 +240,20 @@ export default function DiscoverPage() {
 
   if (status === 'loading' || isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 to-secondary/5">
-        <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
-          <p className="text-muted-foreground">Finding your perfect matches...</p>
+      <div className="min-h-screen bg-gradient-to-br from-primary/5 to-secondary/5">
+        <div className="container mx-auto px-4 py-8">
+          <div className="mb-8 text-center">
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <Sparkles className="h-8 w-8 text-primary" />
+              <h1 className="text-3xl font-bold tracking-tight">
+                Discover Your Match
+              </h1>
+            </div>
+            <p className="text-muted-foreground animate-pulse">
+              Finding your perfect matches...
+            </p>
+          </div>
+          <ProfileCardSkeleton />
         </div>
       </div>
     )
@@ -319,15 +331,15 @@ export default function DiscoverPage() {
                 exit={{ opacity: 0, scale: 0.9 }}
                 className="text-center py-12"
               >
-                <div className="max-w-md mx-auto bg-white rounded-lg shadow-lg p-8">
-                  <div className="mb-4">
-                    <Users className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                    <h2 className="text-2xl font-bold mb-2">
+                <div className="max-w-md mx-auto bg-white rounded-2xl shadow-sm p-8">
+                  <div className="mb-6">
+                    <CoffeeBrewingIllustration className="h-32 w-32 mx-auto mb-6" />
+                    <h2 className="text-2xl font-bold mb-3">
                       {profiles.length === 0 && currentIndex === 0
                         ? 'Your perfect match is brewing 🍵'
                         : 'You\'ve explored all profiles for now!'}
                     </h2>
-                    <p className="text-muted-foreground">
+                    <p className="text-muted-foreground leading-relaxed">
                       {profiles.length === 0 && currentIndex === 0
                         ? 'No matches yet, but great connections take time. Try widening your preferences to discover more profiles!'
                         : 'You\'ve seen everyone available right now. New profiles join daily — check back soon!'}
@@ -337,7 +349,7 @@ export default function DiscoverPage() {
                     {profiles.length > 0 && (
                       <Button
                         size="lg"
-                        className="w-full"
+                        className="w-full rounded-full"
                         onClick={() => router.push('/matches')}
                       >
                         View Your Matches
@@ -346,7 +358,7 @@ export default function DiscoverPage() {
                     <Button
                       size="lg"
                       variant="outline"
-                      className="w-full"
+                      className="w-full rounded-full"
                       onClick={() => router.push('/preferences')}
                     >
                       Update Preferences
@@ -354,7 +366,7 @@ export default function DiscoverPage() {
                     <Button
                       size="lg"
                       variant="outline"
-                      className="w-full"
+                      className="w-full rounded-full"
                       onClick={() => {
                         setProfiles([])
                         setCurrentIndex(0)

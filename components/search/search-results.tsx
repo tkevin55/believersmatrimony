@@ -1,6 +1,7 @@
 'use client'
 
 import { ProfileCardCompact } from './profile-card-compact'
+import { CoconutTreeIllustration } from '@/components/illustrations/empty-state'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Loader2, SearchX } from 'lucide-react'
@@ -60,23 +61,33 @@ export function SearchResults({
     </div>
   )
 
-  // Empty state
+  // Empty state with Kerala illustration
   const EmptyState = () => (
     <div className="flex flex-col items-center justify-center py-16 px-4">
-      <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-6">
-        <SearchX className="w-12 h-12 text-gray-400" />
-      </div>
-      <h3 className="text-xl font-semibold mb-2">No matches brewing with these filters 🍵</h3>
-      <p className="text-muted-foreground text-center max-w-md mb-6">
+      <CoconutTreeIllustration className="h-40 w-40 mb-8" />
+      <h3 className="text-2xl font-bold mb-3">No matches brewing with these filters 🍵</h3>
+      <p className="text-muted-foreground text-center max-w-md mb-6 leading-relaxed">
         Great connections are out there! Try widening your search to discover more profiles.
       </p>
-      <div className="space-y-2 text-sm text-muted-foreground mb-4">
-        <p className="font-medium">Try these tweaks:</p>
-        <ul className="list-disc list-inside space-y-1">
-          <li>Expand your age or height preferences</li>
-          <li>Broaden your location search</li>
-          <li>Add more interests or Kerala districts</li>
-          <li>Adjust education or lifestyle filters</li>
+      <div className="bg-secondary/30 rounded-xl p-6 max-w-md">
+        <p className="font-semibold text-sm mb-3 text-foreground/80">Try these tweaks:</p>
+        <ul className="space-y-2 text-sm text-muted-foreground">
+          <li className="flex items-center gap-2">
+            <span className="text-primary">•</span>
+            <span>Expand your age or height preferences</span>
+          </li>
+          <li className="flex items-center gap-2">
+            <span className="text-primary">•</span>
+            <span>Broaden your location search</span>
+          </li>
+          <li className="flex items-center gap-2">
+            <span className="text-primary">•</span>
+            <span>Add more interests or Kerala districts</span>
+          </li>
+          <li className="flex items-center gap-2">
+            <span className="text-primary">•</span>
+            <span>Adjust education or lifestyle filters</span>
+          </li>
         </ul>
       </div>
     </div>

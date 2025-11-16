@@ -6,8 +6,8 @@ import { Heart, X, Send, MapPin, Briefcase, GraduationCap, Sparkles, ChevronDown
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
-import { cn, getInitials } from '@/lib/utils'
+import { UserAvatar } from '@/components/user-avatar'
+import { cn } from '@/lib/utils'
 import SendInterestDialog from '@/components/send-interest-dialog'
 import { useToast } from '@/hooks/use-toast'
 
@@ -47,7 +47,6 @@ export function ProfileCard({
   const [isLoadingSuperLikes, setIsLoadingSuperLikes] = useState(false)
   const { toast } = useToast()
 
-  // Fetch remaining super likes on mount
   useEffect(() => {
     fetchSuperLikesCount()
   }, [])
@@ -102,7 +101,7 @@ export function ProfileCard({
 
   const getMatchColor = (percentage: number) => {
     if (percentage >= 80) return 'bg-green-500'
-    if (percentage >= 60) return 'bg-blue-500'
+    if (percentage >= 60) return 'bg-primary'
     if (percentage >= 40) return 'bg-yellow-500'
     return 'bg-gray-500'
   }
@@ -123,13 +122,13 @@ export function ProfileCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
+      initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.9 }}
-      transition={{ duration: 0.3 }}
+      exit={{ opacity: 0, x: -100, transition: { duration: 0.15 } }}
+      transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
       className="w-full max-w-md mx-auto"
     >
-      <Card className="overflow-hidden shadow-xl">
+      <Card className="overflow-hidden shadow-sm hover:shadow-xl transition-all duration-200 rounded-2xl border-0">
         {/* Photo Section */}
         <div className="relative h-96 bg-gradient-to-b from-gray-200 to-gray-300">
           {profile.primaryPhoto && !imageError ? (
@@ -141,29 +140,35 @@ export function ProfileCard({
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-secondary/20">
-              <Avatar className="h-32 w-32">
-                <AvatarFallback className="text-4xl">
-                  {getInitials(profile.name)}
-                </AvatarFallback>
-              </Avatar>
+              <UserAvatar
+                name={profile.name}
+                image={null}
+                className="h-32 w-32 text-4xl"
+              />
             </div>
           )}
 
-          {/* Match Percentage Badge */}
+          {/* Match Percentage Badge with gentle pulse */}
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+            transition={{ delay: 0.15, type: 'spring', stiffness: 300, damping: 20 }}
             className="absolute top-4 right-4"
           >
-            <Badge
-              className={cn(
-                'text-white font-bold text-base px-3 py-1',
-                getMatchColor(profile.matchPercentage)
-              )}
+            <motion.div
+              animate={{ scale: [1, 1.03, 1] }}
+              transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
             >
-              {profile.matchPercentage}% Match
-            </Badge>
+              <Badge
+                className={cn(
+                  'text-white font-bold text-base px-4 py-1.5 rounded-full shadow-lg backdrop-blur-sm',
+                  getMatchColor(profile.matchPercentage)
+                )}
+              >
+                <Sparkles className="h-3.5 w-3.5 mr-1 inline" />
+                {profile.matchPercentage}% Match
+              </Badge>
+            </motion.div>
           </motion.div>
 
           {/* Gradient Overlay */}
@@ -171,7 +176,7 @@ export function ProfileCard({
         </div>
 
         {/* Profile Info Section */}
-        <div className="p-6 space-y-4">
+        <div className="p-6 space-y-5">
           {/* Name and Basic Info */}
           <div>
             <h2 className="text-2xl font-bold mb-1">
@@ -191,39 +196,55 @@ export function ProfileCard({
 
             {/* Kerala District Badge */}
             {profile.homeDistrict && (
-              <div className="mt-2">
-                <Badge variant="secondary" className="text-xs">
+              <motion.div
+                initial={{ opacity: 0, x: -5 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2 }}
+                className="mt-2"
+              >
+                <Badge variant="secondary" className="text-xs rounded-full px-2.5 py-1">
                   <MapPin className="h-3 w-3 mr-1" />
                   {formatLabel(profile.homeDistrict)}, Kerala
                 </Badge>
-              </div>
+              </motion.div>
             )}
           </div>
 
-          {/* Interest Tags */}
+          {/* Interest Tags with stagger animation */}
           {profile.interestTags && profile.interestTags.length > 0 && (
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                <Tag className="h-4 w-4" />
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.25 }}
+              className="space-y-3"
+            >
+              <div className="flex items-center gap-2 text-sm font-semibold text-foreground/70">
+                <Tag className="h-4 w-4 text-primary" />
                 <span>Interests</span>
               </div>
-              <div className="flex flex-wrap gap-1.5">
-                {profile.interestTags.slice(0, 7).map((tag) => (
-                  <Badge
+              <div className="flex flex-wrap gap-2">
+                {profile.interestTags.slice(0, 7).map((tag, index) => (
+                  <motion.div
                     key={tag}
-                    variant="outline"
-                    className="text-xs px-2 py-0.5 bg-primary/5 border-primary/20"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.3 + index * 0.03 }}
                   >
-                    {formatInterestTag(tag)}
-                  </Badge>
+                    <Badge
+                      variant="outline"
+                      className="text-xs px-3 py-1 rounded-full bg-primary/5 border-primary/20 hover:bg-primary/10 hover:border-primary/30 transition-all cursor-default"
+                    >
+                      {formatInterestTag(tag)}
+                    </Badge>
+                  </motion.div>
                 ))}
                 {profile.interestTags.length > 7 && (
-                  <Badge variant="outline" className="text-xs px-2 py-0.5">
+                  <Badge variant="outline" className="text-xs px-3 py-1 rounded-full">
                     +{profile.interestTags.length - 7} more
                   </Badge>
                 )}
               </div>
-            </div>
+            </motion.div>
           )}
 
           {/* Quick Info */}
@@ -268,7 +289,7 @@ export function ProfileCard({
               {profile.aboutMe.length > 120 && (
                 <button
                   onClick={() => setIsExpanded(!isExpanded)}
-                  className="flex items-center gap-1 text-sm text-primary hover:underline mt-2"
+                  className="flex items-center gap-1 text-sm text-primary hover:underline mt-2 transition-all"
                 >
                   {isExpanded ? (
                     <>
@@ -293,64 +314,72 @@ export function ProfileCard({
           )}
 
           {/* Action Buttons */}
-          <div className="flex gap-3 pt-4">
+          <div className="flex gap-3 pt-6">
             {/* Pass Button */}
-            <Button
-              variant="outline"
-              size="lg"
-              className="flex-1 border-2 hover:border-destructive hover:bg-destructive/10"
-              onClick={handlePass}
-              disabled={isLoading || isLoadingSuperLikes}
-            >
-              <X className="h-5 w-5 mr-2" />
-              Pass
-            </Button>
-
-            {/* Like Button */}
-            <Button
-              variant="default"
-              size="lg"
-              className="flex-1 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600"
-              onClick={handleLike}
-              disabled={isLoading || isLoadingSuperLikes}
-            >
-              <Heart className="h-5 w-5 mr-2" />
-              Like
-            </Button>
-
-            {/* Super Like Button */}
-            <Button
-              variant="outline"
-              size="lg"
-              className={cn(
-                "flex-1 border-2 border-yellow-500 hover:bg-yellow-500 hover:text-white transition-colors",
-                remainingSuperLikes <= 0 && "opacity-50 cursor-not-allowed"
-              )}
-              onClick={handleSuperLike}
-              disabled={isLoading || isLoadingSuperLikes || remainingSuperLikes <= 0}
-            >
-              <Star className="h-5 w-5 mr-2 fill-yellow-500" />
-              Super
-            </Button>
-          </div>
-
-          {/* Send Interest Button - Full Width Below */}
-          <SendInterestDialog
-            receiverId={profile.id}
-            receiverName={profile.name}
-            onSuccess={() => onSendInterest?.(profile.id)}
-            trigger={
+            <motion.div className="flex-1" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Button
                 variant="outline"
                 size="lg"
-                className="w-full border-2 border-primary hover:bg-primary hover:text-primary-foreground mt-2"
+                className="w-full border-2 rounded-full hover:border-destructive hover:bg-destructive/10 transition-all"
+                onClick={handlePass}
                 disabled={isLoading || isLoadingSuperLikes}
               >
-                <Send className="h-5 w-5 mr-2" />
-                Send Interest
+                <X className="h-5 w-5 mr-2" />
+                Pass
               </Button>
-            }
-          />
+            </motion.div>
+
+            {/* Like Button */}
+            <motion.div className="flex-1" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <Button
+                variant="default"
+                size="lg"
+                className="w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 rounded-full shadow-md hover:shadow-lg transition-all"
+                onClick={handleLike}
+                disabled={isLoading || isLoadingSuperLikes}
+              >
+                <Heart className="h-5 w-5 mr-2" />
+                Like
+              </Button>
+            </motion.div>
+
+            {/* Super Like Button */}
+            <motion.div className="flex-1" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <Button
+                variant="outline"
+                size="lg"
+                className={cn(
+                  "w-full border-2 border-yellow-500 rounded-full hover:bg-yellow-500 hover:text-white transition-all",
+                  remainingSuperLikes <= 0 && "opacity-50 cursor-not-allowed"
+                )}
+                onClick={handleSuperLike}
+                disabled={isLoading || isLoadingSuperLikes || remainingSuperLikes <= 0}
+              >
+                <Star className="h-5 w-5 mr-2 fill-yellow-500" />
+                Super
+              </Button>
+            </motion.div>
+          </div>
+
+          {/* Send Interest Button - Full Width Below */}
+          <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
+            <SendInterestDialog
+              receiverId={profile.id}
+              receiverName={profile.name}
+              onSuccess={() => onSendInterest?.(profile.id)}
+              trigger={
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="w-full border-2 border-primary rounded-full hover:bg-primary hover:text-primary-foreground transition-all mt-2"
+                  disabled={isLoading || isLoadingSuperLikes}
+                >
+                  <Send className="h-5 w-5 mr-2" />
+                  Send Interest
+                </Button>
+              }
+            />
+          </motion.div>
         </div>
       </Card>
     </motion.div>
