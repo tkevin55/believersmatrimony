@@ -8,6 +8,9 @@ import { Button } from '@/components/ui/button'
 import { MessageBubble } from '@/components/message-bubble'
 import { MessageInput } from '@/components/message-input'
 import { TypingIndicator } from '@/components/typing-indicator'
+import { IcebreakerStrip } from '@/components/messages/icebreaker-strip'
+import type { IcebreakerSuggestion as IcebreakerSuggestionType } from '@/components/messages/icebreaker-strip'
+import { generateIcebreakers, shuffleIcebreakers, type IcebreakerContext } from '@/lib/icebreakers'
 import { ArrowLeft, MoreVertical, Phone, Video, Loader2 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 
@@ -33,6 +36,23 @@ interface MatchUser {
   isOnline: boolean
 }
 
+interface UserProfile {
+  id: string
+  name: string | null
+  age: number | null
+  homeDistrict: string | null
+  diasporaLocation: string | null
+  interestTags: string[]
+  weekendPreference: string[] | null
+  occupation: string | null
+  politicalLeaning: string | null
+  keralaConnection: string | null
+  personalityPrompts: {
+    prompt: string
+    answer: string
+  }[]
+}
+
 export default function ChatPage() {
   const router = useRouter()
   const params = useParams()
@@ -46,6 +66,13 @@ export default function ChatPage() {
   const [isSending, setIsSending] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  // Icebreaker state
+  const [messageInput, setMessageInput] = useState('')
+  const [icebreakers, setIcebreakers] = useState<IcebreakerSuggestionType[]>([])
+  const [icebreakerSeed, setIcebreakerSeed] = useState(0)
+  const [currentUserProfile, setCurrentUserProfile] = useState<UserProfile | null>(null)
+  const [matchUserProfile, setMatchUserProfile] = useState<UserProfile | null>(null)
+
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const lastMessageCountRef = useRef(0)
@@ -54,6 +81,61 @@ export default function ChatPage() {
   const scrollToBottom = (smooth = true) => {
     messagesEndRef.current?.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto' })
   }
+
+  // Fetch full profiles for icebreaker generation
+  const fetchProfiles = async () => {
+    try {
+      if (!session?.user?.id || !otherUser?.id) return
+
+      const [currentRes, matchRes] = await Promise.all([
+        fetch('/api/profile'),
+        fetch(`/api/profile/${otherUser.id}`),
+      ])
+
+      if (currentRes.ok && matchRes.ok) {
+        const currentData = await currentRes.json()
+        const matchData = await matchRes.json()
+        setCurrentUserProfile(currentData.profile)
+        setMatchUserProfile(matchData.profile)
+      }
+    } catch (error) {
+      console.error('Error fetching profiles for icebreakers:', error)
+    }
+  }
+
+  // Generate icebreaker suggestions
+  useEffect(() => {
+    if (!currentUserProfile || !matchUserProfile) return
+
+    const context: IcebreakerContext = {
+      currentUser: {
+        name: currentUserProfile.name || 'You',
+        age: currentUserProfile.age,
+        homeDistrict: currentUserProfile.homeDistrict,
+        diasporaLocation: currentUserProfile.diasporaLocation,
+        interestTags: currentUserProfile.interestTags,
+        weekendPreference: currentUserProfile.weekendPreference,
+      },
+      matchUser: {
+        name: matchUserProfile.name || 'User',
+        age: matchUserProfile.age,
+        homeDistrict: matchUserProfile.homeDistrict,
+        diasporaLocation: matchUserProfile.diasporaLocation,
+        interestTags: matchUserProfile.interestTags,
+        weekendPreference: matchUserProfile.weekendPreference,
+        occupation: matchUserProfile.occupation,
+        politicalLeaning: matchUserProfile.politicalLeaning,
+        keralaConnection: matchUserProfile.keralaConnection,
+        personalityPrompts: matchUserProfile.personalityPrompts,
+      },
+    }
+
+    const suggestions = icebreakerSeed === 0
+      ? generateIcebreakers(context, 5)
+      : shuffleIcebreakers(context, icebreakerSeed)
+
+    setIcebreakers(suggestions)
+  }, [currentUserProfile, matchUserProfile, icebreakerSeed])
 
   // Fetch messages
   const fetchMessages = async (isInitial = false) => {
@@ -92,6 +174,13 @@ export default function ChatPage() {
 
     fetchMessages(true)
   }, [matchId, session])
+
+  // Fetch profiles after otherUser is loaded
+  useEffect(() => {
+    if (otherUser) {
+      fetchProfiles()
+    }
+  }, [otherUser, session])
 
   // Set up polling for new messages (every 3 seconds)
   useEffect(() => {
@@ -168,6 +257,19 @@ export default function ChatPage() {
       setIsSending(false)
     }
   }
+
+  // Handle icebreaker selection
+  const handleIcebreakerSelect = (text: string) => {
+    setMessageInput(text)
+  }
+
+  // Handle shuffle
+  const handleShuffle = () => {
+    setIcebreakerSeed(prev => prev + 1)
+  }
+
+  // Show icebreakers only when there are no messages yet
+  const showIcebreakers = messages.length === 0 && icebreakers.length > 0
 
   if (isLoading) {
     return (
@@ -276,10 +378,22 @@ export default function ChatPage() {
         )}
       </div>
 
+      {/* Icebreaker Strip - only show when no messages yet */}
+      {showIcebreakers && (
+        <IcebreakerStrip
+          suggestions={icebreakers}
+          onSelect={handleIcebreakerSelect}
+          onShuffle={handleShuffle}
+          isLoading={!currentUserProfile || !matchUserProfile}
+        />
+      )}
+
       {/* Message Input */}
       <MessageInput
         onSendMessage={handleSendMessage}
         disabled={isSending}
+        value={messageInput}
+        onChange={setMessageInput}
       />
     </div>
   )

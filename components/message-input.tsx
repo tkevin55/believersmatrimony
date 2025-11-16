@@ -12,6 +12,8 @@ interface MessageInputProps {
   onTypingStop?: () => void
   disabled?: boolean
   placeholder?: string
+  value?: string // External control
+  onChange?: (value: string) => void // External control
 }
 
 export function MessageInput({
@@ -20,12 +22,18 @@ export function MessageInput({
   onTypingStop,
   disabled = false,
   placeholder = 'Type a message...',
+  value: externalValue,
+  onChange: externalOnChange,
 }: MessageInputProps) {
-  const [message, setMessage] = useState('')
-  const [charCount, setCharCount] = useState(0)
+  const [internalMessage, setInternalMessage] = useState('')
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const isTypingRef = useRef(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  // Use external value if provided, otherwise internal state
+  const message = externalValue !== undefined ? externalValue : internalMessage
+  const setMessage = externalOnChange || setInternalMessage
+  const charCount = message.length
 
   const MAX_CHARS = 1000
 
@@ -53,7 +61,6 @@ export function MessageInput({
     const value = e.target.value
     if (value.length <= MAX_CHARS) {
       setMessage(value)
-      setCharCount(value.length)
       handleTyping()
     }
   }
@@ -63,7 +70,6 @@ export function MessageInput({
     if (trimmedMessage && !disabled) {
       onSendMessage(trimmedMessage)
       setMessage('')
-      setCharCount(0)
 
       // Stop typing indicator
       if (typingTimeoutRef.current) {
