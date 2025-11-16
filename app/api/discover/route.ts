@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
         matchPercentage: match.matchScore,
         profileViews: match.profileViews,
         // Personality prompts (max 3)
-        personalityPrompts: match.personalityPrompts || [],
+        personalityPrompts: match.user.personalityPrompts || [],
       }
     })
 

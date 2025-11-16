@@ -283,17 +283,17 @@ export async function GET(request: NextRequest) {
               where: { status: 'APPROVED' },
               take: 1,
             },
+            personalityPrompts: {
+              select: {
+                id: true,
+                prompt: true,
+                answer: true,
+                order: true,
+              },
+              orderBy: { order: 'asc' },
+              take: 3,
+            },
           },
-        },
-        personalityPrompts: {
-          select: {
-            id: true,
-            prompt: true,
-            answer: true,
-            order: true,
-          },
-          orderBy: { order: 'asc' },
-          take: 3,
         },
       },
       orderBy,
@@ -333,7 +333,7 @@ export async function GET(request: NextRequest) {
           isOnline,
           lastActive: profile.user.lastActive,
           // Personality prompts (max 3)
-          personalityPrompts: profile.personalityPrompts || [],
+          personalityPrompts: profile.user.personalityPrompts || [],
         }
       })
     )
