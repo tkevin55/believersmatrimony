@@ -172,7 +172,6 @@ export default function DiscoverPage() {
                 Upgrade Now
               </ToastAction>
             ),
-            duration: 8000, // Show for 8 seconds
           })
           setIsActionLoading(false)
           return
