@@ -12,23 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Loader2, Heart, Users, Sparkles } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
 import { ToastAction } from '@/components/ui/toast'
-
-interface Profile {
-  id: string
-  name: string
-  age: number
-  gender: string
-  location: string
-  interestTags?: string[]
-  politicalLeaning?: string | null
-  homeDistrict?: string | null
-  educationLevel?: string | null
-  occupation?: string | null
-  height?: string | null
-  aboutMe?: string | null
-  primaryPhoto?: string | null
-  matchPercentage: number
-}
+import type { PublicProfile } from '@/lib/types/profile'
 
 interface Match {
   id: string
@@ -50,7 +34,7 @@ export default function DiscoverPage() {
   const router = useRouter()
   const { toast } = useToast()
 
-  const [profiles, setProfiles] = useState<Profile[]>([])
+  const [profiles, setProfiles] = useState<PublicProfile[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const [isActionLoading, setIsActionLoading] = useState(false)

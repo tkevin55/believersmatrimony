@@ -9,23 +9,26 @@ import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { getInitials } from '@/lib/utils'
 import { toast } from '@/hooks/use-toast'
+import type { PublicProfile } from '@/lib/types/profile'
+import { formatEducation, formatDistrict, safeArray, safeDisplayName } from '@/lib/formatters'
 
-interface ProfileCardCompactProps {
-  id: string
-  name: string | null
-  age: number
-  gender: string
-  location: string
-  interestTags?: string[]
-  politicalLeaning?: string | null
-  homeDistrict?: string | null
-  educationLevel?: string | null
-  occupation?: string | null
-  primaryPhoto: string | null
-  matchPercentage: number
-  isVerified?: boolean
-  isOnline?: boolean
-}
+type ProfileCardCompactProps = Pick<
+  PublicProfile,
+  | 'id'
+  | 'name'
+  | 'age'
+  | 'gender'
+  | 'location'
+  | 'interestTags'
+  | 'politicalLeaning'
+  | 'homeDistrict'
+  | 'educationLevel'
+  | 'occupation'
+  | 'primaryPhoto'
+  | 'matchPercentage'
+  | 'isVerified'
+  | 'isOnline'
+>
 
 export function ProfileCardCompact({
   id,
@@ -96,19 +99,9 @@ export function ProfileCardCompact({
     router.push(`/profile/${id}`)
   }
 
-  const formatEducation = (edu: string) => {
-    return edu
-      .split('_')
-      .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
-      .join(' ')
-  }
-
-  const formatDistrict = (district: string) => {
-    return district
-      .split('_')
-      .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
-      .join(' ')
-  }
+  // Safe access to arrays
+  const interests = safeArray(interestTags)
+  const displayName = safeDisplayName(name)
 
   const capitalizeFirst = (str: string) => {
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
@@ -137,18 +130,18 @@ export function ProfileCardCompact({
             </div>
           )}
 
-          {/* Match percentage badge */}
+          {/* Match percentage badge - Safe null handling */}
           <div className="absolute top-2 left-2">
             <Badge
               className={`${
-                matchPercentage >= 80
+                (matchPercentage ?? 0) >= 80
                   ? 'bg-green-500'
-                  : matchPercentage >= 60
+                  : (matchPercentage ?? 0) >= 60
                   ? 'bg-blue-500'
                   : 'bg-gray-500'
               } text-white font-semibold`}
             >
-              {matchPercentage}% Match
+              {matchPercentage ?? 0}% Match
             </Badge>
           </div>
 
@@ -180,7 +173,7 @@ export function ProfileCardCompact({
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
             <div className="flex items-center gap-2">
               <h3 className="text-white font-semibold text-lg">
-                {name || 'Anonymous'}
+                {displayName}
                 {isVerified && (
                   <CheckCircle2 className="inline-block ml-1 h-4 w-4 text-blue-400" />
                 )}
@@ -199,27 +192,27 @@ export function ProfileCardCompact({
             </div>
           )}
 
-          {/* Interests (Kaapi Connect) */}
-          {interestTags && interestTags.length > 0 && (
+          {/* Interests (Kaapi Connect) - Safe array access */}
+          {interests.length > 0 && (
             <div className="flex items-start gap-2 text-sm">
               <Tag className="h-4 w-4 flex-shrink-0 mt-0.5" />
               <div className="flex flex-wrap gap-1">
-                {interestTags.slice(0, 3).map((tag, index) => (
+                {interests.slice(0, 3).map((tag, index) => (
                   <Badge key={index} variant="secondary" className="text-xs">
                     {capitalizeFirst(tag)}
                   </Badge>
                 ))}
-                {interestTags.length > 3 && (
+                {interests.length > 3 && (
                   <Badge variant="outline" className="text-xs">
-                    +{interestTags.length - 3}
+                    +{interests.length - 3}
                   </Badge>
                 )}
               </div>
             </div>
           )}
 
-          {/* Kerala District (Kaapi Connect) */}
-          {homeDistrict && (
+          {/* Kerala District (Kaapi Connect) - Safe formatting */}
+          {formatDistrict(homeDistrict) && (
             <div className="flex items-center gap-2 text-sm">
               <Badge variant="outline" className="text-xs">
                 {formatDistrict(homeDistrict)}
@@ -227,8 +220,8 @@ export function ProfileCardCompact({
             </div>
           )}
 
-          {/* Education */}
-          {educationLevel && (
+          {/* Education - Safe formatting */}
+          {formatEducation(educationLevel) && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <GraduationCap className="h-4 w-4 flex-shrink-0" />
               <span className="truncate">{formatEducation(educationLevel)}</span>

@@ -11,29 +11,11 @@ import { PromptCard } from '@/components/prompts/prompt-card'
 import { cn } from '@/lib/utils'
 import SendInterestDialog from '@/components/send-interest-dialog'
 import { useToast } from '@/hooks/use-toast'
+import type { PublicProfile } from '@/lib/types/profile'
+import { formatLabel, formatInterestTag, safeArray } from '@/lib/formatters'
 
 interface ProfileCardProps {
-  profile: {
-    id: string
-    name: string
-    age: number
-    gender: string
-    location: string
-    interestTags?: string[]
-    politicalLeaning?: string | null
-    homeDistrict?: string | null
-    educationLevel?: string | null
-    occupation?: string | null
-    height?: string | null
-    aboutMe?: string | null
-    primaryPhoto?: string | null
-    matchPercentage: number
-    personalityPrompts?: Array<{
-      id: string
-      prompt: string
-      answer: string
-    }>
-  }
+  profile: PublicProfile
   onLike: (userId: string, isSuperLike?: boolean) => Promise<void>
   onPass: (userId: string) => void
   onSendInterest?: (userId: string) => void
@@ -112,19 +94,9 @@ export function ProfileCard({
     return 'bg-gray-500'
   }
 
-  const formatLabel = (text: string) => {
-    return text
-      .split('_')
-      .map(word => word.charAt(0) + word.slice(1).toLowerCase())
-      .join(' ')
-  }
-
-  const formatInterestTag = (tag: string) => {
-    return tag
-      .split('_')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(' ')
-  }
+  // Safe access to arrays
+  const interests = safeArray(profile.interestTags)
+  const prompts = safeArray(profile.personalityPrompts)
 
   return (
     <motion.div
@@ -140,14 +112,14 @@ export function ProfileCard({
           {profile.primaryPhoto && !imageError ? (
             <img
               src={profile.primaryPhoto}
-              alt={profile.name}
+              alt={profile.name || 'Profile photo'}
               className="w-full h-full object-cover"
               onError={() => setImageError(true)}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-secondary/20">
               <UserAvatar
-                name={profile.name}
+                name={profile.name || 'User'}
                 image={null}
                 className="h-32 w-32 text-4xl"
               />
@@ -168,11 +140,11 @@ export function ProfileCard({
               <Badge
                 className={cn(
                   'text-white font-bold text-base px-4 py-1.5 rounded-full shadow-lg backdrop-blur-sm',
-                  getMatchColor(profile.matchPercentage)
+                  getMatchColor(profile.matchPercentage ?? 0)
                 )}
               >
                 <Sparkles className="h-3.5 w-3.5 mr-1 inline" />
-                {profile.matchPercentage}% Match
+                {profile.matchPercentage ?? 0}% Match
               </Badge>
             </motion.div>
           </motion.div>
@@ -186,7 +158,7 @@ export function ProfileCard({
           {/* Name and Basic Info */}
           <div>
             <h2 className="text-2xl font-bold mb-1">
-              {profile.name}, {profile.age}
+              {profile.name || 'Anonymous'}, {profile.age}
             </h2>
             <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
               {profile.location && (
@@ -200,8 +172,8 @@ export function ProfileCard({
               )}
             </div>
 
-            {/* Kerala District Badge */}
-            {profile.homeDistrict && (
+            {/* Kerala District Badge - Safe formatting */}
+            {formatLabel(profile.homeDistrict) && (
               <motion.div
                 initial={{ opacity: 0, x: -5 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -216,8 +188,8 @@ export function ProfileCard({
             )}
           </div>
 
-          {/* Interest Tags with stagger animation */}
-          {profile.interestTags && profile.interestTags.length > 0 && (
+          {/* Interest Tags with stagger animation - Safe array access */}
+          {interests.length > 0 && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -229,7 +201,7 @@ export function ProfileCard({
                 <span>Interests</span>
               </div>
               <div className="flex flex-wrap gap-2">
-                {profile.interestTags.slice(0, 7).map((tag, index) => (
+                {interests.slice(0, 7).map((tag, index) => (
                   <motion.div
                     key={tag}
                     initial={{ opacity: 0, scale: 0.8 }}
@@ -240,22 +212,22 @@ export function ProfileCard({
                       variant="outline"
                       className="text-xs px-3 py-1 rounded-full bg-primary/5 border-primary/20 hover:bg-primary/10 hover:border-primary/30 transition-all cursor-default"
                     >
-                      {formatInterestTag(tag)}
+                      {formatInterestTag(tag) || tag}
                     </Badge>
                   </motion.div>
                 ))}
-                {profile.interestTags.length > 7 && (
+                {interests.length > 7 && (
                   <Badge variant="outline" className="text-xs px-3 py-1 rounded-full">
-                    +{profile.interestTags.length - 7} more
+                    +{interests.length - 7} more
                   </Badge>
                 )}
               </div>
             </motion.div>
           )}
 
-          {/* Quick Info */}
+          {/* Quick Info - Safe formatting */}
           <div className="space-y-2">
-            {profile.politicalLeaning && (
+            {formatLabel(profile.politicalLeaning) && (
               <div className="flex items-center gap-2 text-sm">
                 <Sparkles className="h-4 w-4 text-primary" />
                 <span className="font-medium">{formatLabel(profile.politicalLeaning)}</span>
@@ -269,7 +241,7 @@ export function ProfileCard({
               </div>
             )}
 
-            {profile.educationLevel && (
+            {formatLabel(profile.educationLevel) && (
               <div className="flex items-center gap-2 text-sm">
                 <GraduationCap className="h-4 w-4 text-primary" />
                 <span>{formatLabel(profile.educationLevel)}</span>
@@ -311,13 +283,13 @@ export function ProfileCard({
             </div>
           )}
 
-          {/* Personality Prompts */}
-          {profile.personalityPrompts && profile.personalityPrompts.length > 0 && (
+          {/* Personality Prompts - Safe array access */}
+          {prompts.length > 0 && (
             <div className="space-y-3">
-              {profile.personalityPrompts.map((prompt, index) => (
+              {prompts.map((prompt, index) => (
                 <PromptCard
                   key={prompt.id}
-                  promptId={prompt.prompt}
+                  promptId={prompt.prompt || prompt.promptKey || ''}
                   answer={prompt.answer}
                   delay={0.35 + index * 0.1}
                 />
@@ -385,7 +357,7 @@ export function ProfileCard({
           <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
             <SendInterestDialog
               receiverId={profile.id}
-              receiverName={profile.name}
+              receiverName={profile.name || 'User'}
               onSuccess={() => onSendInterest?.(profile.id)}
               trigger={
                 <Button
